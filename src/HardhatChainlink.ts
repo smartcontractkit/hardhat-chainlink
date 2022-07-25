@@ -2,7 +2,7 @@ import "@nomiclabs/hardhat-ethers/";
 import { BigNumber, Contract } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import AGGREGATOR_V3_INTERFACE_ABI from "../abis/aggregatorV3Interface.abi.json";
+import AGGREGATOR_V3_INTERFACE_ABI from "./abis/aggregatorV3Interface.abi.json";
 
 export const getLatestPrice = async (
   env: HardhatRuntimeEnvironment,
