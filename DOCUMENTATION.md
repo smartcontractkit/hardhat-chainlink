@@ -6,6 +6,28 @@ New to Hardhat? Check the [Official Hardhat Documentation](https://hardhat.org/d
 
 New to Chainlink? Check the [Official Chainlink Documentation](https://docs.chain.link/).
 
+## Installation
+
+```console
+npm install hardhat-chainlink
+
+# or
+
+yarn add hardhat-chainlink
+```
+
+Import the plugin in your `hardhat.config.js`:
+
+```js
+require("hardhat-chainlink");
+```
+
+Or, if you are using TypeScript, in your `hardhat.config.ts`:
+
+```ts
+import "hardhat-chainlink";
+```
+
 ## Environment extensions and Hardhat tasks
 
 This plugin extends the Hardhat Runtime Environment by adding a `chainlink` field
