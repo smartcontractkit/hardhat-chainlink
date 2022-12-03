@@ -731,6 +731,7 @@ Chainlink VRF (Verifiable Random Function) is a provably fair and verifiable ran
 Creates new VRF Subscription programmatically. This is a replacement for managing VRF Subscriptions through [Subscription Manager User Interface](https://docs.chain.link/vrf/v2/subscription/ui).
 
 > **Note**
+>
 > Calling this function costs gas.
 
 ```typescript
@@ -753,6 +754,7 @@ public async createVrfSubscription(
 Funds your VRF Subscription. This is a replacement for managing VRF Subscriptions through [Subscription Manager User Interface](https://docs.chain.link/vrf/v2/subscription/ui).
 
 > **Note**
+>
 > Calling this function costs gas. Reverts if you don't have enough LINK tokens provided as a function argument.
 
 ```typescript
@@ -779,6 +781,7 @@ public async fundVrfSubscription(
 Adds new consumer smart contract to your VRF Subscription. This is a replacement for managing VRF Subscriptions through [Subscription Manager User Interface](https://docs.chain.link/vrf/v2/subscription/ui).
 
 > **Note**
+>
 > Calling this function costs gas.
 
 ```typescript
@@ -803,6 +806,7 @@ public async addVrfConsumer(
 Removes consumer smart contract from your VRF Subscription. This is a replacement for managing VRF Subscriptions through [Subscription Manager User Interface](https://docs.chain.link/vrf/v2/subscription/ui).
 
 > **Note**
+>
 > Calling this function costs gas.
 
 ```typescript
@@ -827,6 +831,7 @@ public async removeVrfConsumer(
 Cancels your VRF Subscription. Sends the remaining funds to provided wallet address. This is a replacement for managing VRF Subscriptions through [Subscription Manager User Interface](https://docs.chain.link/vrf/v2/subscription/ui).
 
 > **Note**
+>
 > Calling this function costs gas.
 
 ```typescript
@@ -894,6 +899,7 @@ public async pendingVrfRequestExists(
 Requests the transfer of ownership of VRF Subscription.
 
 > **Note**
+>
 > Calling this function costs gas.
 
 ```typescript
@@ -918,6 +924,7 @@ public async requestVrfSubscriptionOwnerTransfer(
 Accepts the transfer of ownership of VRF Subscription.
 
 > **Note**
+>
 > Calling this function costs gas.
 
 ```typescript
@@ -1063,6 +1070,7 @@ Smart contracts can't trigger or initiate their own functions at arbitrary times
 Registers new Automation Upkeep.
 
 > **Note**
+>
 > Calling this function costs gas.
 
 ```typescript
@@ -1125,6 +1133,7 @@ public async getAutomationPendingRegistrationRequest(
 Cancels the pending Automation Upkeep Registration Request.
 
 > **Note**
+>
 > Calling this function costs gas.
 
 ```typescript
@@ -1186,6 +1195,7 @@ public async getAutomationRegistrarTypeAndVersion(automationRegistrarAddress: st
 Funds Automation Upkeep with LINK tokens.
 
 > **Note**
+>
 > Calling this function costs gas.
 
 ```typescript
@@ -1210,6 +1220,7 @@ public async fundUpkeep(
 Checks if Upkeep on an Automation-compatible contract needs to be performed or not. Simulated by Automation Nodes via `eth_call`. If Upkeep is needed, the call then simulates the `performUpkeep` function to ensure it succeeds. Finally, it returns the success status along with payment information and the perform data payload. Reverts if Upkeep is not needed.
 
 > **Note**
+>
 > Calling this function costs gas.
 
 ```typescript
@@ -1244,6 +1255,7 @@ public async checkUpkeep(
 Migrate Upkeeps from one Automation Registry to another, including LINK and Upkeep parameters. Only callable by the Upkeep Admin. Can only migrate active Upkeeps.
 
 > **Note**
+>
 > Calling this function costs gas.
 
 ```typescript
@@ -1268,6 +1280,7 @@ public async migrateUpkeeps(
 Receives migrated Upkeeps. Called by other Registries when migrating Upkeeps.
 
 > **Note**
+>
 > Calling this function costs gas.
 
 ```typescript
@@ -1290,6 +1303,7 @@ public async receiveMigratedUpkeeps(
 Cancels an active Upkeep. Prevents an Upkeep from being performed in the future.
 
 > **Note**
+>
 > Calling this function costs gas.
 
 ```typescript
@@ -1312,6 +1326,7 @@ public async cancelUpkeep(
 Withdraws any remaining funds from a canceled Upkeep.
 
 > **Note**
+>
 > Calling this function costs gas.
 
 ```typescript
@@ -1336,6 +1351,7 @@ public async withdrawFundsFromCanceledUpkeep(
 Proposes the safe transfer of an Automation Node's Payee to another Address.
 
 > **Note**
+>
 > Calling this function costs gas.
 
 ```typescript
@@ -1360,6 +1376,7 @@ public async transferAutomationPayeeship(
 Accepts the safe transfer of the Payee role for an Automation Node.
 
 > **Note**
+>
 > Calling this function costs gas.
 
 ```typescript
@@ -1382,6 +1399,7 @@ public async acceptAutomationPayeeship(
 Withdraws an Automation Node's payment. Callable only by the Automation Node's Payee.
 
 > **Note**
+>
 > Calling this function costs gas.
 
 ```typescript
