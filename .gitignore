@@ -61,6 +61,10 @@ typings/
 
 # environment variables
 .env
+coverage.json
+typechain
+typechain-types
+types/
 
 # lock files
 *.lock
@@ -68,3 +72,7 @@ yarn.lock
 package-lock.json
 
 .DS_Store
+
+#Hardhat files
+cache
+artifacts
