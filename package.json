@@ -1,6 +1,6 @@
 {
   "name": "hardhat-chainlink",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Integrates Chainlink into Hardhat projects",
   "repository": "https://github.com/andrejrakic/hardhat-chainlink.git",
   "author": "Andrej Rakic",
