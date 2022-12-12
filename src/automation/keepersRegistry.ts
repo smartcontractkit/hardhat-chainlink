@@ -8,7 +8,7 @@ export const fundUpkeep = async (
   keepersRegistryAddress: string,
   id: BigNumber,
   amountInJuels: BigNumber,
-  waitNumberOfConfirmations: number = 0
+  waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
   const keepersRegistry: KeeperRegistryAbi = new Contract(
@@ -61,7 +61,7 @@ export const migrateUpkeeps = async (
   keepersRegistryAddress: string,
   ids: BigNumber[],
   destination: string,
-  waitNumberOfConfirmations: number = 0
+  waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
   const keepersRegistry: KeeperRegistryAbi = new Contract(
@@ -80,7 +80,7 @@ export const receiveMigratedUpkeeps = async (
   env: HardhatRuntimeEnvironment,
   keepersRegistryAddress: string,
   encodedUpkeeps: BytesLike,
-  waitNumberOfConfirmations: number = 0
+  waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
   const keepersRegistry: KeeperRegistryAbi = new Contract(
@@ -99,7 +99,7 @@ export const cancelUpkeep = async (
   env: HardhatRuntimeEnvironment,
   keepersRegistryAddress: string,
   id: BigNumber,
-  waitNumberOfConfirmations: number = 0
+  waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
   const keepersRegistry: KeeperRegistryAbi = new Contract(
@@ -119,7 +119,7 @@ export const withdrawFundsFromCanceledUpkeep = async (
   keepersRegistryAddress: string,
   id: BigNumber,
   to: string,
-  waitNumberOfConfirmations: number = 0
+  waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
   const keepersRegistry: KeeperRegistryAbi = new Contract(
@@ -139,7 +139,7 @@ export const transferKeeperPayeeship = async (
   keepersRegistryAddress: string,
   keeper: string,
   proposed: string,
-  waitNumberOfConfirmations: number = 0
+  waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
   const keepersRegistry: KeeperRegistryAbi = new Contract(
@@ -158,7 +158,7 @@ export const acceptKeeperPayeeship = async (
   env: HardhatRuntimeEnvironment,
   keepersRegistryAddress: string,
   keeper: string,
-  waitNumberOfConfirmations: number = 0
+  waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
   const keepersRegistry: KeeperRegistryAbi = new Contract(
@@ -178,7 +178,7 @@ export const withdrawKeeperPayment = async (
   keepersRegistryAddress: string,
   from: string,
   to: string,
-  waitNumberOfConfirmations: number = 0
+  waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
   const keepersRegistry: KeeperRegistryAbi = new Contract(

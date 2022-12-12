@@ -18,7 +18,7 @@ export const registerUpkeep = async (
   checkData: BytesLike,
   source: number,
   sender: string,
-  waitNumberOfConfirmations: number = 0
+  waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
   const linkToken: LinkTokenAbi = new Contract(
@@ -27,11 +27,9 @@ export const registerUpkeep = async (
     signer
   ) as LinkTokenAbi;
 
-  const solidityRegisterFunctionSignature: string = `function register(string memory name,bytes calldata encryptedEmail,address upkeepContract,uint32 gasLimit,address adminAddress,bytes calldata checkData,uint96 amount,uint8 source,address sender) external;`;
+  const solidityRegisterFunctionSignature: string = `register`;
 
-  const KeeperRegistrarInterface: Interface = new Interface([
-    solidityRegisterFunctionSignature,
-  ]);
+  const KeeperRegistrarInterface: Interface = new Interface(KEEPERS_REGISTRAR_ABI);
 
   const functionSelector: BytesLike = KeeperRegistrarInterface.getSighash(
     solidityRegisterFunctionSignature
@@ -96,7 +94,7 @@ export const cancelKeepersPendingRegistrationRequest = async (
   env: HardhatRuntimeEnvironment,
   keepersRegistrarAddress: string,
   hash: BytesLike,
-  waitNumberOfConfirmations: number = 0
+  waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
   const keepersRegistrar: KeeperRegistrarAbi = new Contract(

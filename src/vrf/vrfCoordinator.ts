@@ -16,7 +16,7 @@ import {
 export const createVrfSubscription = async (
   env: HardhatRuntimeEnvironment,
   vrfCoordinatorAddress: string,
-  waitNumberOfConfirmations: number = 0
+  waitNumberOfConfirmations: number
 ): Promise<{ subscriptionId: BigNumber; transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
   const vrfCoordinatorV2: VrfCoordinatorV2Abi = new Contract(
@@ -40,7 +40,7 @@ export const fundVrfSubscription = async (
   linkTokenAddress: string,
   amountInJuels: BigNumber,
   subscriptionId: BigNumber,
-  waitNumberOfConfirmations: number = 0
+  waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
   const linkToken: LinkTokenAbi = new Contract(
@@ -64,7 +64,7 @@ export const addVrfConsumer = async (
   vrfCoordinatorAddress: string,
   consumerAddress: string,
   subscriptionId: BigNumber,
-  waitNumberOfConfirmations: number = 0
+  waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
   const vrfCoordinatorV2: VrfCoordinatorV2Abi = new Contract(
@@ -87,7 +87,7 @@ export const removeVrfConsumer = async (
   vrfCoordinatorAddress: string,
   consumerAddress: string,
   subscriptionId: BigNumber,
-  waitNumberOfConfirmations: number = 0
+  waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
   const vrfCoordinatorV2: VrfCoordinatorV2Abi = new Contract(
@@ -110,7 +110,7 @@ export const cancelVrfSubscription = async (
   vrfCoordinatorAddress: string,
   subscriptionId: BigNumber,
   receivingWallet: string,
-  waitNumberOfConfirmations: number = 0
+  waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
   const vrfCoordinatorV2: VrfCoordinatorV2Abi = new Contract(
@@ -175,7 +175,7 @@ export const requestVrfSubscriptionOwnerTransfer = async (
   vrfCoordinatorAddress: string,
   subscriptionId: BigNumber,
   newOwnerAddress: string,
-  waitNumberOfConfirmations: number = 0
+  waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
   const vrfCoordinatorV2: VrfCoordinatorV2Abi = new Contract(
@@ -197,7 +197,7 @@ export const acceptVrfSubscriptionOwnerTransfer = async (
   env: HardhatRuntimeEnvironment,
   vrfCoordinatorAddress: string,
   subscriptionId: BigNumber,
-  waitNumberOfConfirmations: number = 0
+  waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
   const vrfCoordinatorV2: VrfCoordinatorV2Abi = new Contract(

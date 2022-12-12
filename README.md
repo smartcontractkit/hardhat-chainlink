@@ -102,17 +102,13 @@ async function main() {
 
   // Step 1: Create a new VRF Subscription
   const vrfCoordinatorAddress = `0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D`;
-  const transaction = await chainlink.createVrfSubscription(
+  const { subscriptionId } = await chainlink.createVrfSubscription(
     vrfCoordinatorAddress
-  );
-  const transactionReceipt = await transaction.wait(1);
-  const subscriptionId = ethers.BigNumber.from(
-    transactionReceipt.events[0].topics[1]
   );
 
   // Step 2: Fund VRF Subscription
   const linkTokenAddress = `0x326C977E6efc84E512bB9C30f76E30c160eD06FB`;
-  const amountInJuels = `1000000000000000000`; // 1 LINK
+  const amountInJuels = ethers.BigNumber.from(`1000000000000000000`); // 1 LINK
   await chainlink.fundVrfSubscription(
     vrfCoordinatorAddress,
     linkTokenAddress,

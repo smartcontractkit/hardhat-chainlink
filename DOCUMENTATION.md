@@ -285,7 +285,10 @@ public async resolveEnsAggregatorAddress(
 To get an ETH / USD Aggregator address on Ethereum Mainnet using Chainlink ENS Resolver, type:
 
 ```typescript
-const aggregatorAddress = await resolveEnsAggregatorAddress(`ETH`, `USD`);
+const aggregatorAddress = await chainlink.resolveEnsAggregatorAddress(
+  `ETH`,
+  `USD`
+);
 ```
 
 ### resolveEnsAggregatorAddressWithSubdomains
@@ -759,13 +762,13 @@ Creates new VRF Subscription programmatically. This is a replacement for managin
 ```typescript
 public async createVrfSubscription(
     vrfCoordinatorAddress: string,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ subscriptionId: BigNumber; transactionHash: string }>;
 ```
 
 - Parameters:
   `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 0, the execution continues after this function immediately.
+  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, the execution continues after this function immediately.
 
 - Return values:
   `subscriptionId` - The ID of newly created VRF Subscription.
@@ -785,7 +788,7 @@ public async fundVrfSubscription(
     linkTokenAddress: string,
     amountInJuels: BigNumber,
     subscriptionId: BigNumber,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }>;
 ```
 
@@ -794,7 +797,7 @@ public async fundVrfSubscription(
   `linkTokenAddress` - The [Address of a LINK token](https://docs.chain.link/resources/link-token-contracts) smart contract.
   `amountInJuels` - The Amount of LINK tokens for funding in Juels. The smallest denomination of LINK is called a Juel, and 1,000,000,000,000,000,000 (1e18) Juels are equal to 1 LINK. This is similar to Wei, which is the smallest denomination of ETH.
   `subscriptionId` - The VRF Subscription ID.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 0, and the execution continues after this function immediately.
+  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, and the execution continues after this function immediately.
 
 - `RETURN`: The transaction hash.
 
@@ -811,7 +814,7 @@ public async addVrfConsumer(
     vrfCoordinatorAddress: string,
     consumerAddress: string,
     subscriptionId: BigNumber,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }>;
 ```
 
@@ -819,7 +822,7 @@ public async addVrfConsumer(
   `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
   `consumerAddress` - The Address of your consumer smart contract.
   `subscriptionId` - The VRF Subscription ID.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 0, and the execution continues after this function immediately.
+  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, and the execution continues after this function immediately.
 
 - `RETURN`: The transaction hash.
 
@@ -836,7 +839,7 @@ public async removeVrfConsumer(
     vrfCoordinatorAddress: string,
     consumerAddress: string,
     subscriptionId: BigNumber,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }>;
 ```
 
@@ -844,7 +847,7 @@ public async removeVrfConsumer(
   `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
   `consumerAddress` - The Address of your consumer smart contract.
   `subscriptionId` - The VRF Subscription ID.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 0, and the execution continues after this function immediately.
+  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, and the execution continues after this function immediately.
 
 - `RETURN`: The transaction hash.
 
@@ -861,7 +864,7 @@ public async cancelVrfSubscription(
     vrfCoordinatorAddress: string,
     subscriptionId: BigNumber,
     receivingWallet: string,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }>;
 ```
 
@@ -869,7 +872,7 @@ public async cancelVrfSubscription(
   `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
   `subscriptionId` - The VRF Subscription ID.
   `receivingWallet` - The wallet address to send the remaining funds to.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 0, and the execution continues after this function immediately.
+  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, and the execution continues after this function immediately.
 
 - `RETURN`: The transaction hash.
 
@@ -929,7 +932,7 @@ public async requestVrfSubscriptionOwnerTransfer(
     vrfCoordinatorAddress: string,
     subscriptionId: BigNumber,
     newOwnerAddress: string,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }>;
 ```
 
@@ -937,7 +940,7 @@ public async requestVrfSubscriptionOwnerTransfer(
   `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
   `subscriptionId` - The VRF Subscription ID.
   `newOwnerAddress` - The Address of a new owner. It needs to call `acceptVrfSubscriptionOwnerTransfer` function afteward.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 0, and the execution continues after this function immediately.
+  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, and the execution continues after this function immediately.
 
 - `RETURN`: The transaction hash.
 
@@ -953,14 +956,14 @@ Accepts the transfer of ownership of VRF Subscription.
 public async acceptVrfSubscriptionOwnerTransfer(
     vrfCoordinatorAddress: string,
     subscriptionId: BigNumber,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }>;
 ```
 
 - Parameters:
   `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
   `subscriptionId` - The VRF Subscription ID.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 0, and the execution continues after this function immediately.
+  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, and the execution continues after this function immediately.
 
 - `RETURN`: The transaction hash.
 
@@ -1108,7 +1111,7 @@ public async registerUpkeep(
     checkData: BytesLike,
     source: number,
     sender: string,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }>;
 ```
 
@@ -1124,7 +1127,7 @@ public async registerUpkeep(
   `checkData` - ABI-encoded fixed and specified at Upkeep registration and used in every checkUpkeep. Can be empty (`0x`)
   `source` - Not in use in programmatic registration. Please specify with `0`.
   `sender` - The Address of the sender making the request.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 0, and the execution continues after this function immediately.
+  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, and the execution continues after this function immediately.
 
 - `RETURN`: The transaction hash.
 
@@ -1162,14 +1165,14 @@ Cancels the pending Automation Upkeep Registration Request.
 public async cancelAutomationPendingRegistrationRequest(
     automationRegistrarAddress: string,
     hash: BytesLike,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }>;
 ```
 
 - Parameters:
   `automationRegistrarAddress` - The Address of the [Automation Registrar contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that accepts requests for upkeep registrations.
   `hash` - The Keccak256 hash of ABI encoded values: `upkeepContract`, `gasLimit`, `adminAddress`, `checkData`
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 0, and the execution continues after this function immediately.
+  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, and the execution continues after this function immediately.
 
 - `RETURN`: The transaction hash.
 
@@ -1225,7 +1228,7 @@ public async fundUpkeep(
     automationRegistryAddress: string,
     id: BigNumber,
     amountInJuels: BigNumber,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }>;
 ```
 
@@ -1233,7 +1236,7 @@ public async fundUpkeep(
   `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
   `id` - The Upkeep ID.
   `amountInJuels` - The Amount of LINK tokens for funding in Juels. The smallest denomination of LINK is called a Juel, and 1,000,000,000,000,000,000 (1e18) Juels are equal to 1 LINK. This is similar to Wei, which is the smallest denomination of ETH.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 0, the execution continues after this function immediately.
+  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, the execution continues after this function immediately.
 
 - `RETURN`: The transaction hash.
 
@@ -1263,7 +1266,7 @@ public async checkUpkeep(
   `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
   `id` - The Upkeep ID.
   `address` - The Address to simulate performing the Upkeep from.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 0, the execution continues after this function immediately.
+  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, the execution continues after this function immediately.
 
 - Return values:
   `performData` - The calldata parameter to be passed to the target Upkeep.
@@ -1285,7 +1288,7 @@ public async migrateUpkeeps(
     automationRegistryAddress: string,
     ids: BigNumber[],
     destination: string,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }>;
 ```
 
@@ -1293,7 +1296,7 @@ public async migrateUpkeeps(
   `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
   `ids` - The list of IDs of Upkeeps to migrate.
   `destination` - The Address of the Registry to migrate to.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 0, the execution continues after this function immediately.
+  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, the execution continues after this function immediately.
 
 - `RETURN`: The transaction hash.
 
@@ -1309,14 +1312,14 @@ Receives migrated Upkeeps. Called by other Registries when migrating Upkeeps.
 public async receiveMigratedUpkeeps(
     automationRegistryAddress: string,
     encodedUpkeeps: BytesLike,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }>;
 ```
 
 - Parameters:
   `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
   `encodedUpkeeps` - The ABI encoding of Upkeeps to import - decoded by the Transcoder.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 0, the execution continues after this function immediately.
+  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, the execution continues after this function immediately.
 
 - `RETURN`: The transaction hash.
 
@@ -1332,14 +1335,14 @@ Cancels an active Upkeep. Prevents an Upkeep from being performed in the future.
 public async cancelUpkeep(
     automationRegistryAddress: string,
     id: BigNumber,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }>;
 ```
 
 - Parameters:
   `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
   `id` - The Upkeep ID.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 0, the execution continues after this function immediately.
+  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, the execution continues after this function immediately.
 
 - `RETURN`: The transaction hash.
 
@@ -1356,7 +1359,7 @@ public async withdrawFundsFromCanceledUpkeep(
     automationRegistryAddress: string,
     id: BigNumber,
     to: string,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }>;
 ```
 
@@ -1364,7 +1367,7 @@ public async withdrawFundsFromCanceledUpkeep(
   `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
   `id` - The Upkeep ID.
   `to` - The destination Address for sending the remaining funds.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 0, the execution continues after this function immediately.
+  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, the execution continues after this function immediately.
 
 - `RETURN`: The transaction hash.
 
@@ -1381,7 +1384,7 @@ public async transferAutomationPayeeship(
     automationRegistryAddress: string,
     automationNode: string,
     proposed: string,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }>;
 ```
 
@@ -1389,7 +1392,7 @@ public async transferAutomationPayeeship(
   `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
   `automationNode` - The Address of the Automation Node to transfer the Payee role.
   `proposed` - The Address to nominate for the next Payeeship.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 0, the execution continues after this function immediately.
+  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, the execution continues after this function immediately.
 
 - `RETURN`: The transaction hash.
 
@@ -1405,14 +1408,14 @@ Accepts the safe transfer of the Payee role for an Automation Node.
 public async acceptAutomationPayeeship(
     automationRegistryAddress: string,
     automationNode: string,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }>;
 ```
 
 - Parameters:
   `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
   `automationNode` - The Address of the Automation Node address to accept the Payee role.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 0, the execution continues after this function immediately.
+  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, the execution continues after this function immediately.
 
 - `RETURN`: The transaction hash.
 
@@ -1429,7 +1432,7 @@ public async withdrawAutomationPayment(
     automationRegistryAddress: string,
     from: string,
     to: string,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }>;
 ```
 
@@ -1437,7 +1440,7 @@ public async withdrawAutomationPayment(
   `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
   `from` - The Automation Node Address.
   `to` - The Address to send the payment to.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 0, the execution continues after this function immediately.
+  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, the execution continues after this function immediately.
 
 - `RETURN`: The transaction hash.
 

@@ -416,7 +416,7 @@ export class HardhatChainlink {
 
   public async createVrfSubscription(
     vrfCoordinatorAddress: string,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ subscriptionId: BigNumber; transactionHash: string }> {
     return createVrfSubscription(
       this.env,
@@ -430,7 +430,7 @@ export class HardhatChainlink {
     linkTokenAddress: string,
     amountInJuels: BigNumber,
     subscriptionId: BigNumber,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }> {
     return fundVrfSubscription(
       this.env,
@@ -446,7 +446,7 @@ export class HardhatChainlink {
     vrfCoordinatorAddress: string,
     consumerAddress: string,
     subscriptionId: BigNumber,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }> {
     return addVrfConsumer(
       this.env,
@@ -461,7 +461,7 @@ export class HardhatChainlink {
     vrfCoordinatorAddress: string,
     consumerAddress: string,
     subscriptionId: BigNumber,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }> {
     return removeVrfConsumer(
       this.env,
@@ -476,7 +476,7 @@ export class HardhatChainlink {
     vrfCoordinatorAddress: string,
     subscriptionId: BigNumber,
     receivingWallet: string,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }> {
     return cancelVrfSubscription(
       this.env,
@@ -518,7 +518,7 @@ export class HardhatChainlink {
     vrfCoordinatorAddress: string,
     subscriptionId: BigNumber,
     newOwnerAddress: string,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }> {
     return requestVrfSubscriptionOwnerTransfer(
       this.env,
@@ -532,7 +532,7 @@ export class HardhatChainlink {
   public async acceptVrfSubscriptionOwnerTransfer(
     vrfCoordinatorAddress: string,
     subscriptionId: BigNumber,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }> {
     return acceptVrfSubscriptionOwnerTransfer(
       this.env,
@@ -608,7 +608,7 @@ export class HardhatChainlink {
     checkData: BytesLike,
     source: number,
     sender: string,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }> {
     return registerUpkeep(
       this.env,
@@ -644,7 +644,7 @@ export class HardhatChainlink {
   public async cancelAutomationPendingRegistrationRequest(
     automationRegistrarAddress: string,
     hash: BytesLike,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }> {
     return cancelKeepersPendingRegistrationRequest(
       this.env,
@@ -676,7 +676,7 @@ export class HardhatChainlink {
     automationRegistryAddress: string,
     id: BigNumber,
     amountInJuels: BigNumber,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }> {
     return fundUpkeep(
       this.env,
@@ -705,7 +705,7 @@ export class HardhatChainlink {
     automationRegistryAddress: string,
     ids: BigNumber[],
     destination: string,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }> {
     return migrateUpkeeps(
       this.env,
@@ -719,7 +719,7 @@ export class HardhatChainlink {
   public async receiveMigratedUpkeeps(
     automationRegistryAddress: string,
     encodedUpkeeps: BytesLike,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }> {
     return receiveMigratedUpkeeps(
       this.env,
@@ -732,7 +732,7 @@ export class HardhatChainlink {
   public async cancelUpkeep(
     automationRegistryAddress: string,
     id: BigNumber,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }> {
     return cancelUpkeep(
       this.env,
@@ -746,7 +746,7 @@ export class HardhatChainlink {
     automationRegistryAddress: string,
     id: BigNumber,
     to: string,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }> {
     return withdrawFundsFromCanceledUpkeep(
       this.env,
@@ -761,7 +761,7 @@ export class HardhatChainlink {
     automationRegistryAddress: string,
     automationNode: string,
     proposed: string,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }> {
     return transferKeeperPayeeship(
       this.env,
@@ -775,7 +775,7 @@ export class HardhatChainlink {
   public async acceptAutomationPayeeship(
     automationRegistryAddress: string,
     automationNode: string,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }> {
     return acceptKeeperPayeeship(
       this.env,
@@ -789,7 +789,7 @@ export class HardhatChainlink {
     automationRegistryAddress: string,
     from: string,
     to: string,
-    waitNumberOfConfirmations: number = 0
+    waitNumberOfConfirmations: number = 1
   ): Promise<{ transactionHash: string }> {
     return withdrawKeeperPayment(
       this.env,
