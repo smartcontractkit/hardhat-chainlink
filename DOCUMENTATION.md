@@ -108,7 +108,8 @@ public async getLatestPrice(priceFeedAddress: string): Promise<BigNumber>;
 ```
 
 - Parameters:
-  `priceFeedAddress` - Data Feed Address. List of Price Feed Contract Addresses is available [here](https://docs.chain.link/data-feeds/price-feeds/addresses). List of Proof of Reserve Feed Addresses is available [here](https://docs.chain.link/data-feeds/proof-of-reserve/addresses). List of NFT Floor Pricing Feed Addresses is available [here](https://docs.chain.link/data-feeds/nft-floor-price/addresses).
+
+  - `priceFeedAddress` - Data Feed Address. List of Price Feed Contract Addresses is available [here](https://docs.chain.link/data-feeds/price-feeds/addresses). List of Proof of Reserve Feed Addresses is available [here](https://docs.chain.link/data-feeds/proof-of-reserve/addresses). List of NFT Floor Pricing Feed Addresses is available [here](https://docs.chain.link/data-feeds/nft-floor-price/addresses).
 
 - `RETURN`: The latest price
 
@@ -129,14 +130,15 @@ public async getLatestRoundData(
 ```
 
 - Parameters:
-  `dataFeedAddress` - Data Feed Address.
+
+  - `dataFeedAddress` - Data Feed Address.
 
 - Return values:
-  `roundId` - The round ID.
-  `answer` - The price.
-  `startedAt` - Timestamp of when the round started.
-  `updatedAt` - Timestamp of when the round was updated.
-  `answeredInRound` - The round ID of the round in which the answer was computed.
+  - `roundId` - The round ID.
+  - `answer` - The price.
+  - `startedAt` - Timestamp of when the round started.
+  - `updatedAt` - Timestamp of when the round was updated.
+  - `answeredInRound` - The round ID of the round in which the answer was computed.
 
 ### getPriceFeedDecimals
 
@@ -147,7 +149,8 @@ public async getPriceFeedDecimals(priceFeedAddress: string): Promise<number>
 ```
 
 - Parameters:
-  `priceFeedAddress` - Data Feed Address.
+
+  - `priceFeedAddress` - Data Feed Address.
 
 - `RETURN`: The number of decimals.
 
@@ -162,7 +165,8 @@ public async getPriceFeedDescription(
 ```
 
 - Parameters:
-  `priceFeedAddress` - Data Feed Address.
+
+  - `priceFeedAddress` - Data Feed Address.
 
 - `RETURN`: The description of the underlying aggregator.
 
@@ -184,15 +188,16 @@ public async getRoundData(
 ```
 
 - Parameters:
-  `priceFeedAddress` - Data Feed Address.
-  `roundId` - The round ID.
+
+  - `priceFeedAddress` - Data Feed Address.
+  - `roundId` - The round ID.
 
 - Return values:
-  `roundId` - The round ID.
-  `answer` - The answer for this round.
-  `startedAt` - Timestamp of when the round started.
-  `updatedAt` - Timestamp of when the round was updated.
-  `answeredInRound` - The round ID of the round in which the answer was computed.
+  - `roundId` - The round ID.
+  - `answer` - The answer for this round.
+  - `startedAt` - Timestamp of when the round started.
+  - `updatedAt` - Timestamp of when the round was updated.
+  - `answeredInRound` - The round ID of the round in which the answer was computed.
 
 ### getAggregatorAddress
 
@@ -203,7 +208,8 @@ Returns the actual contract address of the underlying aggregator that the proxy 
 ```
 
 - Parameters:
-  `priceFeedAddress` - Data Feed Address.
+
+  - `priceFeedAddress` - Data Feed Address.
 
 - `RETURN`: The address of the underlying aggregator.
 
@@ -216,7 +222,8 @@ Returns the Round ID of the underlying aggregator that the proxy points to.
 ```
 
 - Parameters:
-  `priceFeedAddress` - Data Feed Address.
+
+  - `priceFeedAddress` - Data Feed Address.
 
 - `RETURN`: The Round ID of the underlying aggregator.
 
@@ -229,7 +236,8 @@ Returns the Phase ID of the underlying aggregator that the proxy points to.
 ```
 
 - Parameters:
-  `priceFeedAddress` - Data Feed Address.
+
+  - `priceFeedAddress` - Data Feed Address.
 
 - `RETURN`: The Phase ID of the underlying aggregator.
 
@@ -245,8 +253,9 @@ public async getHistoricalPrice(
 ```
 
 - Parameters:
-  `priceFeedAddress` - Data Feed Address.
-  `roundId` - The round ID.
+
+  - `priceFeedAddress` - Data Feed Address.
+  - `roundId` - The round ID.
 
 - `RETURN`: The historical price.
 
@@ -259,7 +268,8 @@ public async getPriceFeedAggregatorVersion(priceFeedAddress: string): Promise<Bi
 ```
 
 - Parameters:
-  `priceFeedAddress` - Data Feed Address.
+
+  - `priceFeedAddress` - Data Feed Address.
 
 - `RETURN`: The current version of the underlying aggregator.
 
@@ -275,8 +285,9 @@ public async resolveEnsAggregatorAddress(
 ```
 
 - Parameters:
-  `baseTick` - Tick of a Base Asset of a Data Feed. For example, in a ETH / USD Data Feed ETH is a Base Asset.
-  `quoteTick` - Tick of a Quote Asset of a Data Feed. For example, in a ETH / USD Data Feed USD is a Quote Asset.
+
+  - `baseTick` - Tick of a Base Asset of a Data Feed. For example, in a ETH / USD Data Feed ETH is a Base Asset.
+  - `quoteTick` - Tick of a Quote Asset of a Data Feed. For example, in a ETH / USD Data Feed USD is a Quote Asset.
 
 - `RETURN`: The Data Feed Address.
 
@@ -307,13 +318,14 @@ public async resolveEnsAggregatorAddressWithSubdomains(
 ```
 
 - Parameters:
-  `baseTick` - Tick of a Base Asset of a Data Feed. For example, in a ETH / USD Data Feed ETH is a Base Asset.
-  `quoteTick` - Tick of a Quote Asset of a Data Feed. For example, in a ETH / USD Data Feed USD is a Quote Asset.
+
+  - `baseTick` - Tick of a Base Asset of a Data Feed. For example, in a ETH / USD Data Feed ETH is a Base Asset.
+  - `quoteTick` - Tick of a Quote Asset of a Data Feed. For example, in a ETH / USD Data Feed USD is a Quote Asset.
 
 - Return values:
-  `proxy` - The Proxy Data Feed Address.
-  `underlyingAggregator` - The Underlying Aggregator Address.
-  `proposedAggregator` - The Proposed Aggregator Address.
+  - `proxy` - The Proxy Data Feed Address.
+  - `underlyingAggregator` - The Underlying Aggregator Address.
+  - `proposedAggregator` - The Proposed Aggregator Address.
 
 ### getFeedRegistryDecimals
 
@@ -330,9 +342,10 @@ public async getFeedRegistryDecimals(
 ```
 
 - Parameters:
-  `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  `base` - The Base Asset Address.
-  `quote` - The Quote Asset Address.
+
+  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
+  - `base` - The Base Asset Address.
+  - `quote` - The Quote Asset Address.
 
 - `RETURN`: The number of decimals present in the response value from Chainlink’s Feed Registry.
 
@@ -351,9 +364,10 @@ public async getFeedRegistryDescription(
 ```
 
 - Parameters:
-  `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  `base` - The Base Asset Address.
-  `quote` - The Quote Asset Address.
+
+  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
+  - `base` - The Base Asset Address.
+  - `quote` - The Quote Asset Address.
 
 - `RETURN`: The description of the underlying aggregator that the proxy points to.
 
@@ -379,17 +393,18 @@ public async getFeedRegistryRoundData(
 ```
 
 - Parameters:
-  `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  `base` - The Base Asset Address.
-  `quote` - The Quote Asset Address.
-  `roundId` - The round ID.
+
+  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
+  - `base` - The Base Asset Address.
+  - `quote` - The Quote Asset Address.
+  - `roundId` - The round ID.
 
 - Return values:
-  `roundId` - The round ID.
-  `answer` - The price.
-  `startedAt` - Timestamp of when the round started.
-  `updatedAt` - Timestamp of when the round was updated.
-  `answeredInRound` - The round ID of the round in which the answer was computed.
+  - `roundId` - The round ID.
+  - `answer` - The price.
+  - `startedAt` - Timestamp of when the round started.
+  - `updatedAt` - Timestamp of when the round was updated.
+  - `answeredInRound` - The round ID of the round in which the answer was computed.
 
 ### getFeedRegistryLatestRoundData
 
@@ -412,16 +427,17 @@ public async getFeedRegistryLatestRoundData(
 ```
 
 - Parameters:
-  `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  `base` - The Base Asset Address.
-  `quote` - The Quote Asset Address.
+
+  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
+  - `base` - The Base Asset Address.
+  - `quote` - The Quote Asset Address.
 
 - Return values:
-  `roundId` - The round ID.
-  `answer` - The price.
-  `startedAt` - Timestamp of when the round started.
-  `updatedAt` - Timestamp of when the round was updated.
-  `answeredInRound` - The round ID of the round in which the answer was computed.
+  - `roundId` - The round ID.
+  - `answer` - The price.
+  - `startedAt` - Timestamp of when the round started.
+  - `updatedAt` - Timestamp of when the round was updated.
+  - `answeredInRound` - The round ID of the round in which the answer was computed.
 
 ### getFeedRegistryProxyAggregatorVersion
 
@@ -438,9 +454,10 @@ public async getFeedRegistryProxyAggregatorVersion(
 ```
 
 - Parameters:
-  `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  `base` - The Base Asset Address.
-  `quote` - The Quote Asset Address.
+
+  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
+  - `base` - The Base Asset Address.
+  - `quote` - The Quote Asset Address.
 
 - `RETURN`: The version representing the type of aggregator the proxy points to.
 
@@ -459,9 +476,10 @@ public async getFeed(
 ```
 
 - Parameters:
-  `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  `base` - The Base Asset Address.
-  `quote` - The Quote Asset Address.
+
+  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
+  - `base` - The Base Asset Address.
+  - `quote` - The Quote Asset Address.
 
 - `RETURN`: The primary aggregator address of a base/quote pair.
 
@@ -480,9 +498,10 @@ public async getCurrentPhaseId(
 ```
 
 - Parameters:
-  `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  `base` - The Base Asset Address.
-  `quote` - The Quote Asset Address.
+
+  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
+  - `base` - The Base Asset Address.
+  - `quote` - The Quote Asset Address.
 
 - `RETURN`: The current phase id of a base/quote pair.
 
@@ -502,10 +521,11 @@ public async getPhaseFeed(
 ```
 
 - Parameters:
-  `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  `base` - The Base Asset Address.
-  `quote` - The Quote Asset Address.
-  `phaseId` - The Phase ID.
+
+  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
+  - `base` - The Base Asset Address.
+  - `quote` - The Quote Asset Address.
+  - `phaseId` - The Phase ID.
 
 - `RETURN`: The underlying aggregator address of a base/quote pair at a specified phase.
 
@@ -523,8 +543,9 @@ public async isFeedEnabled(
 ```
 
 - Parameters:
-  `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  `aggregatorAddress` - The Address of an Aggregator Data Feed.
+
+  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
+  - `aggregatorAddress` - The Address of an Aggregator Data Feed.
 
 - `RETURN`: `true` if an Aggregator is enabled as primary on the Chainlink's Feed Registry, `false` otherwise.
 
@@ -548,15 +569,16 @@ public async getPhase(
 ```
 
 - Parameters:
-  `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  `base` - The Base Asset Address.
-  `quote` - The Quote Asset Address.
-  `phaseId` - The Phase ID.
+
+  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
+  - `base` - The Base Asset Address.
+  - `quote` - The Quote Asset Address.
+  - `phaseId` - The Phase ID.
 
 - Return values:
-  `phaseId` - The Phase ID.
-  `startingAggregatorRoundId` - The ID of the aggregator when the phase started.
-  `endingAggregatorRoundId` - The ID of the aggregator when the phase ended.
+  - `phaseId` - The Phase ID.
+  - `startingAggregatorRoundId` - The ID of the aggregator when the phase started.
+  - `endingAggregatorRoundId` - The ID of the aggregator when the phase ended.
 
 ### getRoundFeed
 
@@ -574,10 +596,11 @@ public async getRoundFeed(
 ```
 
 - Parameters:
-  `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  `base` - The Base Asset Address.
-  `quote` - The Quote Asset Address.
-  `phaseId` - The Phase ID.
+
+  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
+  - `base` - The Base Asset Address.
+  - `quote` - The Quote Asset Address.
+  - `phaseId` - The Phase ID.
 
 - `RETURN`: The underlying aggregator address of a base/quote pair at a specified round.
 
@@ -600,15 +623,16 @@ public async getPhaseRange(
 ```
 
 - Parameters:
-  `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  `base` - The Base Asset Address.
-  `quote` - The Quote Asset Address.
-  `phaseId` - The Phase ID.
+
+  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
+  - `base` - The Base Asset Address.
+  - `quote` - The Quote Asset Address.
+  - `phaseId` - The Phase ID.
 
 - Return values:
-  `phaseId` - The Phase ID.
-  `startingRoundId` - The Round ID when the phase started.
-  `endingRoundId` - The Round ID when the phase ended.
+  - `phaseId` - The Phase ID.
+  - `startingRoundId` - The Round ID when the phase started.
+  - `endingRoundId` - The Round ID when the phase ended.
 
 ### getPreviousRoundId
 
@@ -626,10 +650,11 @@ public async getPreviousRoundId(
 ```
 
 - Parameters:
-  `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  `base` - The Base Asset Address.
-  `quote` - The Quote Asset Address.
-  `roundId` - The Round ID.
+
+  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
+  - `base` - The Base Asset Address.
+  - `quote` - The Quote Asset Address.
+  - `roundId` - The Round ID.
 
 - `RETURN`: The previous round id of a base/quote pair.
 
@@ -649,10 +674,11 @@ public async getNextRoundId(
 ```
 
 - Parameters:
-  `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  `base` - The Base Asset Address.
-  `quote` - The Quote Asset Address.
-  `roundId` - The Round ID.
+
+  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
+  - `base` - The Base Asset Address.
+  - `quote` - The Quote Asset Address.
+  - `roundId` - The Round ID.
 
 - `RETURN`: The next round id of a base/quote pair.
 
@@ -673,8 +699,9 @@ public async getHistoricalPriceFromAggregator(
 ```
 
 - Parameters:
-  `aggregatorAddress` - The [AccessControlledOffchainAggregator](https://docs.chain.link/data-feeds/price-feeds/api-reference#accesscontrolledoffchainaggregator) contract address.
-  `aggregatorRoundId` - The Round ID of the AccessControlledOffchainAggregator contract.
+
+  - `aggregatorAddress` - The [AccessControlledOffchainAggregator](https://docs.chain.link/data-feeds/price-feeds/api-reference#accesscontrolledoffchainaggregator) contract address.
+  - `aggregatorRoundId` - The Round ID of the AccessControlledOffchainAggregator contract.
 
 - `RETURN`: The price of an asset at the given Round ID.
 
@@ -689,7 +716,8 @@ public async getTypeAndVersionOfAggregator(
 ```
 
 - Parameters:
-  `aggregatorAddress` - The [AccessControlledOffchainAggregator](https://docs.chain.link/data-feeds/price-feeds/api-reference#accesscontrolledoffchainaggregator) contract address.
+
+  - `aggregatorAddress` - The [AccessControlledOffchainAggregator](https://docs.chain.link/data-feeds/price-feeds/api-reference#accesscontrolledoffchainaggregator) contract address.
 
 - `RETURN`: The aggregator type and version.
 
@@ -704,7 +732,8 @@ public async getPhaseIdOfAggregator(
 ```
 
 - Parameters:
-  `aggregatorAddress` - The [AccessControlledOffchainAggregator](https://docs.chain.link/data-feeds/price-feeds/api-reference#accesscontrolledoffchainaggregator) contract address.
+
+  - `aggregatorAddress` - The [AccessControlledOffchainAggregator](https://docs.chain.link/data-feeds/price-feeds/api-reference#accesscontrolledoffchainaggregator) contract address.
 
 - `RETURN`: The aggregator contract version, widely known as Phase ID.
 
@@ -719,7 +748,8 @@ public async isLayer2SequencerUp(
 ```
 
 - Parameters:
-  `sequencerUptimeFeedAddress` - The Address of a [Sequencer Uptime Feed Contract](https://docs.chain.link/data-feeds/l2-sequencer-feeds#available-networks).
+
+  - `sequencerUptimeFeedAddress` - The Address of a [Sequencer Uptime Feed Contract](https://docs.chain.link/data-feeds/l2-sequencer-feeds#available-networks).
 
 - `RETURN`: `false` if Layer 2 Sequencer is currently unavailable, `true` otherwise.
 
@@ -739,13 +769,14 @@ public async getTimeSinceLayer2SequencerIsUp(
 ```
 
 - Parameters:
-  `sequencerUptimeFeedAddress` - The Address of a [Sequencer Uptime Feed Contract](https://docs.chain.link/data-feeds/l2-sequencer-feeds#available-networks).
-  `gracePeriodTime` - Number of seconds to wait after the Layer 2 Sequencer became available before accepting answers from the price data feed. Optional parameter. If not provided, the default value is 3600 seconds.
+
+  - `sequencerUptimeFeedAddress` - The Address of a [Sequencer Uptime Feed Contract](https://docs.chain.link/data-feeds/l2-sequencer-feeds#available-networks).
+  - `gracePeriodTime` - Number of seconds to wait after the Layer 2 Sequencer became available before accepting answers from the price data feed. Optional parameter. If not provided, the default value is 3600 seconds.
 
 - Return values:
-  `isSequencerUp` - `false` if Layer 2 Sequencer is currently unavailable, `true` otherwise.
-  `timeSinceUp` - The number of seconds since the Layer 2 Sequencer became available.
-  `isGracePeriodOver` - `true` if more seconds since the Layer 2 Sequencer became available than `gracePeriodTime` passed, `false` otherwise.
+  - `isSequencerUp` - `false` if Layer 2 Sequencer is currently unavailable, `true` otherwise.
+  - `timeSinceUp` - The number of seconds since the Layer 2 Sequencer became available.
+  - `isGracePeriodOver` - `true` if more seconds since the Layer 2 Sequencer became available than `gracePeriodTime` passed, `false` otherwise.
 
 ## Chainlink VRF (Verifiable Random Function)
 
@@ -771,8 +802,8 @@ public async createVrfSubscription(
   `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, the execution continues after this function immediately.
 
 - Return values:
-  `subscriptionId` - The ID of newly created VRF Subscription.
-  `transactionHash` - The transaction hash.
+  - `subscriptionId` - The ID of newly created VRF Subscription.
+  - `transactionHash` - The transaction hash.
 
 ### fundVrfSubscription
 
@@ -893,14 +924,15 @@ public async getVrfSubscriptionDetails(
 ```
 
 - Parameters:
-  `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
-  `subscriptionId` - The VRF Subscription ID.
+
+  - `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
+  - `subscriptionId` - The VRF Subscription ID.
 
 - Return values:
-  `balance` - The current balance of LINK tokens available for a VRF Subscription to consume for requests.
-  `reqCount` - The VRF requests counter.
-  `owner` - The Address of a VRF Subscription owner. By default, it's a VRF Subscription creator.
-  `consumers` - The array of consumer smart contracts addresses.
+  - `balance` - The current balance of LINK tokens available for a VRF Subscription to consume for requests.
+  - `reqCount` - The VRF requests counter.
+  - `owner` - The Address of a VRF Subscription owner. By default, it's a VRF Subscription creator.
+  - `consumers` - The array of consumer smart contracts addresses.
 
 ### pendingVrfRequestExists
 
@@ -914,8 +946,9 @@ public async pendingVrfRequestExists(
 ```
 
 - Parameters:
-  `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
-  `subscriptionId` - The VRF Subscription ID.
+
+  - `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
+  - `subscriptionId` - The VRF Subscription ID.
 
 - `RETURN`: `true` if there is an outgoing VRF request that is not fulfilled yet, `false` otherwise.
 
@@ -976,7 +1009,8 @@ public async getMaxVrfConsumers(vrfCoordinatorAddress: string): Promise<number>;
 ```
 
 - Parameters:
-  `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
+
+  - `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
 
 - `RETURN`: The maximum number of consumer smart contracts that can be added to a VRF Subscription.
 
@@ -989,7 +1023,8 @@ public async getMaxVrfNumberOfWords(vrfCoordinatorAddress: string): Promise<numb
 ```
 
 - Parameters:
-  `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
+
+  - `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
 
 - `RETURN`: The maximum number of 32bytes words that can be requested from a Chainlink VRF Coordinator.
 
@@ -1002,7 +1037,8 @@ public async getMaxVrfRequestConfirmations(vrfCoordinatorAddress: string): Promi
 ```
 
 - Parameters:
-  `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
+
+  - `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
 
 - `RETURN`: The maximum possible number of VRF Request Confirmations.
 
@@ -1015,7 +1051,8 @@ public async getMinVrfRequestConfirmations(vrfCoordinatorAddress: string): Promi
 ```
 
 - Parameters:
-  `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
+
+  - `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
 
 - `RETURN`: The minimum possible number of VRF Request Confirmations.
 
@@ -1028,7 +1065,8 @@ public async getMaxVrfRequestGasLimit(vrfCoordinatorAddress: string): Promise<nu
 ```
 
 - Parameters:
-  `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
+
+  - `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
 
 - `RETURN`: The maximum gas limit for a single VRF Request.
 
@@ -1044,8 +1082,9 @@ public async getVrfCommitment(
 ```
 
 - Parameters:
-  `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
-  `requestId` - The VRF Request ID.
+
+  - `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
+  - `requestId` - The VRF Request ID.
 
 - `RETURN`: The VRF cryptographic commitment scheme of a given VRF Request.
 
@@ -1065,13 +1104,14 @@ public async getVrfCoordinatorConfig(
 ```
 
 - Parameters:
-  `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
+
+  - `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
 
 - Return values:
-  `minimumRequestConfirmations` - The minimum possible number of VRF Request Confirmations.
-  `maxGasLimit` - The maximum gas limit for a single VRF Request.
-  `stalenessSeconds` - The number of seconds before the feed price can be considered stale.
-  `gasAfterPaymentCalculation` - The gas to cover the oracle payment after calculations.
+  - `minimumRequestConfirmations` - The minimum possible number of VRF Request Confirmations.
+  - `maxGasLimit` - The maximum gas limit for a single VRF Request.
+  - `stalenessSeconds` - The number of seconds before the feed price can be considered stale.
+  - `gasAfterPaymentCalculation` - The gas to cover the oracle payment after calculations.
 
 ### getVrfCoordinatorTypeAndVersion
 
@@ -1082,7 +1122,8 @@ public async getVrfCoordinatorTypeAndVersion(vrfCoordinatorAddress: string): Pro
 ```
 
 - Parameters:
-  `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
+
+  - `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
 
 - `RETURN`: The Type and Version of a VRF Coordinator smart contract.
 
@@ -1146,12 +1187,13 @@ public async getAutomationPendingRegistrationRequest(
 ```
 
 - Parameters:
-  `automationRegistrarAddress` - The Address of the [Automation Registrar contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that accepts requests for upkeep registrations.
-  `hash` - The Keccak256 hash of ABI encoded values: `upkeepContract`, `gasLimit`, `adminAddress`, `checkData`
+
+  - `automationRegistrarAddress` - The Address of the [Automation Registrar contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that accepts requests for upkeep registrations.
+  - `hash` - The Keccak256 hash of ABI encoded values: `upkeepContract`, `gasLimit`, `adminAddress`, `checkData`
 
 - Return values:
-  `adminAddress` - The Address of the Upkeep Registration Request administrator.
-  `balance` - The current balance of the Upkeep Registration Request.
+  - `adminAddress` - The Address of the Upkeep Registration Request administrator.
+  - `balance` - The current balance of the Upkeep Registration Request.
 
 ### cancelAutomationPendingRegistrationRequest
 
@@ -1193,14 +1235,15 @@ public async getAutomationRegistrarConfig(
 ```
 
 - Parameters:
-  `automationRegistrarAddress` - The Address of the [Automation Registrar contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that accepts requests for upkeep registrations.
+
+  - `automationRegistrarAddress` - The Address of the [Automation Registrar contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that accepts requests for upkeep registrations.
 
 - Return values:
-  `autoApproveConfigType` - The setting for auto-approve registrations. It can be DISABLED (No auto approvals, all new upkeeps should be approved manually), ENABLED_SENDER_ALLOWLIST (Auto approvals for allowed senders subject to max allowed. Manual for rest), or ENABLED_ALL (Auto approvals for all new upkeeps subject to max allowed).
-  `autoApproveMaxAllowed` - The maximum number of registrations that can be auto-approved.
-  `approvedCount` - The current number of auto-approved registrations.
-  `automationRegistry` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
-  `minLINKJuels` - The minimum amount of LINK token in Juels that new registrations should fund their upkeep with. The smallest denomination of LINK is called a Juel, and 1,000,000,000,000,000,000 (1e18) Juels are equal to 1 LINK. This is similar to Wei, which is the smallest denomination of ETH.
+  - `autoApproveConfigType` - The setting for auto-approve registrations. It can be DISABLED (No auto approvals, all new upkeeps should be approved manually), ENABLED_SENDER_ALLOWLIST (Auto approvals for allowed senders subject to max allowed. Manual for rest), or ENABLED_ALL (Auto approvals for all new upkeeps subject to max allowed).
+  - `autoApproveMaxAllowed` - The maximum number of registrations that can be auto-approved.
+  - `approvedCount` - The current number of auto-approved registrations.
+  - `automationRegistry` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
+  - `minLINKJuels` - The minimum amount of LINK token in Juels that new registrations should fund their upkeep with. The smallest denomination of LINK is called a Juel, and 1,000,000,000,000,000,000 (1e18) Juels are equal to 1 LINK. This is similar to Wei, which is the smallest denomination of ETH.
 
 ### getAutomationRegistrarTypeAndVersion
 
@@ -1211,7 +1254,8 @@ public async getAutomationRegistrarTypeAndVersion(automationRegistrarAddress: st
 ```
 
 - Parameters:
-  `automationRegistrarAddress` - The Address of the [Automation Registrar contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that accepts requests for upkeep registrations.
+
+  - `automationRegistrarAddress` - The Address of the [Automation Registrar contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that accepts requests for upkeep registrations.
 
 - `RETURN`: The Type and Version of an Automation Registrar contract.
 
@@ -1269,11 +1313,11 @@ public async checkUpkeep(
   `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, the execution continues after this function immediately.
 
 - Return values:
-  `performData` - The calldata parameter to be passed to the target Upkeep.
-  `maxLinkPayment` - The maximum amount of LINK tokens to be spent for payment for a given gas limit.
-  `gasLimit` - The amount of gas to provide the target contract when performing Upkeep.
-  `adjustedGasWei` - The adjusted gas price in Wei needed for performing the Upkeep.
-  `linkEth` - The amount of LINK in terms of Wei needed for a gas received from the Chainlink Fast Gas Data Feed
+  - `performData` - The calldata parameter to be passed to the target Upkeep.
+  - `maxLinkPayment` - The maximum amount of LINK tokens to be spent for payment for a given gas limit.
+  - `gasLimit` - The amount of gas to provide the target contract when performing Upkeep.
+  - `adjustedGasWei` - The adjusted gas price in Wei needed for performing the Upkeep.
+  - `linkEth` - The amount of LINK in terms of Wei needed for a gas received from the Chainlink Fast Gas Data Feed
 
 ### migrateUpkeeps
 
@@ -1457,9 +1501,10 @@ public async getActiveUpkeepIDs(
 ```
 
 - Parameters:
-  `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
-  `startIndex` - The starting index in the list.
-  `maxCount` - The maximum count to retrieve, starting from 0 to unlimited.
+
+  - `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
+  - `startIndex` - The starting index in the list.
+  - `maxCount` - The maximum count to retrieve, starting from 0 to unlimited.
 
 - `RETURN`: The list of IDs of all currently active Upkeeps.
 
@@ -1484,18 +1529,19 @@ public async getUpkeep(
 ```
 
 - Parameters:
-  `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
-  `id` - The Upkeep ID.
+
+  - `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
+  - `id` - The Upkeep ID.
 
 - Return values:
-  `target` - The address of a target contract to perform an Upkeep on.
-  `executeGas` - The amount of gas specified for performing a single Upkeep.
-  `checkData` - The data passed to the contract when checking for an Upkeep.
-  `balance` - The current amount of LINK of Upkeep. To top up, call the `fundUpkeep` function of this plugin.
-  `lastAutomationNode` - The Address of an Automation Node that performed the last Upkeep.
-  `admin` - The address of an Upkeep Admin.
-  `maxValidBlocknumber` - The Maximum Valid Block Number.
-  `amountSpent`- The total amount of LINK spent for performing this Upkeep.
+  - `target` - The address of a target contract to perform an Upkeep on.
+  - `executeGas` - The amount of gas specified for performing a single Upkeep.
+  - `checkData` - The data passed to the contract when checking for an Upkeep.
+  - `balance` - The current amount of LINK of Upkeep. To top up, call the `fundUpkeep` function of this plugin.
+  - `lastAutomationNode` - The Address of an Automation Node that performed the last Upkeep.
+  - `admin` - The address of an Upkeep Admin.
+  - `maxValidBlocknumber` - The Maximum Valid Block Number.
+  - `amountSpent`- The total amount of LINK spent for performing this Upkeep.
 
 ### getAutomationNodeInfo
 
@@ -1509,13 +1555,14 @@ public async getAutomationNodeInfo(
 ```
 
 - Parameters:
-  `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
-  `query` - The Address of an Automation Node to query information details for.
+
+  - `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
+  - `query` - The Address of an Automation Node to query information details for.
 
 - Return values:
-  `payee` - The Address of the Payee.
-  `active` - `true` if an Automation Node is currently active, `false` otherwise.
-  `balance` - The current balance of LINK tokens of an Automation Node.
+  - `payee` - The Address of the Payee.
+  - `active` - `true` if an Automation Node is currently active, `false` otherwise.
+  - `balance` - The current balance of LINK tokens of an Automation Node.
 
 ### automationGetMaxPaymentForGas
 
@@ -1529,8 +1576,9 @@ public async automationGetMaxPaymentForGas(
 ```
 
 - Parameters:
-  `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
-  `gasLimit` - The amount of gas to calculate the payment for.
+
+  - `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
+  - `gasLimit` - The amount of gas to calculate the payment for.
 
 - `RETURN` - The maximum payment for a given gas limit.
 
@@ -1546,8 +1594,9 @@ public async getMinBalanceForUpkeep(
 ```
 
 - Parameters:
-  `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
-  `id` - The Upkeep ID.
+
+  - `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
+  - `id` - The Upkeep ID.
 
 - `RETURN` - The minimum balance required for an Upkeep to remain eligible.
 
@@ -1580,26 +1629,27 @@ public async getAutomationRegistryState(
 ```
 
 - Parameters:
-  `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
+
+  - `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
 
 - Return values:
-  `nonce` - The number that increments for each newly created Upkeep. Serves as one of the parameters for generating the unique Upkeep ID.
-  `ownerLinkBalance` - The amount of LINK funds collected through cancellation fees. This is the withdrawable balance of LINK by the contract owner.
-  `expectedLinkBalance` - The expected amount of LINK tokens of a Registry.
-  `numUpkeeps` - The number of active Upkeeps on a Registry.
-  `paymentPremiumPPB` - The payment premium rate oracles receive on top of being reimbursed for gas, measured in parts per billion.
-  `flatFeeMicroLink` - The flat fee paid to oracles for performing Upkeeps, priced in MicroLink; can be used in conjunction with or independently of `paymentPremiumPPB`.
-  `blockCountPerTurn` - The number of blocks each oracle has during their turn to perform upkeep before it will be the next Automation Node's turn to submit.
-  `checkGasLimit` - The gas limit when checking for Upkeep.
-  `stalenessSeconds` - The number of seconds that is allowed for feed data to be stale before switching to the fallback pricing.
-  `gasCeilingMultiplier` - The multiplier to apply to the fast gas feed price when calculating the payment ceiling for Automation Nodes.
-  `minUpkeepSpend` - The minimum amount of LINK tokens that an Upkeep must spend before canceling.
-  `maxPerformGas` - The maximum `executeGas` allowed for an Upkeep on this Registry.
-  `fallbackGasPrice` - The gas price used if the Fast Gas Data Feed is stale.
-  `fallbackLinkPrice` - The LINK price used if the LINK Data Feed is stale.
-  `transcoder` - The Address of the Transcoder contract.
-  `registrar` - The Address of the Automation Registrar contract.
-  `automationNodes` - The list of Automation Nodes addresses.
+  - `nonce` - The number that increments for each newly created Upkeep. Serves as one of the parameters for generating the unique Upkeep ID.
+  - `ownerLinkBalance` - The amount of LINK funds collected through cancellation fees. This is the withdrawable balance of LINK by the contract owner.
+  - `expectedLinkBalance` - The expected amount of LINK tokens of a Registry.
+  - `numUpkeeps` - The number of active Upkeeps on a Registry.
+  - `paymentPremiumPPB` - The payment premium rate oracles receive on top of being reimbursed for gas, measured in parts per billion.
+  - `flatFeeMicroLink` - The flat fee paid to oracles for performing Upkeeps, priced in MicroLink; can be used in conjunction with or independently of `paymentPremiumPPB`.
+  - `blockCountPerTurn` - The number of blocks each oracle has during their turn to perform upkeep before it will be the next Automation Node's turn to submit.
+  - `checkGasLimit` - The gas limit when checking for Upkeep.
+  - `stalenessSeconds` - The number of seconds that is allowed for feed data to be stale before switching to the fallback pricing.
+  - `gasCeilingMultiplier` - The multiplier to apply to the fast gas feed price when calculating the payment ceiling for Automation Nodes.
+  - `minUpkeepSpend` - The minimum amount of LINK tokens that an Upkeep must spend before canceling.
+  - `maxPerformGas` - The maximum `executeGas` allowed for an Upkeep on this Registry.
+  - `fallbackGasPrice` - The gas price used if the Fast Gas Data Feed is stale.
+  - `fallbackLinkPrice` - The LINK price used if the LINK Data Feed is stale.
+  - `transcoder` - The Address of the Transcoder contract.
+  - `registrar` - The Address of the Automation Registrar contract.
+  - `automationNodes` - The list of Automation Nodes addresses.
 
 ### isAutomationRegistryPaused
 
@@ -1610,7 +1660,8 @@ public async isAutomationRegistryPaused(automationRegistryAddress: string): Prom
 ```
 
 - Parameters:
-  `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
+
+  - `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
 
 - `RETURN`: `true` if the Automation Registry contract is currently paused, `false` otherwise.
 
@@ -1623,7 +1674,8 @@ public async getAutomationRegistryTypeAndVersion(automationRegistryAddress: stri
 ```
 
 - Parameters:
-  `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
+
+  - `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
 
 - `RETURN`: The type and version of an Automation Registry smart contract.
 
@@ -1638,7 +1690,8 @@ public async getAutomationRegistryUpkeepTranscoderVersion(
 ```
 
 - Parameters:
-  `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
+
+  - `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
 
 - `RETURN`: The version of the Transcoder smart contract on the Automation Registry smart contract.
 
