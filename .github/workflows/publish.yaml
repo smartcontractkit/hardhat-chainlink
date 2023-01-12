@@ -12,9 +12,9 @@ jobs:
         
       - name: Setup Node 16.x
         uses: actions/setup-node@v2
-          with:
-            node-version: 16.x
-            registry-url: https://registry.npmjs.org/
+        with:
+          node-version: 16.x
+          registry-url: https://registry.npmjs.org/
          
       - name: Install Dependencies
         run: npm ci 
