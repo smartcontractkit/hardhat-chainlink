@@ -14,15 +14,16 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
+          cache: "yarn"
           registry-url: https://registry.npmjs.org/
 
       - name: Install Dependencies
-        run: npm ci --legacy-peer-deps
+        run: yarn
 
       # Publish Hardhat Plugin as NPM Package
       # We don't need to build the project since there is a prepublishOnly hook in package.json
       # "prepublishOnly": "npm run build"
       - name: Publish Package
-        run: npm publish --access restricted
+        run: yarn publish --access restricted
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
