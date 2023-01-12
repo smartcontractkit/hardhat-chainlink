@@ -17,6 +17,8 @@ jobs:
           registry-url: https://registry.npmjs.org/
           always-auth: true
 
+      - run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+
       - name: Install Dependencies
         run: yarn
 
