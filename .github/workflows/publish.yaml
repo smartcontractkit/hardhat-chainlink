@@ -9,16 +9,16 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
-        
+
       - name: Setup Node 16.x
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
           registry-url: https://registry.npmjs.org/
-         
+
       - name: Install Dependencies
-        run: npm install
-      
+        run: npm ci
+
       # Publish Hardhat Plugin as NPM Package
       # We don't need to build the project since there is a prepublishOnly hook in package.json
       # "prepublishOnly": "npm run build"
@@ -26,5 +26,3 @@ jobs:
         run: npm publish --access restricted
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      
-  
