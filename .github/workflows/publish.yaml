@@ -26,6 +26,6 @@ jobs:
       # We don't need to build the project since there is a prepublishOnly hook in package.json
       # "prepublishOnly": "npm run build"
       - name: Publish Package
-        run: yarn publish --access restricted
+        run: yarn publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
