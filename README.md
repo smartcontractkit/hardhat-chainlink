@@ -9,23 +9,23 @@ This plugin will help you to use the Chainlink protocol inside your tests, scrip
 ## Installation
 
 ```console
-npm install hardhat-chainlink
+npm install @chainlink/hardhat-chainlink
 
 # or
 
-yarn add hardhat-chainlink
+yarn add @chainlink/hardhat-chainlink
 ```
 
 Import the plugin in your `hardhat.config.js`:
 
 ```js
-require("hardhat-chainlink");
+require("@chainlink/hardhat-chainlink");
 ```
 
 Or, if you are using TypeScript, in your `hardhat.config.ts`:
 
 ```ts
-import "hardhat-chainlink";
+import "@chainlink/hardhat-chainlink";
 ```
 
 ## Environment extensions
@@ -50,7 +50,7 @@ To get the latest price of a given asset, prepare the network field inside `hard
   }
 ```
 
-Then import `chainlink` from `hardhat`, call the `getLatestPrice` function and pass it the [Aggreagator contract address](https://docs.chain.link/docs/reference-contracts/):
+Then import `chainlink` from `hardhat`, call the `getLatestPrice` function and pass it the [Aggregator contract address](https://docs.chain.link/docs/reference-contracts/):
 
 ```typescript
 import { chainlink } from "hardhat";

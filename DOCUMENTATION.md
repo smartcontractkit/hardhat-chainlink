@@ -9,23 +9,23 @@ New to Chainlink? Check the [Official Chainlink Documentation](https://docs.chai
 ## Installation
 
 ```console
-npm install hardhat-chainlink
+npm install @chainlink/hardhat-chainlink
 
 # or
 
-yarn add hardhat-chainlink
+yarn add @chainlink/hardhat-chainlink
 ```
 
 Import the plugin in your `hardhat.config.js`:
 
 ```js
-require("hardhat-chainlink");
+require("@chainlink/hardhat-chainlink");
 ```
 
 Or, if you are using TypeScript, in your `hardhat.config.ts`:
 
 ```ts
-import "hardhat-chainlink";
+import "@chainlink/hardhat-chainlink";
 ```
 
 ## Environment extensions and Hardhat tasks

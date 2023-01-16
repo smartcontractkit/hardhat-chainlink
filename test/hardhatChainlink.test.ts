@@ -4,7 +4,7 @@ import { HardhatChainlink } from "../src/HardhatChainlink";
 import { useEnvironment } from "./helpers";
 
 describe("Hardhat Chainlink Tests", function () {
-  useEnvironment("hardhat-chainlink");
+  useEnvironment("@chainlink/hardhat-chainlink");
 
   it("Should add the example field", function () {
     assert.instanceOf(this.hre.chainlink, HardhatChainlink);
