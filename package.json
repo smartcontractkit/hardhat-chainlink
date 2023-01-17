@@ -1,6 +1,6 @@
 {
   "name": "@chainlink/hardhat-chainlink",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Integrates Chainlink into Hardhat projects",
   "repository": "https://github.com/smartcontractkit/hardhat-chainlink.git",
   "homepage": "https://github.com/smartcontractkit/hardhat-chainlink/blob/main/DOCUMENTATION.md",
