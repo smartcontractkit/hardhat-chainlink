@@ -2,6 +2,12 @@
 
 Integrates [Chainlink](https://chain.link) into [Hardhat](https://hardhat.org) projects.
 
+> **Warning**
+>
+> **This package is currently in the BETA testing phase and is not recommended for production usage yet.**
+>
+> **Open issues to submit bugs and earn the Beta Tester POAP.**
+
 ## What
 
 This plugin will help you to use the Chainlink protocol inside your tests, scripts & tasks. This is a community initiative, so everyone is welcome to contribute. Start by opening a "Feature Request" issue.
