@@ -1,18 +1,13 @@
-import { BigNumber, Contract } from "ethers";
+import { BigNumber } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { AggregatorV3InterfaceAbi } from "../../types/ethers-contracts";
-import AGGREGATOR_V3_INTERFACE_ABI from "../abis/aggregatorV3Interface.abi.json";
+import { AggregatorV3Interface__factory } from "../../types/ethers-contracts";
 
 export const getLatestPrice = async (
   env: HardhatRuntimeEnvironment,
   priceFeedAddress: string
 ): Promise<BigNumber> => {
   const [signer] = await env.ethers.getSigners();
-  const priceFeed: AggregatorV3InterfaceAbi = new Contract(
-    priceFeedAddress,
-    AGGREGATOR_V3_INTERFACE_ABI,
-    signer
-  ) as AggregatorV3InterfaceAbi;
+  const priceFeed = AggregatorV3Interface__factory.connect(priceFeedAddress, signer);
 
   const latestRoundData = await priceFeed.latestRoundData();
   const price: BigNumber = latestRoundData.answer;
@@ -31,11 +26,7 @@ export const getLatestRoundData = async (
   answeredInRound: BigNumber;
 }> => {
   const [signer] = await env.ethers.getSigners();
-  const priceFeed: AggregatorV3InterfaceAbi = new Contract(
-    priceFeedAddress,
-    AGGREGATOR_V3_INTERFACE_ABI,
-    signer
-  ) as AggregatorV3InterfaceAbi;
+  const priceFeed = AggregatorV3Interface__factory.connect(priceFeedAddress, signer);
 
   const latestRoundData = await priceFeed.latestRoundData();
 
@@ -53,11 +44,7 @@ export const getPriceFeedDecimals = async (
   priceFeedAddress: string
 ): Promise<number> => {
   const [signer] = await env.ethers.getSigners();
-  const priceFeed: AggregatorV3InterfaceAbi = new Contract(
-    priceFeedAddress,
-    AGGREGATOR_V3_INTERFACE_ABI,
-    signer
-  ) as AggregatorV3InterfaceAbi;
+  const priceFeed = AggregatorV3Interface__factory.connect(priceFeedAddress, signer);
 
   return priceFeed.decimals();
 };
@@ -67,11 +54,7 @@ export const getPriceFeedDescription = async (
   priceFeedAddress: string
 ): Promise<string> => {
   const [signer] = await env.ethers.getSigners();
-  const priceFeed: AggregatorV3InterfaceAbi = new Contract(
-    priceFeedAddress,
-    AGGREGATOR_V3_INTERFACE_ABI,
-    signer
-  ) as AggregatorV3InterfaceAbi;
+  const priceFeed = AggregatorV3Interface__factory.connect(priceFeedAddress, signer);
 
   return priceFeed.description();
 };
@@ -88,11 +71,7 @@ export const getRoundData = async (
   answeredInRound: BigNumber;
 }> => {
   const [signer] = await env.ethers.getSigners();
-  const priceFeed: AggregatorV3InterfaceAbi = new Contract(
-    priceFeedAddress,
-    AGGREGATOR_V3_INTERFACE_ABI,
-    signer
-  ) as AggregatorV3InterfaceAbi;
+  const priceFeed = AggregatorV3Interface__factory.connect(priceFeedAddress, signer);
 
   const roundData = await priceFeed.getRoundData(roundId);
 
@@ -110,11 +89,7 @@ export const getPriceFeedAggregatorVersion = async (
   priceFeedAddress: string
 ): Promise<BigNumber> => {
   const [signer] = await env.ethers.getSigners();
-  const priceFeed: AggregatorV3InterfaceAbi = new Contract(
-    priceFeedAddress,
-    AGGREGATOR_V3_INTERFACE_ABI,
-    signer
-  ) as AggregatorV3InterfaceAbi;
+  const priceFeed = AggregatorV3Interface__factory.connect(priceFeedAddress, signer);
 
   const version = await priceFeed.version();
 
@@ -126,15 +101,9 @@ export const getAggregatorAddress = async (
   priceFeedAddress: string
 ): Promise<string> => {
   const [signer] = await env.ethers.getSigners();
-  const priceFeed: AggregatorV3InterfaceAbi = new Contract(
-    priceFeedAddress,
-    AGGREGATOR_V3_INTERFACE_ABI,
-    signer
-  ) as AggregatorV3InterfaceAbi;
+  const priceFeed = AggregatorV3Interface__factory.connect(priceFeedAddress, signer);
 
-  const aggregatorAddress = await priceFeed.aggregator();
-
-  return aggregatorAddress;
+  return priceFeed.address;
 };
 
 export const getAggregatorRoundId = async (
@@ -142,11 +111,7 @@ export const getAggregatorRoundId = async (
   priceFeedAddress: string
 ): Promise<BigNumber> => {
   const [signer] = await env.ethers.getSigners();
-  const priceFeed: AggregatorV3InterfaceAbi = new Contract(
-    priceFeedAddress,
-    AGGREGATOR_V3_INTERFACE_ABI,
-    signer
-  ) as AggregatorV3InterfaceAbi;
+  const priceFeed = AggregatorV3Interface__factory.connect(priceFeedAddress, signer);
 
   const roundData = await priceFeed.latestRoundData();
   const aggregatorRoundId =
@@ -160,11 +125,7 @@ export const getPhaseId = async (
   priceFeedAddress: string
 ): Promise<BigNumber> => {
   const [signer] = await env.ethers.getSigners();
-  const priceFeed: AggregatorV3InterfaceAbi = new Contract(
-    priceFeedAddress,
-    AGGREGATOR_V3_INTERFACE_ABI,
-    signer
-  ) as AggregatorV3InterfaceAbi;
+  const priceFeed = AggregatorV3Interface__factory.connect(priceFeedAddress, signer);
 
   const roundData = await priceFeed.latestRoundData();
   const phaseId = roundData.roundId.toBigInt() >> 64n;
@@ -178,11 +139,7 @@ export const getHistoricalPrice = async (
   roundId: BigNumber
 ): Promise<BigNumber> => {
   const [signer] = await env.ethers.getSigners();
-  const priceFeed: AggregatorV3InterfaceAbi = new Contract(
-    priceFeedAddress,
-    AGGREGATOR_V3_INTERFACE_ABI,
-    signer
-  ) as AggregatorV3InterfaceAbi;
+  const priceFeed = AggregatorV3Interface__factory.connect(priceFeedAddress, signer);
 
   const roundData = await priceFeed.getRoundData(roundId);
 
