@@ -83,6 +83,37 @@ Here is the list of all available currency identifiers available in the Denomina
 - INR,
 - BRL.
 
+## Chainlink Functions
+
+Chainlink Functions provides your smart contracts with access to a trust-minimized compute infrastructure. Your smart contract sends your code to a Decentralized Oracle Network(DON), and each DON’s oracle will run the same code in a serverless environment. Finally, the DON aggregates all the independent runs and returns the final result to your smart contract. Your code can be anything from a simple computation to fetching data from API providers.
+
+Chainlink Functions do not require your consumer contracts to hold LINK tokens and send them to oracles when making requests. Instead, you must create a subscription account and fund it to pre-pay for your Chainlink Functions requests.
+
+### functionsGetSubscriptionInfo
+
+Returns the Chainlink Functions Subscription details.
+
+```typescript
+public async functionsGetSubscriptionInfo(
+    registryAddress: string,
+    subscriptionId: number
+  ): Promise<{
+    balance: BigNumber;
+    owner: string;
+    consumers: string[];
+  }>;
+```
+
+- Parameters:
+
+  - `registryAddress` - Chainlink Functions Registry Address.
+  - `subscriptionId` - The Chainlink Functions Subscription ID.
+
+- Return values:
+  - `balance` - The Chainlink Functions Subscription balance.
+  - `owner` - The Chainlink Functions Subscription owner.
+  - `consumers` - The list of authorized client contract addresses.
+
 ## Chainlink Data Feeds
 
 Chainlink Data Feeds are the quickest way to connect your smart contracts to the real-world data such as asset prices, reserve balances, and L2 sequencer health. Data feeds provide many different types of data for your applications:
