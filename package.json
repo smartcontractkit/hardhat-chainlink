@@ -18,7 +18,7 @@
     "lint": "tslint --config tslint.json --project tsconfig.json",
     "test": "mocha --exit --recursive 'test/**/*.test.ts'",
     "copy": "mkdir -p dist/src/tasks && cp src/setup/Dockerfile dist && cp src/setup/docker-compose.yaml dist && cp src/setup/env.template dist/src/tasks/.env && cp -r artifacts dist && cp -r cache dist && cp -r src/FunctionsSandboxLibrary dist/src && cp -r contracts dist",
-    "build": "tsc --project tsconfig.json && hardhat compile && yarn run copy",
+    "build": "tsc --project tsconfig.json && npx hardhat compile && yarn run copy",
     "watch": "tsc -w --project tsconfig.json",
     "prepublishOnly": "yarn run build",
     "postinstall": "yarn typechain --target ethers-v5 --out-dir './types-abis' './src/abis/*.json' && yarn typechain --target ethers-v5 --out-dir './types' './node_modules/@chainlink/contracts/abi/v0.8/*.json'"
