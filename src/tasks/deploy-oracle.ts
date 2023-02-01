@@ -1,5 +1,5 @@
 import { ActionType } from 'hardhat/types'
-import OracleArtefact from "../../artifacts/@chainlink/contracts/src/v0.4/Oracle.sol/Oracle.json"
+import OracleArtifact from "../../artifacts/@chainlink/contracts/src/v0.4/Oracle.sol/Oracle.json"
 
 export const deployOracle: ActionType<{
     nodeAddress: string
@@ -7,7 +7,7 @@ export const deployOracle: ActionType<{
 }> = async (taskArgs, hre) => {
     const { nodeAddress, linkAddress } = taskArgs
 
-    const Oracle = await hre.ethers.getContractFactoryFromArtifact(OracleArtefact)
+    const Oracle = await hre.ethers.getContractFactoryFromArtifact(OracleArtifact)
     const oracle = await Oracle.deploy(linkAddress)
 
     await oracle.deployed()

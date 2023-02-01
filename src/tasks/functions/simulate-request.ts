@@ -1,5 +1,8 @@
 import { ActionType, HardhatRuntimeEnvironment } from "hardhat/types";
-import { LinkTokenInterface__factory } from "../../../types";
+import LinkTokenArtifact from "../../../artifacts/@chainlink/contracts/src/v0.4/LinkToken.sol/LinkToken.json"
+import FunctionsOracleFactoryArtifact from "../../../artifacts/@chainlink/contracts/src/v0.8/dev/functions/FunctionsOracleFactory.sol/FunctionsOracleFactory.json"
+import FunctionsOracleArtifacts from "../../../artifacts/@chainlink/contracts/src/v0.8/dev/functions/FunctionsOracle.sol/FunctionsOracle.json"
+import FunctionsBillingRegistry from "../../../artifacts/@chainlink/contracts/src/v0.8/dev/functions/FunctionsBillingRegistry.sol/FunctionsBillingRegistry.json"
 
 const {
     simulateRequest,
@@ -9,12 +12,11 @@ const {
 } = require("../../FunctionsSandboxLibrary")
 
 export const simulateRequestAction: ActionType<{
-    linkTokenAddress: string;
     linkEthAddress: string;
     functionsPublicKey: string;
     gasLimit: number;
 }> = async (taskArgs, hre) => {
-    const { linkTokenAddress, linkEthAddress, functionsPublicKey } = taskArgs;
+    const { linkEthAddress, functionsPublicKey } = taskArgs;
 
     const gasLimit = taskArgs.gasLimit ?? 100000
     if (gasLimit > 300000) {
@@ -25,8 +27,7 @@ export const simulateRequestAction: ActionType<{
     const deployer = accounts[0]
 
     // Deploy a mock oracle & registry contract to simulate a fulfillment
-    const linkToken = LinkTokenInterface__factory.connect(linkTokenAddress, deployer);
-    const { oracle, registry } = await deployMockOracle(hre, linkEthAddress, linkEthAddress, functionsPublicKey);
+    const { oracle, registry, linkToken } = await deployMockOracle(hre, linkEthAddress, functionsPublicKey);
 
     // Deploy the client contract
     const clientFactory = await hre.ethers.getContractFactory("FunctionsConsumer")
@@ -171,14 +172,17 @@ export const simulateRequestAction: ActionType<{
 
 const deployMockOracle = async (
     hre: HardhatRuntimeEnvironment,
-    linkTokenAddress: string,
     linkEthFeedAddress: string,
     functionsPublicKey: string) => {
     const accounts = await hre.ethers.getSigners()
     const deployer = accounts[0]
 
+    const LinkToken = await hre.ethers.getContractFactoryFromArtifact(LinkTokenArtifact)
+    const linkToken = await LinkToken.deploy()
+    await linkToken.deployed()
+
     // Deploy the mock oracle factory contract
-    const oracleFactoryFactory = await hre.ethers.getContractFactory("FunctionsOracleFactory")
+    const oracleFactoryFactory = await hre.ethers.getContractFactoryFromArtifact(FunctionsOracleFactoryArtifact)
     const oracleFactory = await oracleFactoryFactory.deploy()
     await oracleFactory.deployed()
 
@@ -186,7 +190,7 @@ const deployMockOracle = async (
     const OracleDeploymentTransaction = await oracleFactory.deployNewOracle()
     const OracleDeploymentReceipt = await OracleDeploymentTransaction.wait(1)
     const FunctionsOracleAddress = OracleDeploymentReceipt.events[1].args.don
-    const oracle = await hre.ethers.getContractAt("FunctionsOracle", FunctionsOracleAddress, deployer)
+    const oracle = await hre.ethers.getContractAtFromArtifact(FunctionsOracleArtifacts, FunctionsOracleAddress, deployer)
 
     // Accept ownership of the mock oracle contract
     const acceptTx = await oracle.acceptOwnership()
@@ -196,8 +200,8 @@ const deployMockOracle = async (
     await oracle.setDONPublicKey("0x" + functionsPublicKey)
 
     // Deploy the mock registry billing contract
-    const registryFactory = await hre.ethers.getContractFactory("FunctionsBillingRegistry")
-    const registry = await registryFactory.deploy(linkTokenAddress, linkEthFeedAddress, FunctionsOracleAddress)
+    const registryFactory = await hre.ethers.getContractFactoryFromArtifact(FunctionsBillingRegistry)
+    const registry = await registryFactory.deploy(linkToken.Address, linkEthFeedAddress, FunctionsOracleAddress)
     await registry.deployTransaction.wait(1)
 
     // Set registry configuration
@@ -221,6 +225,6 @@ const deployMockOracle = async (
     // Set the current account as an authorized sender in the mock registry to allow for simulated local fulfillments
     await registry.setAuthorizedSenders([oracle.address, deployer.address])
     await oracle.setRegistry(registry.address)
-    return { oracle, registry }
+    return { oracle, registry, linkToken }
 }
 
