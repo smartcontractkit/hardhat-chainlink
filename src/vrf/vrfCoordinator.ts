@@ -8,7 +8,7 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import {
   LinkTokenInterface__factory,
   VRFCoordinatorV2__factory,
-} from "../../types/ethers-contracts";
+} from "../../types";
 
 export const createVrfSubscription = async (
   env: HardhatRuntimeEnvironment,

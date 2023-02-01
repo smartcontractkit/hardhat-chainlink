@@ -1,7 +1,7 @@
 import { BigNumber, BytesLike, Contract, ContractTransaction } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { Interface, defaultAbiCoder } from "ethers/lib/utils";
-import { LinkTokenInterface__factory, KeeperRegistrar__factory } from "../../types/ethers-contracts";
+import { LinkTokenInterface__factory, KeeperRegistrar__factory } from "../../types";
 import KEEPERS_REGISTRAR_ABI from "@chainlink/contracts/abi/v0.8/KeeperRegistrar.json";
 
 export const registerUpkeep = async (

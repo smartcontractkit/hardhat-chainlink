@@ -1,7 +1,7 @@
 import { BigNumber } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import { FunctionsBillingRegistry__factory } from "../../types/ethers-contracts";
+import { FunctionsBillingRegistry__factory } from "../../types";
 
 export const getSubscriptionInfo = async (
   hre: HardhatRuntimeEnvironment,

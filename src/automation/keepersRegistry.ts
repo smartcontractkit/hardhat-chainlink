@@ -1,6 +1,6 @@
 import { BigNumber, BytesLike, Contract } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { KeeperRegistry1_3__factory } from "../../types/ethers-contracts";
+import { KeeperRegistry1_3__factory } from "../../types";
 
 export const fundUpkeep = async (
   env: HardhatRuntimeEnvironment,

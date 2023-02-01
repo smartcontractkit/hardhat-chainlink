@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { AggregatorV3Interface__factory } from "../../types/ethers-contracts";
+import { AggregatorV3Interface__factory } from "../../types";
 
 export const getLatestPrice = async (
   env: HardhatRuntimeEnvironment,

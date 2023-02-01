@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { FeedRegistryInterface__factory } from "../../types/ethers-contracts";
+import { FeedRegistryInterface__factory } from "../../types";
 
 export const Denominations = Object.freeze({
   ETH: `0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE`,

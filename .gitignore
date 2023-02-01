@@ -65,6 +65,7 @@ coverage.json
 typechain
 typechain-types
 types/
+types-abis/
 
 # lock files
 *.lock

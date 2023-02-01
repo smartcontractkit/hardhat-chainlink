@@ -17,11 +17,11 @@
     "lint:fix": "prettier --write 'src/**/*.{js,ts}' 'test/**/*.{js,ts}' && tslint --fix --config tslint.json --project tsconfig.json",
     "lint": "tslint --config tslint.json --project tsconfig.json",
     "test": "mocha --exit --recursive 'test/**/*.test.ts'",
-    "copy": "mkdir -p dist/src/tasks && cp src/setup/Dockerfile dist && cp src/setup/docker-compose.yaml dist && cp src/setup/env.template dist/src/tasks/.env && cp -r artifacts dist && cp -r cache dist",
+    "copy": "mkdir -p dist/src/tasks && cp src/setup/Dockerfile dist && cp src/setup/docker-compose.yaml dist && cp src/setup/env.template dist/src/tasks/.env && cp -r artifacts dist && cp -r cache dist && cp -r src/FunctionsSandboxLibrary dist/src && cp -r contracts dist",
     "build": "tsc --project tsconfig.json && hardhat compile && yarn run copy",
     "watch": "tsc -w --project tsconfig.json",
     "prepublishOnly": "yarn run build",
-    "postinstall": "typechain --target ethers-v5 './node_modules/@chainlink/contracts/abi/v0.8/*.json' './src/abis/*.json'"
+    "postinstall": "yarn typechain --target ethers-v5 --out-dir './types-abis' './src/abis/*.json' && yarn typechain --target ethers-v5 --out-dir './types' './node_modules/@chainlink/contracts/abi/v0.8/*.json'"
   },
   "files": [
     "dist/",
@@ -62,7 +62,10 @@
   "dependencies": {
     "@chainlink/contracts": "0.6.1",
     "axios": "^1.1.3",
-    "docker-compose": "^0.23.17"
+    "docker-compose": "^0.23.17",
+    "eth-crypto": "^2.5.0",
+    "is-http-url": "^2.0.0",
+    "vm2": "^3.9.13"
   },
   "peerDependencies": {
     "hardhat": "^2.0.0"

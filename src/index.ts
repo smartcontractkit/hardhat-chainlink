@@ -13,6 +13,8 @@ import { deployLinkToken } from "./tasks/deploy-link-token";
 import { deployOracle } from "./tasks/deploy-oracle";
 import { getSubscriptionInfo } from "./tasks/functions/get-subscription-info";
 import { deployConsumerContract } from "./tasks/functions/deploy-consumer-contract";
+import { simulateRequestAction } from "./tasks/functions/simulate-request";
+import { generateConsumerContract } from "./tasks/functions/generate-consumer-contract";
 import { fundEth, fundLink } from "./tasks/fund";
 import { nodeInfo } from "./tasks/node-info";
 import { runNode } from "./tasks/run-node";
@@ -85,4 +87,31 @@ task(
     "verifyContract",
     "Verify deployed contract with Etherscan"
   )
-  .setAction(deployConsumerContract)
+  .setAction(deployConsumerContract);
+
+task(
+  "chainlink:functions-simulate-request",
+  "Simulates an end-to-end fulfillment locally for the FunctionsConsumer contract"
+)
+  .addPositionalParam(
+    "linkTokenAddress",
+    "LINK token contract address"
+  )
+  .addPositionalParam(
+    "linkEthAddress",
+    "LINK/ETH price feed address"
+  )
+  .addPositionalParam(
+    "functionsPublicKey",
+    "Functions DON public key (hex without 0x prefix)"
+  )
+  .addOptionalParam(
+    "gasLimit",
+    "Maximum amount of gas that can be used to call fulfillRequest in the client contract (defaults to 100,000)"
+  )
+  .setAction(simulateRequestAction);
+
+task(
+  "chainlink:functions-generate-consumer-contract",
+  "Generates a new FunctionsConsumer.sol contract in your contracts directory"
+).setAction(generateConsumerContract);
