@@ -12,13 +12,14 @@ import { createJob } from "./tasks/create-job";
 import { deployLinkToken } from "./tasks/deploy-link-token";
 import { deployOracle } from "./tasks/deploy-oracle";
 import { getSubscriptionInfo } from "./tasks/functions/get-subscription-info";
+import { deployConsumerContract } from "./tasks/functions/deploy-consumer-contract";
 import { fundEth, fundLink } from "./tasks/fund";
 import { nodeInfo } from "./tasks/node-info";
 import { runNode } from "./tasks/run-node";
 import "./type-extensions";
 
 extendConfig(
-  (config: HardhatConfig, userConfig: Readonly<HardhatUserConfig>) => {}
+  (config: HardhatConfig, userConfig: Readonly<HardhatUserConfig>) => { }
 );
 
 extendEnvironment((hre: HardhatRuntimeEnvironment) => {
@@ -71,3 +72,17 @@ task(
   )
   .addPositionalParam("subscriptionId", "Subscription ID")
   .setAction(getSubscriptionInfo);
+
+task(
+  "chainlink:functions-deploy-consumer-contract",
+  "Deploys FunctionsConsumer contract"
+)
+  .addPositionalParam(
+    "oracleAddress",
+    "FunctionsOracle contract address"
+  )
+  .addOptionalPositionalParam(
+    "verifyContract",
+    "Verify deployed contract with Etherscan"
+  )
+  .setAction(deployConsumerContract)
