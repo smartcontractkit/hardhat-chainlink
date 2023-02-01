@@ -85,7 +85,7 @@ Here is the list of all available currency identifiers available in the Denomina
 
 ## Chainlink Functions
 
-Chainlink Functions provides your smart contracts with access to a trust-minimized compute infrastructure. Your smart contract sends your code to a Decentralized Oracle Network(DON), and each DON’s oracle will run the same code in a serverless environment. Finally, the DON aggregates all the independent runs and returns the final result to your smart contract. Your code can be anything from a simple computation to fetching data from API providers.
+Chainlink Functions provides your smart contracts with access to a trust-minimized compute infrastructure. Your smart contract sends your code to a Decentralized Oracle Network (DON), and each DON’s oracle will run the same code in a serverless environment. Finally, the DON aggregates all the independent runs and returns the final result to your smart contract. Your code can be anything from a simple computation to fetching data from API providers.
 
 Chainlink Functions do not require your consumer contracts to hold LINK tokens and send them to oracles when making requests. Instead, you must create a subscription account and fund it to pre-pay for your Chainlink Functions requests.
 
@@ -110,8 +110,8 @@ public async functionsGetSubscriptionInfo(
   - `subscriptionId` - The Chainlink Functions Subscription ID.
 
 - Return values:
-  - `balance` - The Chainlink Functions Subscription balance.
-  - `owner` - The Chainlink Functions Subscription owner.
+  - `balance` - The Chainlink Functions Subscription balance (LINK).
+  - `owner` - The Chainlink Functions Subscription owner (address).
   - `consumers` - The list of authorized client contract addresses.
 
 ## Chainlink Data Feeds

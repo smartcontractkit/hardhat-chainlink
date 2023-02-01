@@ -17,10 +17,10 @@
     "lint:fix": "prettier --write 'src/**/*.{js,ts}' 'test/**/*.{js,ts}' && tslint --fix --config tslint.json --project tsconfig.json",
     "lint": "tslint --config tslint.json --project tsconfig.json",
     "test": "mocha --exit --recursive 'test/**/*.test.ts'",
-    "copy": "mkdir -p dist/src/tasks && cp src/setup/Dockerfile dist && cp src/setup/docker-compose.yaml dist && cp src/setup/env.template dist/src/tasks/.env && cp -r cache dist",
-    "build": "tsc --project tsconfig.json && npm run copy",
+    "copy": "mkdir -p dist/src/tasks && cp src/setup/Dockerfile dist && cp src/setup/docker-compose.yaml dist && cp src/setup/env.template dist/src/tasks/.env && cp -r artifacts dist && cp -r cache dist",
+    "build": "tsc --project tsconfig.json && hardhat compile && yarn run copy",
     "watch": "tsc -w --project tsconfig.json",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "yarn run build",
     "postinstall": "typechain --target ethers-v5 './node_modules/@chainlink/contracts/abi/v0.8/*.json' './src/abis/*.json'"
   },
   "files": [
@@ -31,7 +31,6 @@
     "DOCUMENTATION.md"
   ],
   "devDependencies": {
-    "@chainlink/contracts": "0.6.1",
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.2",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.6",
     "@nomicfoundation/hardhat-toolbox": "^1.0.2",
@@ -61,6 +60,7 @@
     "uuid": "^9.0.0"
   },
   "dependencies": {
+    "@chainlink/contracts": "0.6.1",
     "axios": "^1.1.3",
     "docker-compose": "^0.23.17"
   },
