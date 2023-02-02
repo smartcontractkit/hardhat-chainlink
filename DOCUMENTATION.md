@@ -89,6 +89,13 @@ Chainlink Functions provides your smart contracts with access to a trust-minimiz
 
 Chainlink Functions do not require your consumer contracts to hold LINK tokens and send them to oracles when making requests. Instead, you must create a subscription account and fund it to pre-pay for your Chainlink Functions requests.
 
+### Tasks
+
+- `chainlink:functions-deploy-consumer-contract`: Deploys FunctionsConsumer contract
+- `chainlink:functions-generate-consumer-contract`: Generates a new `FunctionsConsumer.sol` contract in your `contracts` directory
+- `chainlink:functions-get-subscription-info`: Retrieve Functions subscription info
+- `chainlink:functions-simulate-request`: Simulates an end-to-end fulfillment locally for the FunctionsConsumer contract
+
 ### functionsGetSubscriptionInfo
 
 Returns the Chainlink Functions Subscription details.

@@ -1,5 +1,8 @@
 import { ActionType, HardhatRuntimeEnvironment } from "hardhat/types";
-import LinkTokenArtifact from "../../../artifacts/@chainlink/contracts/src/v0.4/LinkToken.sol/LinkToken.json"
+import { HardhatPluginError } from "hardhat/plugins";
+import { getLinkTokenAddress, getLinkEthPriceFeedAddress } from "../../addresses";
+import { requestConfig } from "./functions-request-config";
+import { LinkTokenInterface__factory } from "../../../types";
 import FunctionsOracleFactoryArtifact from "../../../artifacts/@chainlink/contracts/src/v0.8/dev/functions/FunctionsOracleFactory.sol/FunctionsOracleFactory.json"
 import FunctionsOracleArtifacts from "../../../artifacts/@chainlink/contracts/src/v0.8/dev/functions/FunctionsOracle.sol/FunctionsOracle.json"
 import FunctionsBillingRegistry from "../../../artifacts/@chainlink/contracts/src/v0.8/dev/functions/FunctionsBillingRegistry.sol/FunctionsBillingRegistry.json"
@@ -12,22 +15,28 @@ const {
 } = require("../../FunctionsSandboxLibrary")
 
 export const simulateRequestAction: ActionType<{
-    linkEthAddress: string;
     functionsPublicKey: string;
     gasLimit: number;
 }> = async (taskArgs, hre) => {
-    const { linkEthAddress, functionsPublicKey } = taskArgs;
+    const { functionsPublicKey } = taskArgs;
 
     const gasLimit = taskArgs.gasLimit ?? 100000
     if (gasLimit > 300000) {
         throw Error("Gas limit must be less than or equal to 300,000")
     }
 
+    if (hre.network.config.chainId == undefined) {
+        throw new HardhatPluginError("hardhat-chainlink", "Current network does not have chainId specified")
+    }
+
     const accounts = await hre.ethers.getSigners()
     const deployer = accounts[0]
+    const chainID = hre.network.config.chainId || 31337
+    const linkTokenAddress = getLinkTokenAddress(chainID)
+    const linkEthFeedAddress = getLinkEthPriceFeedAddress(chainID)
 
     // Deploy a mock oracle & registry contract to simulate a fulfillment
-    const { oracle, registry, linkToken } = await deployMockOracle(hre, linkEthAddress, functionsPublicKey);
+    const { oracle, registry, linkToken } = await deployMockOracle(hre, linkTokenAddress, linkEthFeedAddress, functionsPublicKey);
 
     // Deploy the client contract
     const clientFactory = await hre.ethers.getContractFactory("FunctionsConsumer")
@@ -52,12 +61,12 @@ export const simulateRequestAction: ActionType<{
     await registry.addConsumer(subscriptionId, client.address)
 
     // Build the parameters to make a request from the client contract
-    const requestConfig = require("./functions-request-config.js")
+    const thisRequestConfig = requestConfig
     // Fetch the DON public key from on-chain
     const DONPublicKey = await oracle.getDONPublicKey()
     // Remove the preceeding 0x from the DON public key
-    requestConfig.DONPublicKey = DONPublicKey.slice(2)
-    const request = await buildRequest(requestConfig)
+    thisRequestConfig.DONPublicKey = DONPublicKey.slice(2)
+    const request = await buildRequest(thisRequestConfig)
 
     // Make a request & simulate a fulfillment
     await new Promise(async (resolve: any) => {
@@ -75,17 +84,17 @@ export const simulateRequestAction: ActionType<{
 
         // Simulating the JavaScript code locally
         console.log("Executing JavaScript request source code locally...")
-        const unvalidatedRequestConfig = require("./functions-request-config.js")
-        const requestConfig = getRequestConfig(unvalidatedRequestConfig)
+        const unvalidatedRequestConfig = requestConfig
+        const thisRequestConfig = getRequestConfig(unvalidatedRequestConfig)
 
-        if (requestConfig.secretsLocation === 1) {
-            if (!requestConfig.secrets || Object.keys(requestConfig.secrets).length === 0) {
+        if (thisRequestConfig.secretsLocation === 1) {
+            if (!thisRequestConfig.secrets || Object.keys(thisRequestConfig.secrets).length === 0) {
                 console.log("Using secrets assigned to the first node as no default secrets were provided")
-                requestConfig.secrets = requestConfig.perNodeSecrets[0] ?? {}
+                thisRequestConfig.secrets = thisRequestConfig.perNodeSecrets[0] ?? {}
             }
         }
 
-        const { success, result, resultLog } = await simulateRequest(requestConfig)
+        const { success, result, resultLog } = await simulateRequest(thisRequestConfig)
         console.log(resultLog)
 
         // Simulate a request fulfillment
@@ -125,7 +134,7 @@ export const simulateRequestAction: ActionType<{
             if (result !== "0x") {
                 console.log(
                     `Response returned to client contract represented as a hex string: ${result}\n${getDecodedResultLog(
-                        requestConfig,
+                        thisRequestConfig,
                         result
                     )}`
                 )
@@ -172,21 +181,23 @@ export const simulateRequestAction: ActionType<{
 
 const deployMockOracle = async (
     hre: HardhatRuntimeEnvironment,
+    linkTokenAddress: string,
     linkEthFeedAddress: string,
     functionsPublicKey: string) => {
     const accounts = await hre.ethers.getSigners()
     const deployer = accounts[0]
 
-    const LinkToken = await hre.ethers.getContractFactoryFromArtifact(LinkTokenArtifact)
-    const linkToken = await LinkToken.deploy()
-    await linkToken.deployed()
+    const linkToken = LinkTokenInterface__factory.connect(linkTokenAddress, deployer)
 
     // Deploy the mock oracle factory contract
+    console.log("Deploying FunctionsOracleFactory...")
     const oracleFactoryFactory = await hre.ethers.getContractFactoryFromArtifact(FunctionsOracleFactoryArtifact)
     const oracleFactory = await oracleFactoryFactory.deploy()
+    console.log(`TX hash: ${oracleFactory.deployTransaction.hash}`)
     await oracleFactory.deployed()
 
     // Deploy the mock oracle contract
+    console.log("Deploying FunctionsOracle...")
     const OracleDeploymentTransaction = await oracleFactory.deployNewOracle()
     const OracleDeploymentReceipt = await OracleDeploymentTransaction.wait(1)
     const FunctionsOracleAddress = OracleDeploymentReceipt.events[1].args.don
@@ -200,9 +211,11 @@ const deployMockOracle = async (
     await oracle.setDONPublicKey("0x" + functionsPublicKey)
 
     // Deploy the mock registry billing contract
+    console.log("Deploying FunctionsBillingRegistry...")
     const registryFactory = await hre.ethers.getContractFactoryFromArtifact(FunctionsBillingRegistry)
-    const registry = await registryFactory.deploy(linkToken.Address, linkEthFeedAddress, FunctionsOracleAddress)
-    await registry.deployTransaction.wait(1)
+    const registry = await registryFactory.deploy(linkTokenAddress, linkEthFeedAddress, FunctionsOracleAddress)
+    console.log(`TX hash: ${registry.deployTransaction.hash}`)
+    await registry.deployed()
 
     // Set registry configuration
     const config = {
@@ -223,8 +236,16 @@ const deployMockOracle = async (
         config.requestTimeoutSeconds
     )
     // Set the current account as an authorized sender in the mock registry to allow for simulated local fulfillments
+    console.log("Configuring registry and oracle...")
     await registry.setAuthorizedSenders([oracle.address, deployer.address])
     await oracle.setRegistry(registry.address)
+
+    console.table({
+        "Oracle": oracle.address,
+        "Registry": registry.address,
+        "LinkToken": linkToken.address
+    })
+
     return { oracle, registry, linkToken }
 }
 

@@ -33,5 +33,5 @@ export const deployConsumerContract: ActionType<{
     console.warn("POLYGONSCAN_API_KEY or ETHERSCAN_API_KEY missing. Skipping contract verification...")
   }
 
-  console.log(`FunctionsConsumer contract deployed at ${clientContract.address} on ${hre.network.name}`)
+  console.table({ "FunctionsConsumer": clientContract.address })
 }

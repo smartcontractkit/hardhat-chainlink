@@ -12,11 +12,11 @@ export const getSubscriptionInfo: ActionType<{
     subscriptionId
   );
 
-  console.log(`Subscription ${subscriptionId} owner: ${subInfo.owner}`);
-  console.log(`Balance: ${hre.ethers.utils.formatEther(subInfo.balance)} LINK`);
-  console.log(
-    `${subInfo.consumers.length} authorized consumer contract${subInfo.consumers.length === 1 ? "" : "s"
-    }:`
-  );
-  console.log(subInfo.consumers);
+  console.table({
+    "Owner": subInfo.owner,
+    "Balance": `${hre.ethers.utils.formatEther(subInfo.balance)} LINK`
+  })
+
+  console.log(`Authorized consumers:`);
+  console.table(subInfo.consumers);
 };

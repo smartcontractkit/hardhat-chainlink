@@ -94,10 +94,6 @@ task(
   "Simulates an end-to-end fulfillment locally for the FunctionsConsumer contract"
 )
   .addPositionalParam(
-    "linkEthAddress",
-    "LINK/ETH price feed address"
-  )
-  .addPositionalParam(
     "functionsPublicKey",
     "Functions DON public key (hex without 0x prefix)"
   )
