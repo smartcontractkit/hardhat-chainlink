@@ -168,7 +168,7 @@ task(
 
 task(
   "chainlink:functions-cancel-subscription",
-  ""
+  "Cancels a subscription and refunds to a specified address"
 )
   .addPositionalParam(
     "registryAddress",

@@ -91,10 +91,16 @@ Chainlink Functions do not require your consumer contracts to hold LINK tokens a
 
 ### Tasks
 
+Run `npx hardhat` to see the full list of tasks. Run a specific task without arguments to see the expected arguments.
+
 - `chainlink:functions-deploy-consumer-contract`: Deploys FunctionsConsumer contract
 - `chainlink:functions-generate-consumer-contract`: Generates a new `FunctionsConsumer.sol` contract in your `contracts` directory
 - `chainlink:functions-get-subscription-info`: Retrieve Functions subscription info
 - `chainlink:functions-simulate-request`: Simulates an end-to-end fulfillment locally for the FunctionsConsumer contract
+- `chainlink:functions-add-subscription-consumer`: Authorize a client contract address to consumer the subscription
+- `chainlink:functions-cancel-subscription`: Cancels a subscription and refunds to a specified address
+- `chainlink:functions-create-subscription`: Creates a new subscription
+- `chainlink:functions-fund-subscription`: Funds an existing subscription with the given amount of LINK
 
 ### functionsGetSubscriptionInfo
 
@@ -120,6 +126,18 @@ public async functionsGetSubscriptionInfo(
   - `balance` - The Chainlink Functions Subscription balance (LINK).
   - `owner` - The Chainlink Functions Subscription owner (address).
   - `consumers` - The list of authorized client contract addresses.
+
+### functionsFundSubscription
+
+TBD
+
+### functionsCancelSubscription
+
+TBD
+
+### functionsAddSubscriptionConsumer
+
+TBD
 
 ## Chainlink Data Feeds
 
