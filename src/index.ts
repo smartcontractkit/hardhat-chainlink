@@ -15,6 +15,10 @@ import { getSubscriptionInfo } from "./tasks/functions/get-subscription-info";
 import { deployConsumerContract } from "./tasks/functions/deploy-consumer-contract";
 import { simulateRequestAction } from "./tasks/functions/simulate-request";
 import { generateConsumerContract } from "./tasks/functions/generate-consumer-contract";
+import { createSubscriptionAction } from "./tasks/functions/create-subscription";
+import { fundSubscriptionAction } from "./tasks/functions/fund-subscription";
+import { addSubscriptionConsumerAction } from "./tasks/functions/add-subscription-consumer";
+import { cancelSubscriptionAction } from "./tasks/functions/cancel-subscription";
 import { fundEth, fundLink } from "./tasks/fund";
 import { nodeInfo } from "./tasks/node-info";
 import { runNode } from "./tasks/run-node";
@@ -107,3 +111,75 @@ task(
   "chainlink:functions-generate-consumer-contract",
   "Generates a new FunctionsConsumer.sol contract in your contracts directory"
 ).setAction(generateConsumerContract);
+
+task(
+  "chainlink:functions-fund-subscription",
+  "Funds an existing subscription with the given amount of LINK"
+)
+  .addPositionalParam(
+    "registryAddress",
+    "FunctionsBillingRegistry address"
+  )
+  .addPositionalParam(
+    "subscriptionId",
+    "A subscription ID"
+  )
+  .addPositionalParam(
+    "linkAmount",
+    "Amount of LINK to fund the subscription"
+  )
+  .setAction(fundSubscriptionAction)
+
+task(
+  "chainlink:functions-create-subscription",
+  "Creates a new subscription"
+)
+  .addPositionalParam(
+    "registryAddress",
+    "FunctionsBillingRegistry address"
+  )
+  .addOptionalPositionalParam(
+    "clientContractAddress",
+    "Address of the client contract address authorized to use the new billing subscription"
+  )
+  .addOptionalPositionalParam(
+    "linkAmount",
+    "Initial amount used to fund the subscription in LINK"
+  )
+  .setAction(createSubscriptionAction)
+
+task(
+  "chainlink:functions-add-subscription-consumer",
+  "Authorize a client contract address to consumer the subscription"
+)
+  .addPositionalParam(
+    "registryAddress",
+    "FunctionsBillingRegistry address"
+  )
+  .addPositionalParam(
+    "subscriptionId",
+    "A subscription ID"
+  )
+  .addPositionalParam(
+    "clientContractAddress",
+    "A client contract address"
+  )
+  .setAction(addSubscriptionConsumerAction)
+
+task(
+  "chainlink:functions-cancel-subscription",
+  ""
+)
+  .addPositionalParam(
+    "registryAddress",
+    "FunctionsBillingRegistry address"
+  )
+  .addPositionalParam(
+    "subscriptionId",
+    "A subscription ID to cancel"
+  )
+  .addOptionalPositionalParam(
+    "refundAddress",
+    "An address to refund (defaults to subscription owner)"
+  )
+  .setAction(cancelSubscriptionAction)

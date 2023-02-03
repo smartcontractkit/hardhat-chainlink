@@ -1,5 +1,5 @@
 // Returns LINK token contract address for the specified chain.
-export function getLinkTokenAddress(chainID: number): string {
+export function getLinkTokenAddress(chainID: number | undefined): string {
     switch (chainID) {
         case 1: // Ethereum Mainnet
             return "0x514910771AF9Ca656af840dff83E8264EcF986CA"
@@ -14,7 +14,7 @@ export function getLinkTokenAddress(chainID: number): string {
 }
 
 // Returns LINK/ETH price feed contract address for the specified chain.
-export function getLinkEthPriceFeedAddress(chainID: number): string {
+export function getLinkEthPriceFeedAddress(chainID: number | undefined): string {
     switch (chainID) {
         case 1: // Ethereum Mainnet
             return "0xDC530D9457755926550b59e8ECcdaE7624181557"
