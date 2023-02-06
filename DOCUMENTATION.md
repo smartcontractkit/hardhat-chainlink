@@ -129,15 +129,55 @@ public async functionsGetSubscriptionInfo(
 
 ### functionsFundSubscription
 
-TBD
+```typescript
+public async functionsFundSubscription(
+    registryAddress: string,
+    subscriptionId: number,
+    linkAmount: string,
+  ): Promise<BigNumber> 
+```
+
+- Parameters:
+
+  - `registryAddress` - Chainlink Functions Registry Address.
+  - `subscriptionId` - The Chainlink Functions Subscription ID.
+  - `linkAmount` - Amount of LINK to add to the subscription balance.
+
+- Return values:
+
+  - `BigNumber` - The new subscription balance (LINK).
 
 ### functionsCancelSubscription
 
-TBD
+```typescript
+public async functionsCancelSubscription(
+    registryAddress: string,
+    subscriptionId: number,
+    refundAddress: string,
+  ): Promise<void> 
+```
+
+- Parameters:
+
+  - `registryAddress` - Chainlink Functions Registry Address.
+  - `subscriptionId` - The Chainlink Functions Subscription ID.
+  - `refundAddress` - A refund address (or keep empty for the subscription owner address).
 
 ### functionsAddSubscriptionConsumer
 
-TBD
+```typescript
+public async functionsAddSubscriptionConsumer(
+    registryAddress: string,
+    subscriptionId: number,
+    consumerAddress: string,
+  ): Promise<void> 
+```
+
+- Parameters:
+
+  - `registryAddress` - Chainlink Functions Registry Address.
+  - `subscriptionId` - The Chainlink Functions Subscription ID.
+  - `consumerAddress` - A consumer contract address.
 
 ## Chainlink Data Feeds
 
