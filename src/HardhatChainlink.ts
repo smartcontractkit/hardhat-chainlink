@@ -1,7 +1,5 @@
-import "@nomiclabs/hardhat-ethers/";
+import "@nomiclabs/hardhat-ethers";
 import { BigNumber, BytesLike } from "ethers";
-import { link } from "fs";
-import { string } from "hardhat/internal/core/params/argumentTypes";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import {
@@ -30,10 +28,10 @@ import {
   withdrawKeeperPayment,
 } from "./automation";
 import {
-  getSubscriptionInfo,
-  fundSubscription,
-  cancelSubscription,
   addSubscriptionConsumer,
+  cancelSubscription,
+  fundSubscription,
+  getSubscriptionInfo,
 } from "./functions";
 import {
   Denominations,
@@ -930,26 +928,39 @@ export class HardhatChainlink {
   public async functionsFundSubscription(
     registryAddress: string,
     subscriptionId: number,
-    linkAmount: string,
+    linkAmount: string
   ): Promise<BigNumber> {
-    return fundSubscription(this.env, registryAddress, subscriptionId, linkAmount);
+    return fundSubscription(
+      this.env,
+      registryAddress,
+      subscriptionId,
+      linkAmount
+    );
   }
 
   public async functionsCancelSubscription(
     registryAddress: string,
     subscriptionId: number,
-    refundAddress: string,
+    refundAddress: string
   ): Promise<void> {
-    return cancelSubscription(this.env, registryAddress, subscriptionId, refundAddress);
+    return cancelSubscription(
+      this.env,
+      registryAddress,
+      subscriptionId,
+      refundAddress
+    );
   }
 
   public async functionsAddSubscriptionConsumer(
     registryAddress: string,
     subscriptionId: number,
-    consumerAddress: string,
+    consumerAddress: string
   ): Promise<void> {
-    return addSubscriptionConsumer(this.env, registryAddress, subscriptionId, consumerAddress);
+    return addSubscriptionConsumer(
+      this.env,
+      registryAddress,
+      subscriptionId,
+      consumerAddress
+    );
   }
-
 }
-

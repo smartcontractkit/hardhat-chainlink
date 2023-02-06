@@ -11,21 +11,21 @@ import { HardhatChainlink } from "./HardhatChainlink";
 import { createJob } from "./tasks/create-job";
 import { deployLinkToken } from "./tasks/deploy-link-token";
 import { deployOracle } from "./tasks/deploy-oracle";
-import { getSubscriptionInfo } from "./tasks/functions/get-subscription-info";
-import { deployConsumerContract } from "./tasks/functions/deploy-consumer-contract";
-import { simulateRequestAction } from "./tasks/functions/simulate-request";
-import { generateConsumerContract } from "./tasks/functions/generate-consumer-contract";
-import { createSubscriptionAction } from "./tasks/functions/create-subscription";
-import { fundSubscriptionAction } from "./tasks/functions/fund-subscription";
 import { addSubscriptionConsumerAction } from "./tasks/functions/add-subscription-consumer";
 import { cancelSubscriptionAction } from "./tasks/functions/cancel-subscription";
+import { createSubscriptionAction } from "./tasks/functions/create-subscription";
+import { deployConsumerContract } from "./tasks/functions/deploy-consumer-contract";
+import { fundSubscriptionAction } from "./tasks/functions/fund-subscription";
+import { generateConsumerContract } from "./tasks/functions/generate-consumer-contract";
+import { getSubscriptionInfo } from "./tasks/functions/get-subscription-info";
+import { simulateRequestAction } from "./tasks/functions/simulate-request";
 import { fundEth, fundLink } from "./tasks/fund";
 import { nodeInfo } from "./tasks/node-info";
 import { runNode } from "./tasks/run-node";
 import "./type-extensions";
 
 extendConfig(
-  (config: HardhatConfig, userConfig: Readonly<HardhatUserConfig>) => { }
+  (config: HardhatConfig, userConfig: Readonly<HardhatUserConfig>) => {}
 );
 
 extendEnvironment((hre: HardhatRuntimeEnvironment) => {
@@ -83,10 +83,7 @@ task(
   "chainlink:functions-deploy-consumer-contract",
   "Deploys FunctionsConsumer contract"
 )
-  .addPositionalParam(
-    "oracleAddress",
-    "FunctionsOracle contract address"
-  )
+  .addPositionalParam("oracleAddress", "FunctionsOracle contract address")
   .addOptionalPositionalParam(
     "verifyContract",
     "Verify deployed contract with Etherscan"
@@ -116,28 +113,13 @@ task(
   "chainlink:functions-fund-subscription",
   "Funds an existing subscription with the given amount of LINK"
 )
-  .addPositionalParam(
-    "registryAddress",
-    "FunctionsBillingRegistry address"
-  )
-  .addPositionalParam(
-    "subscriptionId",
-    "A subscription ID"
-  )
-  .addPositionalParam(
-    "linkAmount",
-    "Amount of LINK to fund the subscription"
-  )
-  .setAction(fundSubscriptionAction)
+  .addPositionalParam("registryAddress", "FunctionsBillingRegistry address")
+  .addPositionalParam("subscriptionId", "A subscription ID")
+  .addPositionalParam("linkAmount", "Amount of LINK to fund the subscription")
+  .setAction(fundSubscriptionAction);
 
-task(
-  "chainlink:functions-create-subscription",
-  "Creates a new subscription"
-)
-  .addPositionalParam(
-    "registryAddress",
-    "FunctionsBillingRegistry address"
-  )
+task("chainlink:functions-create-subscription", "Creates a new subscription")
+  .addPositionalParam("registryAddress", "FunctionsBillingRegistry address")
   .addOptionalPositionalParam(
     "clientContractAddress",
     "Address of the client contract address authorized to use the new billing subscription"
@@ -146,40 +128,25 @@ task(
     "linkAmount",
     "Initial amount used to fund the subscription in LINK"
   )
-  .setAction(createSubscriptionAction)
+  .setAction(createSubscriptionAction);
 
 task(
   "chainlink:functions-add-subscription-consumer",
   "Authorize a client contract address to consumer the subscription"
 )
-  .addPositionalParam(
-    "registryAddress",
-    "FunctionsBillingRegistry address"
-  )
-  .addPositionalParam(
-    "subscriptionId",
-    "A subscription ID"
-  )
-  .addPositionalParam(
-    "clientContractAddress",
-    "A client contract address"
-  )
-  .setAction(addSubscriptionConsumerAction)
+  .addPositionalParam("registryAddress", "FunctionsBillingRegistry address")
+  .addPositionalParam("subscriptionId", "A subscription ID")
+  .addPositionalParam("clientContractAddress", "A client contract address")
+  .setAction(addSubscriptionConsumerAction);
 
 task(
   "chainlink:functions-cancel-subscription",
   "Cancels a subscription and refunds to a specified address"
 )
-  .addPositionalParam(
-    "registryAddress",
-    "FunctionsBillingRegistry address"
-  )
-  .addPositionalParam(
-    "subscriptionId",
-    "A subscription ID to cancel"
-  )
+  .addPositionalParam("registryAddress", "FunctionsBillingRegistry address")
+  .addPositionalParam("subscriptionId", "A subscription ID to cancel")
   .addOptionalPositionalParam(
     "refundAddress",
     "An address to refund (defaults to subscription owner)"
   )
-  .setAction(cancelSubscriptionAction)
+  .setAction(cancelSubscriptionAction);

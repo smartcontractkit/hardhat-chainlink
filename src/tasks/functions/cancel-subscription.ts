@@ -1,4 +1,5 @@
 import { ActionType } from "hardhat/types";
+
 import { cancelSubscription } from "../../functions";
 
 export const cancelSubscriptionAction: ActionType<{
@@ -8,9 +9,13 @@ export const cancelSubscriptionAction: ActionType<{
 }> = async (taskArgs, hre) => {
   const { refundAddress, subscriptionId, registryAddress } = taskArgs;
 
-  console.log(`Cancelling subscription ${subscriptionId} with refund to ${refundAddress || "owner"}...`);
-  
+  console.log(
+    `Cancelling subscription ${subscriptionId} with refund to ${
+      refundAddress || "owner"
+    }...`
+  );
+
   await cancelSubscription(hre, registryAddress, subscriptionId, refundAddress);
 
-  console.log(`Subscription ${subscriptionId} has been cancelled.`)
+  console.log(`Subscription ${subscriptionId} has been cancelled.`);
 };

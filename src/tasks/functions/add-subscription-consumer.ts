@@ -1,4 +1,5 @@
 import { ActionType } from "hardhat/types";
+
 import { addSubscriptionConsumer } from "../../functions";
 
 export const addSubscriptionConsumerAction: ActionType<{
@@ -8,9 +9,18 @@ export const addSubscriptionConsumerAction: ActionType<{
 }> = async (taskArgs, hre) => {
   const { subscriptionId, registryAddress, clientContractAddress } = taskArgs;
 
-  console.log(`Adding subscription ${subscriptionId} consumer ${clientContractAddress}...`);
+  console.log(
+    `Adding subscription ${subscriptionId} consumer ${clientContractAddress}...`
+  );
 
-    await addSubscriptionConsumer(hre, registryAddress, subscriptionId, clientContractAddress);
+  await addSubscriptionConsumer(
+    hre,
+    registryAddress,
+    subscriptionId,
+    clientContractAddress
+  );
 
-    console.log(`Client ${clientContractAddress} has been authorized with subscription: ${subscriptionId}`)
+  console.log(
+    `Client ${clientContractAddress} has been authorized with subscription: ${subscriptionId}`
+  );
 };

@@ -1,10 +1,7 @@
-import {
-  BigNumber,
-  ContractTransaction,
-  ContractReceipt,
-} from "ethers";
+import { BigNumber, ContractReceipt, ContractTransaction } from "ethers";
 import { BytesLike, defaultAbiCoder } from "ethers/lib/utils";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+
 import {
   LinkTokenInterface__factory,
   VRFCoordinatorV2__factory,
@@ -16,15 +13,20 @@ export const createVrfSubscription = async (
   waitNumberOfConfirmations: number
 ): Promise<{ subscriptionId: BigNumber; transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
-  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(vrfCoordinatorAddress, signer);
+  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
+    vrfCoordinatorAddress,
+    signer
+  );
 
   const tx: ContractTransaction = await vrfCoordinatorV2.createSubscription();
   const txReceipt: ContractReceipt = await tx.wait(waitNumberOfConfirmations);
-  if (!txReceipt.events) throw "Error Creating New Subscription";
+  if (!txReceipt.events) {
+    throw new Error("Error Creating New Subscription");
+  }
 
   const subscriptionId = BigNumber.from(txReceipt.events[0].topics[1]);
 
-  return { subscriptionId: subscriptionId, transactionHash: tx.hash };
+  return { subscriptionId, transactionHash: tx.hash };
 };
 
 export const fundVrfSubscription = async (
@@ -36,7 +38,10 @@ export const fundVrfSubscription = async (
   waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
-  const linkToken = LinkTokenInterface__factory.connect(linkTokenAddress, signer);
+  const linkToken = LinkTokenInterface__factory.connect(
+    linkTokenAddress,
+    signer
+  );
 
   const tx: ContractTransaction = await linkToken.transferAndCall(
     vrfCoordinatorAddress,
@@ -56,7 +61,10 @@ export const addVrfConsumer = async (
   waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
-  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(vrfCoordinatorAddress, signer);
+  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
+    vrfCoordinatorAddress,
+    signer
+  );
 
   const tx: ContractTransaction = await vrfCoordinatorV2.addConsumer(
     subscriptionId,
@@ -75,7 +83,10 @@ export const removeVrfConsumer = async (
   waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
-  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(vrfCoordinatorAddress, signer);
+  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
+    vrfCoordinatorAddress,
+    signer
+  );
 
   const tx: ContractTransaction = await vrfCoordinatorV2.removeConsumer(
     subscriptionId,
@@ -94,7 +105,10 @@ export const cancelVrfSubscription = async (
   waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
-  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(vrfCoordinatorAddress, signer);
+  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
+    vrfCoordinatorAddress,
+    signer
+  );
 
   const tx: ContractTransaction = await vrfCoordinatorV2.cancelSubscription(
     subscriptionId,
@@ -116,7 +130,10 @@ export const getVrfSubscriptionDetails = async (
   consumers: string[];
 }> => {
   const [signer] = await env.ethers.getSigners();
-  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(vrfCoordinatorAddress, signer);
+  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
+    vrfCoordinatorAddress,
+    signer
+  );
 
   const callback = await vrfCoordinatorV2.getSubscription(subscriptionId);
 
@@ -134,9 +151,12 @@ export const pendingVrfRequestExists = async (
   subscriptionId: BigNumber
 ): Promise<boolean> => {
   const [signer] = await env.ethers.getSigners();
-  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(vrfCoordinatorAddress, signer);
+  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
+    vrfCoordinatorAddress,
+    signer
+  );
 
-  return await vrfCoordinatorV2.pendingRequestExists(subscriptionId);
+  return vrfCoordinatorV2.pendingRequestExists(subscriptionId);
 };
 
 export const requestVrfSubscriptionOwnerTransfer = async (
@@ -147,7 +167,10 @@ export const requestVrfSubscriptionOwnerTransfer = async (
   waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
-  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(vrfCoordinatorAddress, signer);
+  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
+    vrfCoordinatorAddress,
+    signer
+  );
 
   const tx: ContractTransaction = await vrfCoordinatorV2.requestSubscriptionOwnerTransfer(
     subscriptionId,
@@ -165,7 +188,10 @@ export const acceptVrfSubscriptionOwnerTransfer = async (
   waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
-  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(vrfCoordinatorAddress, signer);
+  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
+    vrfCoordinatorAddress,
+    signer
+  );
 
   const tx: ContractTransaction = await vrfCoordinatorV2.acceptSubscriptionOwnerTransfer(
     subscriptionId
@@ -180,7 +206,10 @@ export const getMaxVrfConsumers = async (
   vrfCoordinatorAddress: string
 ): Promise<number> => {
   const [signer] = await env.ethers.getSigners();
-  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(vrfCoordinatorAddress, signer);
+  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
+    vrfCoordinatorAddress,
+    signer
+  );
 
   const maxConsumers = await vrfCoordinatorV2.MAX_CONSUMERS();
 
@@ -192,7 +221,10 @@ export const getMaxVrfNumberOfWords = async (
   vrfCoordinatorAddress: string
 ): Promise<number> => {
   const [signer] = await env.ethers.getSigners();
-  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(vrfCoordinatorAddress, signer);
+  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
+    vrfCoordinatorAddress,
+    signer
+  );
 
   const maxNumWords = await vrfCoordinatorV2.MAX_NUM_WORDS();
 
@@ -204,7 +236,10 @@ export const getMaxVrfRequestConfirmations = async (
   vrfCoordinatorAddress: string
 ): Promise<number> => {
   const [signer] = await env.ethers.getSigners();
-  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(vrfCoordinatorAddress, signer);
+  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
+    vrfCoordinatorAddress,
+    signer
+  );
 
   const maxRequestConfirmations = await vrfCoordinatorV2.MAX_REQUEST_CONFIRMATIONS();
 
@@ -216,7 +251,10 @@ export const getMinVrfRequestConfirmations = async (
   vrfCoordinatorAddress: string
 ): Promise<number> => {
   const [signer] = await env.ethers.getSigners();
-  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(vrfCoordinatorAddress, signer);
+  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
+    vrfCoordinatorAddress,
+    signer
+  );
 
   const requestConfig = await vrfCoordinatorV2.getRequestConfig();
 
@@ -228,7 +266,10 @@ export const getMaxVrfRequestGasLimit = async (
   vrfCoordinatorAddress: string
 ): Promise<number> => {
   const [signer] = await env.ethers.getSigners();
-  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(vrfCoordinatorAddress, signer);
+  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
+    vrfCoordinatorAddress,
+    signer
+  );
 
   const requestConfig = await vrfCoordinatorV2.getRequestConfig();
 
@@ -241,7 +282,10 @@ export const getVrfCommitment = async (
   requestId: BigNumber
 ): Promise<BytesLike> => {
   const [signer] = await env.ethers.getSigners();
-  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(vrfCoordinatorAddress, signer);
+  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
+    vrfCoordinatorAddress,
+    signer
+  );
 
   const commitment = await vrfCoordinatorV2.getCommitment(requestId);
 
@@ -258,7 +302,10 @@ export const getVrfCoordinatorConfig = async (
   gasAfterPaymentCalculation: number;
 }> => {
   const [signer] = await env.ethers.getSigners();
-  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(vrfCoordinatorAddress, signer);
+  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
+    vrfCoordinatorAddress,
+    signer
+  );
 
   const config = await vrfCoordinatorV2.getConfig();
 
@@ -275,7 +322,10 @@ export const getVrfCoordinatorTypeAndVersion = async (
   vrfCoordinatorAddress: string
 ): Promise<string> => {
   const [signer] = await env.ethers.getSigners();
-  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(vrfCoordinatorAddress, signer);
+  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
+    vrfCoordinatorAddress,
+    signer
+  );
 
   const typeAndVersion = await vrfCoordinatorV2.typeAndVersion();
 

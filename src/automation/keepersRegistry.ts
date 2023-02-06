@@ -1,5 +1,6 @@
 import { BigNumber, BytesLike, Contract } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+
 import { KeeperRegistry1_3__factory } from "../../types";
 
 export const fundUpkeep = async (
@@ -10,7 +11,10 @@ export const fundUpkeep = async (
   waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(keepersRegistryAddress, signer);
+  const keepersRegistry = KeeperRegistry1_3__factory.connect(
+    keepersRegistryAddress,
+    signer
+  );
 
   const tx = await keepersRegistry.addFunds(id, amountInJuels);
   await tx.wait(waitNumberOfConfirmations);
@@ -31,7 +35,10 @@ export const checkUpkeep = async (
   linkEth: BigNumber;
 }> => {
   const [signer] = await env.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(keepersRegistryAddress, signer);
+  const keepersRegistry = KeeperRegistry1_3__factory.connect(
+    keepersRegistryAddress,
+    signer
+  );
 
   const simulatedResponse = await keepersRegistry.callStatic.checkUpkeep(
     id,
@@ -55,7 +62,10 @@ export const migrateUpkeeps = async (
   waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(keepersRegistryAddress, signer);
+  const keepersRegistry = KeeperRegistry1_3__factory.connect(
+    keepersRegistryAddress,
+    signer
+  );
 
   const tx = await keepersRegistry.migrateUpkeeps(ids, destination);
   await tx.wait(waitNumberOfConfirmations);
@@ -70,7 +80,10 @@ export const receiveMigratedUpkeeps = async (
   waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(keepersRegistryAddress, signer);
+  const keepersRegistry = KeeperRegistry1_3__factory.connect(
+    keepersRegistryAddress,
+    signer
+  );
 
   const tx = await keepersRegistry.receiveUpkeeps(encodedUpkeeps);
   await tx.wait(waitNumberOfConfirmations);
@@ -85,7 +98,10 @@ export const cancelUpkeep = async (
   waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(keepersRegistryAddress, signer);
+  const keepersRegistry = KeeperRegistry1_3__factory.connect(
+    keepersRegistryAddress,
+    signer
+  );
 
   const tx = await keepersRegistry.cancelUpkeep(id);
   await tx.wait(waitNumberOfConfirmations);
@@ -101,7 +117,10 @@ export const withdrawFundsFromCanceledUpkeep = async (
   waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(keepersRegistryAddress, signer);
+  const keepersRegistry = KeeperRegistry1_3__factory.connect(
+    keepersRegistryAddress,
+    signer
+  );
 
   const tx = await keepersRegistry.withdrawFunds(id, to);
   await tx.wait(waitNumberOfConfirmations);
@@ -117,7 +136,10 @@ export const transferKeeperPayeeship = async (
   waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(keepersRegistryAddress, signer);
+  const keepersRegistry = KeeperRegistry1_3__factory.connect(
+    keepersRegistryAddress,
+    signer
+  );
 
   const tx = await keepersRegistry.transferPayeeship(keeper, proposed);
   await tx.wait(waitNumberOfConfirmations);
@@ -132,7 +154,10 @@ export const acceptKeeperPayeeship = async (
   waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(keepersRegistryAddress, signer);
+  const keepersRegistry = KeeperRegistry1_3__factory.connect(
+    keepersRegistryAddress,
+    signer
+  );
 
   const tx = await keepersRegistry.acceptPayeeship(keeper);
   await tx.wait(waitNumberOfConfirmations);
@@ -148,7 +173,10 @@ export const withdrawKeeperPayment = async (
   waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(keepersRegistryAddress, signer);
+  const keepersRegistry = KeeperRegistry1_3__factory.connect(
+    keepersRegistryAddress,
+    signer
+  );
 
   const tx = await keepersRegistry.withdrawPayment(from, to);
   await tx.wait(waitNumberOfConfirmations);
@@ -163,9 +191,12 @@ export const getActiveUpkeepIDs = async (
   maxCount: BigNumber
 ): Promise<BigNumber[]> => {
   const [signer] = await env.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(keepersRegistryAddress, signer);
+  const keepersRegistry = KeeperRegistry1_3__factory.connect(
+    keepersRegistryAddress,
+    signer
+  );
 
-  return await keepersRegistry.getActiveUpkeepIDs(startIndex, maxCount);
+  return keepersRegistry.getActiveUpkeepIDs(startIndex, maxCount);
 };
 
 export const getUpkeep = async (
@@ -183,7 +214,10 @@ export const getUpkeep = async (
   amountSpent: BigNumber;
 }> => {
   const [signer] = await env.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(keepersRegistryAddress, signer);
+  const keepersRegistry = KeeperRegistry1_3__factory.connect(
+    keepersRegistryAddress,
+    signer
+  );
 
   const upkeep = await keepersRegistry.getUpkeep(id);
 
@@ -205,7 +239,10 @@ export const getKeeperInfo = async (
   query: string
 ): Promise<{ payee: string; active: boolean; balance: BigNumber }> => {
   const [signer] = await env.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(keepersRegistryAddress, signer);
+  const keepersRegistry = KeeperRegistry1_3__factory.connect(
+    keepersRegistryAddress,
+    signer
+  );
 
   const keeper = await keepersRegistry.getKeeperInfo(query);
 
@@ -222,9 +259,12 @@ export const keepersGetMaxPaymentForGas = async (
   gasLimit: BigNumber
 ): Promise<BigNumber> => {
   const [signer] = await env.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(keepersRegistryAddress, signer);
+  const keepersRegistry = KeeperRegistry1_3__factory.connect(
+    keepersRegistryAddress,
+    signer
+  );
 
-  return await keepersRegistry.getMaxPaymentForGas(gasLimit);
+  return keepersRegistry.getMaxPaymentForGas(gasLimit);
 };
 
 export const getMinBalanceForUpkeep = async (
@@ -233,9 +273,12 @@ export const getMinBalanceForUpkeep = async (
   id: BigNumber
 ): Promise<BigNumber> => {
   const [signer] = await env.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(keepersRegistryAddress, signer);
+  const keepersRegistry = KeeperRegistry1_3__factory.connect(
+    keepersRegistryAddress,
+    signer
+  );
 
-  return await keepersRegistry.getMinBalanceForUpkeep(id);
+  return keepersRegistry.getMinBalanceForUpkeep(id);
 };
 
 export const getKeepersRegistryState = async (
@@ -261,7 +304,10 @@ export const getKeepersRegistryState = async (
   automationNodes: string[];
 }> => {
   const [signer] = await env.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(keepersRegistryAddress, signer);
+  const keepersRegistry = KeeperRegistry1_3__factory.connect(
+    keepersRegistryAddress,
+    signer
+  );
 
   const store = await keepersRegistry.getState();
 
@@ -291,9 +337,12 @@ export const isKeepersRegistryPaused = async (
   keepersRegistryAddress: string
 ): Promise<boolean> => {
   const [signer] = await env.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(keepersRegistryAddress, signer);
+  const keepersRegistry = KeeperRegistry1_3__factory.connect(
+    keepersRegistryAddress,
+    signer
+  );
 
-  return await keepersRegistry.paused();
+  return keepersRegistry.paused();
 };
 
 export const getKeepersRegistryTypeAndVersion = async (
@@ -301,9 +350,12 @@ export const getKeepersRegistryTypeAndVersion = async (
   keepersRegistryAddress: string
 ): Promise<string> => {
   const [signer] = await env.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(keepersRegistryAddress, signer);
+  const keepersRegistry = KeeperRegistry1_3__factory.connect(
+    keepersRegistryAddress,
+    signer
+  );
 
-  return await keepersRegistry.typeAndVersion();
+  return keepersRegistry.typeAndVersion();
 };
 
 export const getKeepersRegistryUpkeepTranscoderVersion = async (
@@ -311,7 +363,10 @@ export const getKeepersRegistryUpkeepTranscoderVersion = async (
   keepersRegistryAddress: string
 ): Promise<number> => {
   const [signer] = await env.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(keepersRegistryAddress, signer);
+  const keepersRegistry = KeeperRegistry1_3__factory.connect(
+    keepersRegistryAddress,
+    signer
+  );
 
-  return await keepersRegistry.upkeepTranscoderVersion();
+  return keepersRegistry.upkeepTranscoderVersion();
 };

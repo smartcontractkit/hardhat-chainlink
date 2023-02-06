@@ -1,8 +1,12 @@
-import { BigNumber, BytesLike, Contract, ContractTransaction } from "ethers";
-import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { Interface, defaultAbiCoder } from "ethers/lib/utils";
-import { LinkTokenInterface__factory, KeeperRegistrar__factory } from "../../types";
 import KEEPERS_REGISTRAR_ABI from "@chainlink/contracts/abi/v0.8/KeeperRegistrar.json";
+import { BigNumber, BytesLike, Contract, ContractTransaction } from "ethers";
+import { defaultAbiCoder, Interface } from "ethers/lib/utils";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
+
+import {
+  KeeperRegistrar__factory,
+  LinkTokenInterface__factory,
+} from "../../types";
 
 export const registerUpkeep = async (
   env: HardhatRuntimeEnvironment,
@@ -20,11 +24,16 @@ export const registerUpkeep = async (
   waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
-  const linkToken = LinkTokenInterface__factory.connect(linkTokenAddress, signer);
+  const linkToken = LinkTokenInterface__factory.connect(
+    linkTokenAddress,
+    signer
+  );
 
   const solidityRegisterFunctionSignature: string = `register`;
 
-  const KeeperRegistrarInterface: Interface = new Interface(KEEPERS_REGISTRAR_ABI);
+  const KeeperRegistrarInterface: Interface = new Interface(
+    KEEPERS_REGISTRAR_ABI
+  );
 
   const functionSelector: BytesLike = KeeperRegistrarInterface.getSighash(
     solidityRegisterFunctionSignature
@@ -74,7 +83,10 @@ export const getKeepersPendingRegistrationRequest = async (
   balance: BigNumber;
 }> => {
   const [signer] = await env.ethers.getSigners();
-  const keepersRegistrar = KeeperRegistrar__factory.connect(keepersRegistrarAddress, signer);
+  const keepersRegistrar = KeeperRegistrar__factory.connect(
+    keepersRegistrarAddress,
+    signer
+  );
 
   const pendingRequest = await keepersRegistrar.getPendingRequest(hash);
 
@@ -88,7 +100,10 @@ export const cancelKeepersPendingRegistrationRequest = async (
   waitNumberOfConfirmations: number
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await env.ethers.getSigners();
-  const keepersRegistrar = KeeperRegistrar__factory.connect(keepersRegistrarAddress, signer);
+  const keepersRegistrar = KeeperRegistrar__factory.connect(
+    keepersRegistrarAddress,
+    signer
+  );
 
   const tx: ContractTransaction = await keepersRegistrar.cancel(hash);
   await tx.wait(waitNumberOfConfirmations);
@@ -107,7 +122,10 @@ export const getKeepersRegistrarConfig = async (
   minLINKJuels: BigNumber;
 }> => {
   const [signer] = await env.ethers.getSigners();
-  const keepersRegistrar = KeeperRegistrar__factory.connect(keepersRegistrarAddress, signer);
+  const keepersRegistrar = KeeperRegistrar__factory.connect(
+    keepersRegistrarAddress,
+    signer
+  );
 
   const config = await keepersRegistrar.getRegistrationConfig();
 
@@ -125,7 +143,10 @@ export const getKeepersRegistrarTypeAndVersion = async (
   keepersRegistrarAddress: string
 ): Promise<string> => {
   const [signer] = await env.ethers.getSigners();
-  const keepersRegistrar = KeeperRegistrar__factory.connect(keepersRegistrarAddress, signer);
+  const keepersRegistrar = KeeperRegistrar__factory.connect(
+    keepersRegistrarAddress,
+    signer
+  );
 
-  return await keepersRegistrar.typeAndVersion();
+  return keepersRegistrar.typeAndVersion();
 };

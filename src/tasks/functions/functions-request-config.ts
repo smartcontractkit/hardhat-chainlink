@@ -1,6 +1,6 @@
 import * as dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
 
 enum ContentLocation {
   Inline = 0,
@@ -9,7 +9,7 @@ enum ContentLocation {
 
 const CodeLanguage = {
   JavaScript: 0,
-}
+};
 
 const ReturnType = {
   uint: "uint256",
@@ -19,7 +19,7 @@ const ReturnType = {
   string: "string",
   bytes: "Buffer",
   Buffer: "Buffer",
-}
+};
 
 const calculationExampleJS = `
 // This example shows how to calculate a continuously compounding interested rate.
@@ -43,7 +43,7 @@ const totalAmountAfterInterest = principalAmount * eulersNumber ** (APYAsDecimal
 // - Functions.encodeString
 // Or return a custom Buffer for a custom byte encoding
 return Functions.encodeUint256(Math.round(totalAmountAfterInterest))
-`
+`;
 
 // Configure the request by setting the fields below
 export const requestConfig = {
@@ -55,11 +55,11 @@ export const requestConfig = {
   codeLanguage: CodeLanguage.JavaScript,
   // string containing the source code to be executed
   source: calculationExampleJS,
-  //source: fs.readFileSync('./Functions-request-source-API-example.js').toString(),
+  // source: fs.readFileSync('./Functions-request-source-API-example.js').toString(),
   // secrets can be accessed within the source code with `secrets.varName` (ie: secrets.apiKey)
   secrets: { apiKey: process.env.COINMARKETCAP_API_KEY },
   // ETH wallet key used to sign secrets so they cannot be accessed by a 3rd party
-  walletPrivateKey: process.env["PRIVATE_KEY"],
+  walletPrivateKey: process.env.PRIVATE_KEY,
   // args (string only array) can be accessed within the source code with `args[index]` (ie: args[0]).
   args: ["1", "bitcoin", "btc-bitcoin", "btc", "1000000", "450"],
   // expected type of the returned value
@@ -70,4 +70,4 @@ export const requestConfig = {
   // The first entry will be used by the simulator if `secrets` is undefined
   perNodeSecrets: [],
   DONPublicKey: "",
-}
+};

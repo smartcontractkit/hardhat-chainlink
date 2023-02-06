@@ -1,5 +1,6 @@
 import { BigNumber } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+
 import { FeedRegistryInterface__factory } from "../../types";
 
 export const Denominations = Object.freeze({
@@ -32,7 +33,10 @@ export const getFeedRegistryDecimals = async (
   quote: string
 ): Promise<number> => {
   const [signer] = await env.ethers.getSigners();
-  const feedRegistry = FeedRegistryInterface__factory.connect(feedRegistryAddress, signer);
+  const feedRegistry = FeedRegistryInterface__factory.connect(
+    feedRegistryAddress,
+    signer
+  );
 
   return feedRegistry.decimals(base, quote);
 };
@@ -44,7 +48,10 @@ export const getFeedRegistryDescription = async (
   quote: string
 ): Promise<string> => {
   const [signer] = await env.ethers.getSigners();
-  const feedRegistry = FeedRegistryInterface__factory.connect(feedRegistryAddress, signer);
+  const feedRegistry = FeedRegistryInterface__factory.connect(
+    feedRegistryAddress,
+    signer
+  );
 
   return feedRegistry.description(base, quote);
 };
@@ -63,7 +70,10 @@ export const getFeedRegistryRoundData = async (
   answeredInRound: BigNumber;
 }> => {
   const [signer] = await env.ethers.getSigners();
-  const feedRegistry = FeedRegistryInterface__factory.connect(feedRegistryAddress, signer);
+  const feedRegistry = FeedRegistryInterface__factory.connect(
+    feedRegistryAddress,
+    signer
+  );
 
   const roundData = await feedRegistry.getRoundData(base, quote, roundId);
 
@@ -89,7 +99,10 @@ export const getFeedRegistryLatestRoundData = async (
   answeredInRound: BigNumber;
 }> => {
   const [signer] = await env.ethers.getSigners();
-  const feedRegistry = FeedRegistryInterface__factory.connect(feedRegistryAddress, signer);
+  const feedRegistry = FeedRegistryInterface__factory.connect(
+    feedRegistryAddress,
+    signer
+  );
 
   const roundData = await feedRegistry.latestRoundData(base, quote);
 
@@ -109,7 +122,10 @@ export const getFeedRegistryProxyAggregatorVersion = async (
   quote: string
 ): Promise<BigNumber> => {
   const [signer] = await env.ethers.getSigners();
-  const feedRegistry = FeedRegistryInterface__factory.connect(feedRegistryAddress, signer);
+  const feedRegistry = FeedRegistryInterface__factory.connect(
+    feedRegistryAddress,
+    signer
+  );
 
   const version = await feedRegistry.version(base, quote);
 
@@ -123,7 +139,10 @@ export const getFeed = async (
   quote: string
 ): Promise<string> => {
   const [signer] = await env.ethers.getSigners();
-  const feedRegistry = FeedRegistryInterface__factory.connect(feedRegistryAddress, signer);
+  const feedRegistry = FeedRegistryInterface__factory.connect(
+    feedRegistryAddress,
+    signer
+  );
 
   const feedAddress = await feedRegistry.getFeed(base, quote);
 
@@ -138,7 +157,10 @@ export const getPhaseFeed = async (
   phaseId: BigNumber
 ): Promise<string> => {
   const [signer] = await env.ethers.getSigners();
-  const feedRegistry = FeedRegistryInterface__factory.connect(feedRegistryAddress, signer);
+  const feedRegistry = FeedRegistryInterface__factory.connect(
+    feedRegistryAddress,
+    signer
+  );
 
   const feedAddress = await feedRegistry.getPhaseFeed(base, quote, phaseId);
 
@@ -151,7 +173,10 @@ export const isFeedEnabled = async (
   aggregatorAddress: string
 ): Promise<boolean> => {
   const [signer] = await env.ethers.getSigners();
-  const feedRegistry = FeedRegistryInterface__factory.connect(feedRegistryAddress, signer);
+  const feedRegistry = FeedRegistryInterface__factory.connect(
+    feedRegistryAddress,
+    signer
+  );
 
   return feedRegistry.isFeedEnabled(aggregatorAddress);
 };
@@ -168,7 +193,10 @@ export const getPhase = async (
   endingAggregatorRoundId: BigNumber;
 }> => {
   const [signer] = await env.ethers.getSigners();
-  const feedRegistry = FeedRegistryInterface__factory.connect(feedRegistryAddress, signer);
+  const feedRegistry = FeedRegistryInterface__factory.connect(
+    feedRegistryAddress,
+    signer
+  );
 
   const phase = await feedRegistry.getPhase(base, quote, phaseId);
 
@@ -187,7 +215,10 @@ export const getRoundFeed = async (
   roundId: BigNumber
 ): Promise<string> => {
   const [signer] = await env.ethers.getSigners();
-  const feedRegistry = FeedRegistryInterface__factory.connect(feedRegistryAddress, signer);
+  const feedRegistry = FeedRegistryInterface__factory.connect(
+    feedRegistryAddress,
+    signer
+  );
 
   const aggregatorAddress = await feedRegistry.getRoundFeed(
     base,
@@ -209,7 +240,10 @@ export const getPhaseRange = async (
   endingRoundId: BigNumber;
 }> => {
   const [signer] = await env.ethers.getSigners();
-  const feedRegistry = FeedRegistryInterface__factory.connect(feedRegistryAddress, signer);
+  const feedRegistry = FeedRegistryInterface__factory.connect(
+    feedRegistryAddress,
+    signer
+  );
 
   const phaseRange = await feedRegistry.getPhaseRange(base, quote, phaseId);
 
@@ -227,7 +261,10 @@ export const getPreviousRoundId = async (
   roundId: BigNumber
 ): Promise<BigNumber> => {
   const [signer] = await env.ethers.getSigners();
-  const feedRegistry = FeedRegistryInterface__factory.connect(feedRegistryAddress, signer);
+  const feedRegistry = FeedRegistryInterface__factory.connect(
+    feedRegistryAddress,
+    signer
+  );
 
   const previousRoundId = await feedRegistry.getPreviousRoundId(
     base,
@@ -246,7 +283,10 @@ export const getNextRoundId = async (
   roundId: BigNumber
 ): Promise<BigNumber> => {
   const [signer] = await env.ethers.getSigners();
-  const feedRegistry = FeedRegistryInterface__factory.connect(feedRegistryAddress, signer);
+  const feedRegistry = FeedRegistryInterface__factory.connect(
+    feedRegistryAddress,
+    signer
+  );
 
   const nextRoundId = await feedRegistry.getNextRoundId(base, quote, roundId);
 
@@ -260,7 +300,10 @@ export const getCurrentPhaseId = async (
   quote: string
 ): Promise<number> => {
   const [signer] = await env.ethers.getSigners();
-  const feedRegistry = FeedRegistryInterface__factory.connect(feedRegistryAddress, signer);
+  const feedRegistry = FeedRegistryInterface__factory.connect(
+    feedRegistryAddress,
+    signer
+  );
 
   const currentPhaseId = await feedRegistry.getCurrentPhaseId(base, quote);
 
