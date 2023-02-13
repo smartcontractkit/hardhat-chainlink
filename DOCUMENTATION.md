@@ -83,6 +83,102 @@ Here is the list of all available currency identifiers available in the Denomina
 - INR,
 - BRL.
 
+## Chainlink Functions
+
+Chainlink Functions provides your smart contracts with access to a trust-minimized compute infrastructure. Your smart contract sends your code to a Decentralized Oracle Network (DON), and each DON’s oracle will run the same code in a serverless environment. Finally, the DON aggregates all the independent runs and returns the final result to your smart contract. Your code can be anything from a simple computation to fetching data from API providers.
+
+Chainlink Functions do not require your consumer contracts to hold LINK tokens and send them to oracles when making requests. Instead, you must create a subscription account and fund it to pre-pay for your Chainlink Functions requests.
+
+### Tasks
+
+Run `npx hardhat` to see the full list of tasks. Run a specific task without arguments to see the expected arguments.
+
+- `chainlink:functions-deploy-consumer-contract`: Deploys FunctionsConsumer contract
+- `chainlink:functions-generate-consumer-contract`: Generates a new `FunctionsConsumer.sol` contract in your `contracts` directory
+- `chainlink:functions-get-subscription-info`: Retrieve Functions subscription info
+- `chainlink:functions-simulate-request`: Simulates an end-to-end fulfillment locally for the FunctionsConsumer contract
+- `chainlink:functions-add-subscription-consumer`: Authorize a client contract address to consumer the subscription
+- `chainlink:functions-cancel-subscription`: Cancels a subscription and refunds to a specified address
+- `chainlink:functions-create-subscription`: Creates a new subscription
+- `chainlink:functions-fund-subscription`: Funds an existing subscription with the given amount of LINK
+
+### functionsGetSubscriptionInfo
+
+Returns the Chainlink Functions Subscription details.
+
+```typescript
+public async functionsGetSubscriptionInfo(
+    registryAddress: string,
+    subscriptionId: number
+  ): Promise<{
+    balance: BigNumber;
+    owner: string;
+    consumers: string[];
+  }>;
+```
+
+- Parameters:
+
+  - `registryAddress` - Chainlink Functions Registry Address.
+  - `subscriptionId` - The Chainlink Functions Subscription ID.
+
+- Return values:
+  - `balance` - The Chainlink Functions Subscription balance (LINK).
+  - `owner` - The Chainlink Functions Subscription owner (address).
+  - `consumers` - The list of authorized client contract addresses.
+
+### functionsFundSubscription
+
+```typescript
+public async functionsFundSubscription(
+    registryAddress: string,
+    subscriptionId: number,
+    linkAmount: string,
+  ): Promise<BigNumber> 
+```
+
+- Parameters:
+
+  - `registryAddress` - Chainlink Functions Registry Address.
+  - `subscriptionId` - The Chainlink Functions Subscription ID.
+  - `linkAmount` - Amount of LINK to add to the subscription balance.
+
+- Return values:
+
+  - `BigNumber` - The new subscription balance (LINK).
+
+### functionsCancelSubscription
+
+```typescript
+public async functionsCancelSubscription(
+    registryAddress: string,
+    subscriptionId: number,
+    refundAddress: string,
+  ): Promise<void> 
+```
+
+- Parameters:
+
+  - `registryAddress` - Chainlink Functions Registry Address.
+  - `subscriptionId` - The Chainlink Functions Subscription ID.
+  - `refundAddress` - A refund address (or keep empty for the subscription owner address).
+
+### functionsAddSubscriptionConsumer
+
+```typescript
+public async functionsAddSubscriptionConsumer(
+    registryAddress: string,
+    subscriptionId: number,
+    consumerAddress: string,
+  ): Promise<void> 
+```
+
+- Parameters:
+
+  - `registryAddress` - Chainlink Functions Registry Address.
+  - `subscriptionId` - The Chainlink Functions Subscription ID.
+  - `consumerAddress` - A consumer contract address.
+
 ## Chainlink Data Feeds
 
 Chainlink Data Feeds are the quickest way to connect your smart contracts to the real-world data such as asset prices, reserve balances, and L2 sequencer health. Data feeds provide many different types of data for your applications:

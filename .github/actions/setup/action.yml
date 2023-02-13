@@ -1,0 +1,14 @@
+name: Setup
+description: Runs basic commands to install dependencies
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
+    - name: yarn install
+      run: yarn install
+      shell: bash
+    - name: build
+      run: yarn run build
+      shell: bash

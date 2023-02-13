@@ -1,6 +1,7 @@
 import { BigNumber, constants, Contract } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { L2SequencerUptimeStatusFeedAbi } from "../../types/ethers-contracts";
+
+import { L2SequencerUptimeStatusFeedAbi } from "../../types-abis";
 import L2_SEQUENCER_UPTIME_STATUS_FEED_ABI from "../abis/l2SequencerUptimeStatusFeed.abi.json";
 
 export const isLayer2SequencerUp = async (
@@ -54,8 +55,8 @@ export const getTimeSinceLayer2SequencerIsUp = async (
   }
 
   return {
-    isSequencerUp: isSequencerUp,
-    timeSinceUp: timeSinceUp,
-    isGracePeriodOver: isGracePeriodOver,
+    isSequencerUp,
+    timeSinceUp,
+    isGracePeriodOver,
   };
 };

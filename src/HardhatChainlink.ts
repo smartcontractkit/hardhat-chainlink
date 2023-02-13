@@ -1,42 +1,74 @@
-import "@nomiclabs/hardhat-ethers/";
+import "@nomiclabs/hardhat-ethers";
 import { BigNumber, BytesLike } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+
 import {
+  acceptKeeperPayeeship,
+  cancelKeepersPendingRegistrationRequest,
+  cancelUpkeep,
+  checkUpkeep,
+  fundUpkeep,
+  getActiveUpkeepIDs,
+  getKeeperInfo,
+  getKeepersPendingRegistrationRequest,
+  getKeepersRegistrarConfig,
+  getKeepersRegistrarTypeAndVersion,
+  getKeepersRegistryState,
+  getKeepersRegistryTypeAndVersion,
+  getKeepersRegistryUpkeepTranscoderVersion,
+  getMinBalanceForUpkeep,
+  getUpkeep,
+  isKeepersRegistryPaused,
+  keepersGetMaxPaymentForGas,
+  migrateUpkeeps,
+  receiveMigratedUpkeeps,
+  registerUpkeep,
+  transferKeeperPayeeship,
+  withdrawFundsFromCanceledUpkeep,
+  withdrawKeeperPayment,
+} from "./automation";
+import {
+  addSubscriptionConsumer,
+  cancelSubscription,
+  fundSubscription,
+  getSubscriptionInfo,
+} from "./functions";
+import {
+  Denominations,
+  getAggregatorAddress,
+  getAggregatorRoundId,
+  getCurrentPhaseId,
+  getFeed,
+  getFeedRegistryDecimals,
+  getFeedRegistryDescription,
+  getFeedRegistryLatestRoundData,
+  getFeedRegistryProxyAggregatorVersion,
+  getFeedRegistryRoundData,
+  getHistoricalPrice,
+  getHistoricalPriceFromAggregator,
   getLatestPrice,
   getLatestRoundData,
+  getLatestRoundIdOfAggregator,
+  getLatestTimestampOfAggregator,
+  getNextRoundId,
+  getPhase,
+  getPhaseFeed,
+  getPhaseId,
+  getPhaseIdOfAggregator,
+  getPhaseRange,
+  getPreviousRoundId,
+  getPriceFeedAggregatorVersion,
   getPriceFeedDecimals,
   getPriceFeedDescription,
   getRoundData,
-  getAggregatorAddress,
-  getAggregatorRoundId,
-  getPhaseId,
-  getHistoricalPrice,
-  getPriceFeedAggregatorVersion,
+  getRoundFeed,
+  getRoundTimestampOfAggregator,
+  getTimeSinceLayer2SequencerIsUp,
+  getTypeAndVersionOfAggregator,
+  isFeedEnabled,
+  isLayer2SequencerUp,
   resolveEnsAggregatorAddress,
   resolveEnsAggregatorAddressWithSubdomains,
-  Denominations,
-  getFeedRegistryDecimals,
-  getFeedRegistryDescription,
-  getFeedRegistryRoundData,
-  getFeedRegistryLatestRoundData,
-  getFeedRegistryProxyAggregatorVersion,
-  getFeed,
-  getPhaseFeed,
-  isFeedEnabled,
-  getPhase,
-  getRoundFeed,
-  getPhaseRange,
-  getPreviousRoundId,
-  getNextRoundId,
-  getCurrentPhaseId,
-  getHistoricalPriceFromAggregator,
-  getRoundTimestampOfAggregator,
-  getLatestTimestampOfAggregator,
-  getLatestRoundIdOfAggregator,
-  getTypeAndVersionOfAggregator,
-  getPhaseIdOfAggregator,
-  isLayer2SequencerUp,
-  getTimeSinceLayer2SequencerIsUp,
 } from "./priceFeeds";
 import {
   acceptVrfSubscriptionOwnerTransfer,
@@ -44,48 +76,23 @@ import {
   cancelVrfSubscription,
   createVrfSubscription,
   fundVrfSubscription,
+  getMaxVrfConsumers,
+  getMaxVrfNumberOfWords,
+  getMaxVrfRequestConfirmations,
+  getMaxVrfRequestGasLimit,
+  getMinVrfRequestConfirmations,
+  getVrfCommitment,
+  getVrfCoordinatorConfig,
+  getVrfCoordinatorTypeAndVersion,
   getVrfSubscriptionDetails,
   pendingVrfRequestExists,
   removeVrfConsumer,
   requestVrfSubscriptionOwnerTransfer,
-  getMaxVrfConsumers,
-  getMaxVrfNumberOfWords,
-  getMaxVrfRequestConfirmations,
-  getMinVrfRequestConfirmations,
-  getMaxVrfRequestGasLimit,
-  getVrfCommitment,
-  getVrfCoordinatorConfig,
-  getVrfCoordinatorTypeAndVersion,
 } from "./vrf";
-import {
-  registerUpkeep,
-  getKeepersPendingRegistrationRequest,
-  cancelKeepersPendingRegistrationRequest,
-  getKeepersRegistrarConfig,
-  getKeepersRegistrarTypeAndVersion,
-  fundUpkeep,
-  checkUpkeep,
-  migrateUpkeeps,
-  receiveMigratedUpkeeps,
-  cancelUpkeep,
-  withdrawFundsFromCanceledUpkeep,
-  transferKeeperPayeeship,
-  acceptKeeperPayeeship,
-  withdrawKeeperPayment,
-  getActiveUpkeepIDs,
-  getUpkeep,
-  getKeeperInfo,
-  keepersGetMaxPaymentForGas,
-  getMinBalanceForUpkeep,
-  getKeepersRegistryState,
-  isKeepersRegistryPaused,
-  getKeepersRegistryTypeAndVersion,
-  getKeepersRegistryUpkeepTranscoderVersion,
-} from "./automation";
 
 export class HardhatChainlink {
-  private env: HardhatRuntimeEnvironment;
   public denominations;
+  private env: HardhatRuntimeEnvironment;
 
   constructor(env: HardhatRuntimeEnvironment) {
     this.env = env;
@@ -669,7 +676,10 @@ export class HardhatChainlink {
   public async getAutomationRegistrarTypeAndVersion(
     automationRegistrarAddress: string
   ): Promise<string> {
-    return getKeepersRegistrarTypeAndVersion(this.env, automationRegistrarAddress);
+    return getKeepersRegistrarTypeAndVersion(
+      this.env,
+      automationRegistrarAddress
+    );
   }
 
   public async fundUpkeep(
@@ -887,7 +897,10 @@ export class HardhatChainlink {
   public async getAutomationRegistryTypeAndVersion(
     automationRegistryAddress: string
   ): Promise<string> {
-    return getKeepersRegistryTypeAndVersion(this.env, automationRegistryAddress);
+    return getKeepersRegistryTypeAndVersion(
+      this.env,
+      automationRegistryAddress
+    );
   }
 
   public async getAutomationRegistryUpkeepTranscoderVersion(
@@ -896,6 +909,58 @@ export class HardhatChainlink {
     return getKeepersRegistryUpkeepTranscoderVersion(
       this.env,
       automationRegistryAddress
+    );
+  }
+
+  // --- Functions ---
+
+  public async functionsGetSubscriptionInfo(
+    registryAddress: string,
+    subscriptionId: number
+  ): Promise<{
+    balance: BigNumber;
+    owner: string;
+    consumers: string[];
+  }> {
+    return getSubscriptionInfo(this.env, registryAddress, subscriptionId);
+  }
+
+  public async functionsFundSubscription(
+    registryAddress: string,
+    subscriptionId: number,
+    linkAmount: string
+  ): Promise<BigNumber> {
+    return fundSubscription(
+      this.env,
+      registryAddress,
+      subscriptionId,
+      linkAmount
+    );
+  }
+
+  public async functionsCancelSubscription(
+    registryAddress: string,
+    subscriptionId: number,
+    refundAddress: string
+  ): Promise<void> {
+    return cancelSubscription(
+      this.env,
+      registryAddress,
+      subscriptionId,
+      refundAddress
+    );
+  }
+
+  public async functionsAddSubscriptionConsumer(
+    registryAddress: string,
+    subscriptionId: number,
+    consumerAddress: string
+  ): Promise<void> {
+    return addSubscriptionConsumer(
+      this.env,
+      registryAddress,
+      subscriptionId,
+      consumerAddress
     );
   }
 }
