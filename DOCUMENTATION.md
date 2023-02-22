@@ -49,7 +49,7 @@ npx hardhat
 
 ## Denominations library
 
-This plugin comes up with the predefined Denominations library. This library is available for you to fetch currency identifiers that lack a canonical Ethereum address.
+This plugin comes up with the predefined [Denominations library](https://github.com/smartcontractkit/chainlink/blob/develop/contracts/src/v0.8/Denominations.sol). This library is available for you to fetch currency identifiers that lack a canonical Ethereum address.
 
 #### Example
 
@@ -62,26 +62,43 @@ const usdDenomination = chainlink.denominations.USD; // 0x0000000000000000000000
 
 Here is the list of all available currency identifiers available in the Denominations library:
 
-- ETH,
-- BTC,
-- USD,
-- GBP,
-- EUR,
-- JPY,
-- KRW,
-- CNY,
-- AUD,
-- CAD,
-- CHF,
-- ARS,
-- PHP,
-- NZD,
-- SGD,
-- NGN,
-- ZAR,
-- RUB,
-- INR,
-- BRL.
+<table>
+  <thead>
+    <th colspan="5">Currency identifiers</th>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        ETH<br/>
+        BTC<br/>
+        USD<br/>
+        GBP<br/>
+        EUR<br/>
+      </td>
+      <td>
+        JPY<br/>
+        KRW<br/>
+        CNY<br/>
+        AUD<br/>
+        CAD<br/>
+      </td>
+      <td>
+        CHF<br/>
+        ARS<br/>
+        PHP<br/>
+        NZD<br/>
+        SGD<br/>
+      </td>
+      <td>
+        NGN<br/>
+        ZAR<br/>
+        RUB<br/>
+        INR<br/>
+        BRL<br/>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 ## Chainlink Functions
 
@@ -93,14 +110,16 @@ Chainlink Functions do not require your consumer contracts to hold LINK tokens a
 
 Run `npx hardhat` to see the full list of tasks. Run a specific task without arguments to see the expected arguments.
 
-- `chainlink:functions-deploy-consumer-contract`: Deploys FunctionsConsumer contract
-- `chainlink:functions-generate-consumer-contract`: Generates a new `FunctionsConsumer.sol` contract in your `contracts` directory
-- `chainlink:functions-get-subscription-info`: Retrieve Functions subscription info
-- `chainlink:functions-simulate-request`: Simulates an end-to-end fulfillment locally for the FunctionsConsumer contract
-- `chainlink:functions-add-subscription-consumer`: Authorize a client contract address to consumer the subscription
-- `chainlink:functions-cancel-subscription`: Cancels a subscription and refunds to a specified address
-- `chainlink:functions-create-subscription`: Creates a new subscription
-- `chainlink:functions-fund-subscription`: Funds an existing subscription with the given amount of LINK
+|Task name                          |Description                              |
+|-----------------------------------|-----------------------------------------|
+|`chainlink:functions-deploy-consumer-contract`|Deploys FunctionsConsumer contract |
+|`chainlink:functions-generate-consumer-contract`| Generates a new `FunctionsConsumer.sol` contract in your `contracts` directory |
+|`chainlink:functions-get-subscription-info`|Retrieve Functions subscription info |
+|`chainlink:functions-simulate-request`|Simulates an end-to-end fulfillment locally for the FunctionsConsumer contract |
+|`chainlink:functions-add-subscription-consumer`|Authorize a client contract address to consumer the subscription |
+|`chainlink:functions-cancel-subscription`| Cancels a subscription and refunds to a specified address |
+|`chainlink:functions-create-subscription`| Creates a new subscription |
+|`chainlink:functions-fund-subscription` | Funds an existing subscription with the given amount of LINK |
 
 ### functionsGetSubscriptionInfo
 
@@ -205,7 +224,10 @@ public async getLatestPrice(priceFeedAddress: string): Promise<BigNumber>;
 
 - Parameters:
 
-  - `priceFeedAddress` - Data Feed Address. List of Price Feed Contract Addresses is available [here](https://docs.chain.link/data-feeds/price-feeds/addresses). List of Proof of Reserve Feed Addresses is available [here](https://docs.chain.link/data-feeds/proof-of-reserve/addresses). List of NFT Floor Pricing Feed Addresses is available [here](https://docs.chain.link/data-feeds/nft-floor-price/addresses).
+  - `priceFeedAddress` - Data Feed address
+    -  [Price Feed contract addresses](https://docs.chain.link/data-feeds/price-feeds/addresses)
+    -  [Proof of Reserve feed addresses](https://docs.chain.link/data-feeds/proof-of-reserve/addresses)
+    -  [NFT Floor Pricing feed addresses](https://docs.chain.link/data-feeds/nft-floor-price/addresses)
 
 - `RETURN`: The latest price
 
@@ -227,7 +249,7 @@ public async getLatestRoundData(
 
 - Parameters:
 
-  - `dataFeedAddress` - Data Feed Address.
+  - `dataFeedAddress` - Data Feed address
 
 - Return values:
   - `roundId` - The round ID.
@@ -246,7 +268,7 @@ public async getPriceFeedDecimals(priceFeedAddress: string): Promise<number>
 
 - Parameters:
 
-  - `priceFeedAddress` - Data Feed Address.
+  - `priceFeedAddress` - Data Feed address
 
 - `RETURN`: The number of decimals.
 
@@ -262,7 +284,7 @@ public async getPriceFeedDescription(
 
 - Parameters:
 
-  - `priceFeedAddress` - Data Feed Address.
+  - `priceFeedAddress` - Data Feed address
 
 - `RETURN`: The description of the underlying aggregator.
 
