@@ -1,21 +1,19 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-export const resolveEnsAggregatorAddress = async (
-  env: HardhatRuntimeEnvironment,
+export const resolveAggregatorAddress = async (
+  hre: HardhatRuntimeEnvironment,
   baseTick: string,
   quoteTick: string
 ): Promise<string> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
 
-  const proxyAggregatorAddress = await signer.resolveName(
+  return signer.resolveName(
     `${baseTick.toLowerCase()}-${quoteTick.toLowerCase()}.data.eth`
   );
-
-  return proxyAggregatorAddress;
 };
 
-export const resolveEnsAggregatorAddressWithSubdomains = async (
-  env: HardhatRuntimeEnvironment,
+export const resolveAggregatorAddressWithSubdomains = async (
+  hre: HardhatRuntimeEnvironment,
   baseTick: string,
   quoteTick: string
 ): Promise<{
@@ -23,7 +21,7 @@ export const resolveEnsAggregatorAddressWithSubdomains = async (
   underlyingAggregator: string;
   proposedAggregator: string;
 }> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
 
   const proxyAggregatorAddress = await signer.resolveName(
     `proxy.${baseTick.toLowerCase()}-${quoteTick.toLowerCase()}.data.eth`
