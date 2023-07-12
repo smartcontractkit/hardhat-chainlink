@@ -1,44 +1,43 @@
-import { BigNumber, constants, Contract } from "ethers";
+import { BigNumber, BigNumberish, constants, Contract } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { L2SequencerUptimeStatusFeedAbi } from "../../types-abis";
-import L2_SEQUENCER_UPTIME_STATUS_FEED_ABI from "../abis/l2SequencerUptimeStatusFeed.abi.json";
+import L2_SEQUENCER_UPTIME_STATUS_FEED_ABI from "../contracts/abis/l2SequencerUptimeStatusFeed.abi.json";
 
-export const isLayer2SequencerUp = async (
-  env: HardhatRuntimeEnvironment,
-  sequencerUptimeFeedAddress: string
+export const isL2SequencerUp = async (
+  hre: HardhatRuntimeEnvironment,
+  l2SequencerAddress: string
 ): Promise<boolean> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const sequencerUptimeFeed: L2SequencerUptimeStatusFeedAbi = new Contract(
-    sequencerUptimeFeedAddress,
+    l2SequencerAddress,
     L2_SEQUENCER_UPTIME_STATUS_FEED_ABI,
     signer
   ) as L2SequencerUptimeStatusFeedAbi;
 
   const roundData = await sequencerUptimeFeed.latestRoundData();
-  const isSequencerUp = roundData.answer === constants.Zero ? true : false;
 
-  return isSequencerUp;
+  return roundData.answer === constants.Zero;
 };
 
-export const getTimeSinceLayer2SequencerIsUp = async (
-  env: HardhatRuntimeEnvironment,
-  sequencerUptimeFeedAddress: string,
-  gracePeriodTime = BigNumber.from(3600)
+export const getTimeSinceL2SequencerIsUp = async (
+  hre: HardhatRuntimeEnvironment,
+  l2SequencerAddress: string,
+  gracePeriodTime: BigNumberish = BigNumber.from(3600)
 ): Promise<{
   isSequencerUp: boolean;
   timeSinceUp: BigNumber;
   isGracePeriodOver: boolean;
 }> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const sequencerUptimeFeed: L2SequencerUptimeStatusFeedAbi = new Contract(
-    sequencerUptimeFeedAddress,
+    l2SequencerAddress,
     L2_SEQUENCER_UPTIME_STATUS_FEED_ABI,
     signer
   ) as L2SequencerUptimeStatusFeedAbi;
 
   const roundData = await sequencerUptimeFeed.latestRoundData();
-  const isSequencerUp = roundData.answer === constants.Zero ? true : false;
+  const isSequencerUp = roundData.answer === constants.Zero;
 
   let timeSinceUp: BigNumber;
   let isGracePeriodOver: boolean;
@@ -47,11 +46,11 @@ export const getTimeSinceLayer2SequencerIsUp = async (
     timeSinceUp = BigNumber.from(0);
     isGracePeriodOver = false;
   } else {
-    const latestBlock = await env.ethers.provider.getBlock("latest");
+    const latestBlock = await hre.ethers.provider.getBlock("latest");
     timeSinceUp = BigNumber.from(latestBlock.timestamp).sub(
       roundData.startedAt
     );
-    isGracePeriodOver = timeSinceUp.gt(gracePeriodTime) ? true : false;
+    isGracePeriodOver = timeSinceUp.gt(gracePeriodTime);
   }
 
   return {
