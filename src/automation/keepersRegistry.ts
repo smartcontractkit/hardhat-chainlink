@@ -1,32 +1,31 @@
-import { BigNumber, BytesLike, Contract } from "ethers";
+import { BigNumber, BigNumberish, BytesLike } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { KeeperRegistry1_3__factory } from "../../types";
 
 export const fundUpkeep = async (
-  env: HardhatRuntimeEnvironment,
+  hre: HardhatRuntimeEnvironment,
   keepersRegistryAddress: string,
-  id: BigNumber,
-  amountInJuels: BigNumber,
-  waitNumberOfConfirmations: number
+  upkeepId: BigNumberish,
+  amountInJuels: BigNumberish
 ): Promise<{ transactionHash: string }> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const keepersRegistry = KeeperRegistry1_3__factory.connect(
     keepersRegistryAddress,
     signer
   );
 
-  const tx = await keepersRegistry.addFunds(id, amountInJuels);
-  await tx.wait(waitNumberOfConfirmations);
+  const tx = await keepersRegistry.addFunds(upkeepId, amountInJuels);
+  await tx.wait(hre.config.chainlink.confirmations);
 
   return { transactionHash: tx.hash };
 };
 
 export const checkUpkeep = async (
-  env: HardhatRuntimeEnvironment,
+  hre: HardhatRuntimeEnvironment,
   keepersRegistryAddress: string,
-  id: BigNumber,
-  address: string
+  upkeepId: BigNumberish,
+  fromAddress: string
 ): Promise<{
   performData: BytesLike;
   maxLinkPayment: BigNumber;
@@ -34,15 +33,15 @@ export const checkUpkeep = async (
   adjustedGasWei: BigNumber;
   linkEth: BigNumber;
 }> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const keepersRegistry = KeeperRegistry1_3__factory.connect(
     keepersRegistryAddress,
     signer
   );
 
   const simulatedResponse = await keepersRegistry.callStatic.checkUpkeep(
-    id,
-    address
+    upkeepId,
+    fromAddress
   );
 
   return {
@@ -54,143 +53,48 @@ export const checkUpkeep = async (
   };
 };
 
-export const migrateUpkeeps = async (
-  env: HardhatRuntimeEnvironment,
-  keepersRegistryAddress: string,
-  ids: BigNumber[],
-  destination: string,
-  waitNumberOfConfirmations: number
-): Promise<{ transactionHash: string }> => {
-  const [signer] = await env.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(
-    keepersRegistryAddress,
-    signer
-  );
-
-  const tx = await keepersRegistry.migrateUpkeeps(ids, destination);
-  await tx.wait(waitNumberOfConfirmations);
-
-  return { transactionHash: tx.hash };
-};
-
-export const receiveMigratedUpkeeps = async (
-  env: HardhatRuntimeEnvironment,
-  keepersRegistryAddress: string,
-  encodedUpkeeps: BytesLike,
-  waitNumberOfConfirmations: number
-): Promise<{ transactionHash: string }> => {
-  const [signer] = await env.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(
-    keepersRegistryAddress,
-    signer
-  );
-
-  const tx = await keepersRegistry.receiveUpkeeps(encodedUpkeeps);
-  await tx.wait(waitNumberOfConfirmations);
-
-  return { transactionHash: tx.hash };
-};
-
 export const cancelUpkeep = async (
-  env: HardhatRuntimeEnvironment,
+  hre: HardhatRuntimeEnvironment,
   keepersRegistryAddress: string,
-  id: BigNumber,
-  waitNumberOfConfirmations: number
+  upkeepId: BigNumberish
 ): Promise<{ transactionHash: string }> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const keepersRegistry = KeeperRegistry1_3__factory.connect(
     keepersRegistryAddress,
     signer
   );
 
-  const tx = await keepersRegistry.cancelUpkeep(id);
-  await tx.wait(waitNumberOfConfirmations);
+  const tx = await keepersRegistry.cancelUpkeep(upkeepId);
+  await tx.wait(hre.config.chainlink.confirmations);
 
   return { transactionHash: tx.hash };
 };
 
-export const withdrawFundsFromCanceledUpkeep = async (
-  env: HardhatRuntimeEnvironment,
+export const withdrawFunds = async (
+  hre: HardhatRuntimeEnvironment,
   keepersRegistryAddress: string,
-  id: BigNumber,
-  to: string,
-  waitNumberOfConfirmations: number
+  upkeepId: BigNumberish,
+  receivingAddress: string
 ): Promise<{ transactionHash: string }> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const keepersRegistry = KeeperRegistry1_3__factory.connect(
     keepersRegistryAddress,
     signer
   );
 
-  const tx = await keepersRegistry.withdrawFunds(id, to);
-  await tx.wait(waitNumberOfConfirmations);
-
-  return { transactionHash: tx.hash };
-};
-
-export const transferKeeperPayeeship = async (
-  env: HardhatRuntimeEnvironment,
-  keepersRegistryAddress: string,
-  keeper: string,
-  proposed: string,
-  waitNumberOfConfirmations: number
-): Promise<{ transactionHash: string }> => {
-  const [signer] = await env.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(
-    keepersRegistryAddress,
-    signer
-  );
-
-  const tx = await keepersRegistry.transferPayeeship(keeper, proposed);
-  await tx.wait(waitNumberOfConfirmations);
-
-  return { transactionHash: tx.hash };
-};
-
-export const acceptKeeperPayeeship = async (
-  env: HardhatRuntimeEnvironment,
-  keepersRegistryAddress: string,
-  keeper: string,
-  waitNumberOfConfirmations: number
-): Promise<{ transactionHash: string }> => {
-  const [signer] = await env.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(
-    keepersRegistryAddress,
-    signer
-  );
-
-  const tx = await keepersRegistry.acceptPayeeship(keeper);
-  await tx.wait(waitNumberOfConfirmations);
-
-  return { transactionHash: tx.hash };
-};
-
-export const withdrawKeeperPayment = async (
-  env: HardhatRuntimeEnvironment,
-  keepersRegistryAddress: string,
-  from: string,
-  to: string,
-  waitNumberOfConfirmations: number
-): Promise<{ transactionHash: string }> => {
-  const [signer] = await env.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(
-    keepersRegistryAddress,
-    signer
-  );
-
-  const tx = await keepersRegistry.withdrawPayment(from, to);
-  await tx.wait(waitNumberOfConfirmations);
+  const tx = await keepersRegistry.withdrawFunds(upkeepId, receivingAddress);
+  await tx.wait(hre.config.chainlink.confirmations);
 
   return { transactionHash: tx.hash };
 };
 
 export const getActiveUpkeepIDs = async (
-  env: HardhatRuntimeEnvironment,
+  hre: HardhatRuntimeEnvironment,
   keepersRegistryAddress: string,
-  startIndex: BigNumber,
-  maxCount: BigNumber
+  startIndex: BigNumberish,
+  maxCount: BigNumberish
 ): Promise<BigNumber[]> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const keepersRegistry = KeeperRegistry1_3__factory.connect(
     keepersRegistryAddress,
     signer
@@ -200,9 +104,9 @@ export const getActiveUpkeepIDs = async (
 };
 
 export const getUpkeep = async (
-  env: HardhatRuntimeEnvironment,
+  hre: HardhatRuntimeEnvironment,
   keepersRegistryAddress: string,
-  id: BigNumber
+  upkeepId: BigNumberish
 ): Promise<{
   target: string;
   executeGas: number;
@@ -213,13 +117,13 @@ export const getUpkeep = async (
   maxValidBlocknumber: BigNumber;
   amountSpent: BigNumber;
 }> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const keepersRegistry = KeeperRegistry1_3__factory.connect(
     keepersRegistryAddress,
     signer
   );
 
-  const upkeep = await keepersRegistry.getUpkeep(id);
+  const upkeep = await keepersRegistry.getUpkeep(upkeepId);
 
   return {
     target: upkeep.target,
@@ -233,12 +137,100 @@ export const getUpkeep = async (
   };
 };
 
+export const migrateUpkeeps = async (
+  hre: HardhatRuntimeEnvironment,
+  keepersRegistryAddress: string,
+  upkeepIds: BigNumberish[],
+  destination: string
+): Promise<{ transactionHash: string }> => {
+  const [signer] = await hre.ethers.getSigners();
+  const keepersRegistry = KeeperRegistry1_3__factory.connect(
+    keepersRegistryAddress,
+    signer
+  );
+
+  const tx = await keepersRegistry.migrateUpkeeps(upkeepIds, destination);
+  await tx.wait(hre.config.chainlink.confirmations);
+
+  return { transactionHash: tx.hash };
+};
+
+export const receiveUpkeeps = async (
+  hre: HardhatRuntimeEnvironment,
+  keepersRegistryAddress: string,
+  encodedUpkeeps: BytesLike
+): Promise<{ transactionHash: string }> => {
+  const [signer] = await hre.ethers.getSigners();
+  const keepersRegistry = KeeperRegistry1_3__factory.connect(
+    keepersRegistryAddress,
+    signer
+  );
+
+  const tx = await keepersRegistry.receiveUpkeeps(encodedUpkeeps);
+  await tx.wait(hre.config.chainlink.confirmations);
+
+  return { transactionHash: tx.hash };
+};
+
+export const withdrawKeeperPayment = async (
+  hre: HardhatRuntimeEnvironment,
+  keepersRegistryAddress: string,
+  fromAddress: string,
+  toAddress: string
+): Promise<{ transactionHash: string }> => {
+  const [signer] = await hre.ethers.getSigners();
+  const keepersRegistry = KeeperRegistry1_3__factory.connect(
+    keepersRegistryAddress,
+    signer
+  );
+
+  const tx = await keepersRegistry.withdrawPayment(fromAddress, toAddress);
+  await tx.wait(hre.config.chainlink.confirmations);
+
+  return { transactionHash: tx.hash };
+};
+
+export const transferKeeperPayeeship = async (
+  hre: HardhatRuntimeEnvironment,
+  keepersRegistryAddress: string,
+  keeper: string,
+  proposed: string
+): Promise<{ transactionHash: string }> => {
+  const [signer] = await hre.ethers.getSigners();
+  const keepersRegistry = KeeperRegistry1_3__factory.connect(
+    keepersRegistryAddress,
+    signer
+  );
+
+  const tx = await keepersRegistry.transferPayeeship(keeper, proposed);
+  await tx.wait(hre.config.chainlink.confirmations);
+
+  return { transactionHash: tx.hash };
+};
+
+export const acceptKeeperPayeeship = async (
+  hre: HardhatRuntimeEnvironment,
+  keepersRegistryAddress: string,
+  keeper: string
+): Promise<{ transactionHash: string }> => {
+  const [signer] = await hre.ethers.getSigners();
+  const keepersRegistry = KeeperRegistry1_3__factory.connect(
+    keepersRegistryAddress,
+    signer
+  );
+
+  const tx = await keepersRegistry.acceptPayeeship(keeper);
+  await tx.wait(hre.config.chainlink.confirmations);
+
+  return { transactionHash: tx.hash };
+};
+
 export const getKeeperInfo = async (
-  env: HardhatRuntimeEnvironment,
+  hre: HardhatRuntimeEnvironment,
   keepersRegistryAddress: string,
   query: string
 ): Promise<{ payee: string; active: boolean; balance: BigNumber }> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const keepersRegistry = KeeperRegistry1_3__factory.connect(
     keepersRegistryAddress,
     signer
@@ -253,12 +245,12 @@ export const getKeeperInfo = async (
   };
 };
 
-export const keepersGetMaxPaymentForGas = async (
-  env: HardhatRuntimeEnvironment,
+export const getMaxPaymentForGas = async (
+  hre: HardhatRuntimeEnvironment,
   keepersRegistryAddress: string,
-  gasLimit: BigNumber
+  gasLimit: BigNumberish
 ): Promise<BigNumber> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const keepersRegistry = KeeperRegistry1_3__factory.connect(
     keepersRegistryAddress,
     signer
@@ -268,21 +260,21 @@ export const keepersGetMaxPaymentForGas = async (
 };
 
 export const getMinBalanceForUpkeep = async (
-  env: HardhatRuntimeEnvironment,
+  hre: HardhatRuntimeEnvironment,
   keepersRegistryAddress: string,
-  id: BigNumber
+  upkeepId: BigNumberish
 ): Promise<BigNumber> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const keepersRegistry = KeeperRegistry1_3__factory.connect(
     keepersRegistryAddress,
     signer
   );
 
-  return keepersRegistry.getMinBalanceForUpkeep(id);
+  return keepersRegistry.getMinBalanceForUpkeep(upkeepId);
 };
 
-export const getKeepersRegistryState = async (
-  env: HardhatRuntimeEnvironment,
+export const getKeeperRegistryState = async (
+  hre: HardhatRuntimeEnvironment,
   keepersRegistryAddress: string
 ): Promise<{
   nonce: number;
@@ -303,7 +295,7 @@ export const getKeepersRegistryState = async (
   registrar: string;
   automationNodes: string[];
 }> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const keepersRegistry = KeeperRegistry1_3__factory.connect(
     keepersRegistryAddress,
     signer
@@ -332,11 +324,11 @@ export const getKeepersRegistryState = async (
   };
 };
 
-export const isKeepersRegistryPaused = async (
-  env: HardhatRuntimeEnvironment,
+export const isKeeperRegistryPaused = async (
+  hre: HardhatRuntimeEnvironment,
   keepersRegistryAddress: string
 ): Promise<boolean> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const keepersRegistry = KeeperRegistry1_3__factory.connect(
     keepersRegistryAddress,
     signer
@@ -345,11 +337,11 @@ export const isKeepersRegistryPaused = async (
   return keepersRegistry.paused();
 };
 
-export const getKeepersRegistryTypeAndVersion = async (
-  env: HardhatRuntimeEnvironment,
+export const getKeeperRegistryTypeAndVersion = async (
+  hre: HardhatRuntimeEnvironment,
   keepersRegistryAddress: string
 ): Promise<string> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const keepersRegistry = KeeperRegistry1_3__factory.connect(
     keepersRegistryAddress,
     signer
@@ -358,11 +350,11 @@ export const getKeepersRegistryTypeAndVersion = async (
   return keepersRegistry.typeAndVersion();
 };
 
-export const getKeepersRegistryUpkeepTranscoderVersion = async (
-  env: HardhatRuntimeEnvironment,
+export const getKeeperRegistryUpkeepTranscoderVersion = async (
+  hre: HardhatRuntimeEnvironment,
   keepersRegistryAddress: string
 ): Promise<number> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const keepersRegistry = KeeperRegistry1_3__factory.connect(
     keepersRegistryAddress,
     signer
