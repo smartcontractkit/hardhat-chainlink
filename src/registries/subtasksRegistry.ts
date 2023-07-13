@@ -1,8 +1,7 @@
-import { BigNumber } from "ethers";
-
 import { camelToFlat, camelToKebab } from "../helpers/utils";
 import * as automationActions from "../tasks/automation";
 import * as feedsActions from "../tasks/feeds";
+import * as registriesActions from "../tasks/registries";
 import * as vrfActions from "../tasks/vrf";
 
 import { SubtaskProperties } from "./interfaces";
@@ -16,6 +15,7 @@ export enum Task {
   vrf = "vrf",
   sandbox = "sandbox",
   functions = "functions",
+  registries = "registries",
 }
 
 enum DataFeedSubtask {
@@ -102,6 +102,18 @@ enum AutomationSubtasks {
   isKeeperRegistryPaused = "isKeeperRegistryPaused",
   getKeeperRegistryTypeAndVersion = "getKeeperRegistryTypeAndVersion",
   getKeeperRegistryUpkeepTranscoderVersion = "getKeeperRegistryUpkeepTranscoderVersion",
+}
+
+enum PluginRegistriesSubtasks {
+  getDataFeedAddress = "getDataFeedAddress",
+  getFeedRegistryAddress = "getFeedRegistryAddress",
+  getVRFCoordinatorAddress = "getVRFCoordinatorAddress",
+  getLinkTokenAddress = "getLinkTokenAddress",
+  getKeeperRegistryAddress = "getKeeperRegistryAddress",
+  getKeeperRegistrarAddress = "getKeeperRegistrarAddress",
+  getL2SequencerAddress = "getL2SequencerAddress",
+  getFunctionOracleAddress = "getFunctionOracleAddress",
+  getDenomination = "getDenomination",
 }
 
 export const subtasksRegistry: Record<
@@ -1253,4 +1265,68 @@ export const subtasksRegistry: Record<
   },
   [Task.functions]: {},
   [Task.sandbox]: {},
+  [Task.registries]: {
+    [PluginRegistriesSubtasks.getDataFeedAddress]: {
+      action: registriesActions.getDataFeedAddress,
+      command: camelToKebab(PluginRegistriesSubtasks.getDataFeedAddress),
+      description: camelToFlat(PluginRegistriesSubtasks.getDataFeedAddress),
+      args: [],
+    },
+    [PluginRegistriesSubtasks.getFeedRegistryAddress]: {
+      action: registriesActions.getFeedRegistryAddress,
+      command: camelToKebab(PluginRegistriesSubtasks.getFeedRegistryAddress),
+      description: camelToFlat(PluginRegistriesSubtasks.getFeedRegistryAddress),
+      args: [],
+    },
+    [PluginRegistriesSubtasks.getVRFCoordinatorAddress]: {
+      action: registriesActions.getVRFCoordinatorAddress,
+      command: camelToKebab(PluginRegistriesSubtasks.getVRFCoordinatorAddress),
+      description: camelToFlat(
+        PluginRegistriesSubtasks.getVRFCoordinatorAddress
+      ),
+      args: [],
+    },
+    [PluginRegistriesSubtasks.getLinkTokenAddress]: {
+      action: registriesActions.getLinkTokenAddress,
+      command: camelToKebab(PluginRegistriesSubtasks.getLinkTokenAddress),
+      description: camelToFlat(PluginRegistriesSubtasks.getLinkTokenAddress),
+      args: [],
+    },
+    [PluginRegistriesSubtasks.getKeeperRegistryAddress]: {
+      action: registriesActions.getKeeperRegistryAddress,
+      command: camelToKebab(PluginRegistriesSubtasks.getKeeperRegistryAddress),
+      description: camelToFlat(
+        PluginRegistriesSubtasks.getKeeperRegistryAddress
+      ),
+      args: [],
+    },
+    [PluginRegistriesSubtasks.getKeeperRegistrarAddress]: {
+      action: registriesActions.getKeeperRegistrarAddress,
+      command: camelToKebab(PluginRegistriesSubtasks.getKeeperRegistrarAddress),
+      description: camelToFlat(
+        PluginRegistriesSubtasks.getKeeperRegistrarAddress
+      ),
+      args: [],
+    },
+    [PluginRegistriesSubtasks.getL2SequencerAddress]: {
+      action: registriesActions.getL2SequencerAddress,
+      command: camelToKebab(PluginRegistriesSubtasks.getL2SequencerAddress),
+      description: camelToFlat(PluginRegistriesSubtasks.getL2SequencerAddress),
+      args: [],
+    },
+    [PluginRegistriesSubtasks.getFunctionOracleAddress]: {
+      action: registriesActions.getFunctionOracleAddress,
+      command: camelToKebab(PluginRegistriesSubtasks.getFunctionOracleAddress),
+      description: camelToFlat(
+        PluginRegistriesSubtasks.getFunctionOracleAddress
+      ),
+      args: [],
+    },
+    [PluginRegistriesSubtasks.getDenomination]: {
+      action: registriesActions.getDenomination,
+      command: camelToKebab(PluginRegistriesSubtasks.getDenomination),
+      description: camelToFlat(PluginRegistriesSubtasks.getDenomination),
+      args: [],
+    },
+  },
 };
