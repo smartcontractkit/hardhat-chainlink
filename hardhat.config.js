@@ -1,5 +1,4 @@
 require('@nomicfoundation/hardhat-toolbox')
-// require('./dist')
 
 const commonCompilerSettings = {
   optimizer: {
@@ -33,5 +32,5 @@ module.exports = {
         settings: commonCompilerSettings,
       }
     ]
-  }
+  },
 }
