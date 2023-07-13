@@ -1,5 +1,4 @@
 import { extendConfig, extendEnvironment, task } from "hardhat/config";
-import { boolean } from "hardhat/internal/core/params/argumentTypes";
 import { lazyObject } from "hardhat/plugins";
 import {
   HardhatConfig,
@@ -8,145 +7,150 @@ import {
 } from "hardhat/types";
 
 import { HardhatChainlink } from "./HardhatChainlink";
-import { createJob } from "./tasks/create-job";
-import { deployLinkToken } from "./tasks/deploy-link-token";
-import { deployOracle } from "./tasks/deploy-oracle";
-import { addSubscriptionConsumerAction } from "./tasks/functions/add-subscription-consumer";
-import { cancelSubscriptionAction } from "./tasks/functions/cancel-subscription";
-import { createSubscriptionAction } from "./tasks/functions/create-subscription";
-import { deployConsumerContract } from "./tasks/functions/deploy-consumer-contract";
-import { fundSubscriptionAction } from "./tasks/functions/fund-subscription";
-import { generateConsumerContract } from "./tasks/functions/generate-consumer-contract";
-import { getSubscriptionInfo } from "./tasks/functions/get-subscription-info";
-import { simulateRequestAction } from "./tasks/functions/simulate-request";
-import { fundEth, fundLink } from "./tasks/fund";
-import { nodeInfo } from "./tasks/node-info";
-import { runNode } from "./tasks/run-node";
+import { PACKAGE_NAME } from "./helpers/constants";
+import { registerSubtasks } from "./helpers/subtasks";
+import { resolveTask } from "./helpers/tasks";
+import { subtasksRegistry, Task } from "./registries";
 import "./type-extensions";
 
+export interface ChainlinkUserConfig {
+  confirmations?: number;
+}
+
+// Add our types to the Hardhat config
+declare module "hardhat/types/config" {
+  interface HardhatUserConfig {
+    chainlink?: ChainlinkUserConfig;
+  }
+
+  interface HardhatConfig {
+    chainlink: ChainlinkUserConfig;
+  }
+}
+
 extendConfig(
-  (config: HardhatConfig, userConfig: Readonly<HardhatUserConfig>) => {}
+  (config: HardhatConfig, userConfig: Readonly<HardhatUserConfig>) => {
+    const { confirmations } = userConfig.chainlink ?? {};
+    config.chainlink = {
+      confirmations: confirmations || 1,
+    };
+  }
 );
 
 extendEnvironment((hre: HardhatRuntimeEnvironment) => {
   hre.chainlink = lazyObject(() => new HardhatChainlink(hre));
 });
 
-task("chainlink:run-node", "Runs the chainlink node")
-  .addOptionalPositionalParam(
-    "restartOnly",
-    "Restart the existing containers instead of removing and recreating them",
-    false,
-    boolean
-  )
-  .setAction(runNode);
-
-task("chainlink:create-job", "Creates the job")
-  .addPositionalParam("oracleAddress", "Address of Oracle")
-  .addOptionalPositionalParam("jobType", "direct or cron", "direct")
-  .setAction(createJob);
+// DATA FEEDS
+task(`${PACKAGE_NAME}:${Task.dataFeeds}`, "Data Feeds Module")
+  .addOptionalPositionalParam("subtask", "Subtask")
+  .setAction(async (taskArgs, hre) => {
+    await resolveTask(hre, Task.dataFeeds, taskArgs);
+  });
 
 task(
-  "chainlink:deploy-link",
-  "Deploys the Link token into a running node"
-).setAction(deployLinkToken);
+  `${PACKAGE_NAME}:${Task.dataFeeds}:subtasks`,
+  "Data Feeds Module: Subtasks List"
+).setAction(async () => {
+  console.log(JSON.stringify(subtasksRegistry[Task.dataFeeds], null, 2));
+});
 
-task("chainlink:deploy-oracle", "Deploys the oracle")
-  .addPositionalParam("nodeAddress", "The node address")
-  .addPositionalParam("linkAddress", "The Link token address")
-  .setAction(deployOracle);
-
-task("chainlink:fund-eth", "Funds the node with ETH")
-  .addPositionalParam("nodeAddress", "The node address")
-  .addPositionalParam("amount", "Amount to fund")
-  .setAction(fundEth);
-
-task("chainlink:fund-link", "Funds the node with LINK")
-  .addPositionalParam("linkAddress", "The link token address")
-  .addPositionalParam("contractAddress", "The consumer contract address")
-  .setAction(fundLink);
-
-task("chainlink:node-info", "Get node info").setAction(nodeInfo);
+// DATA FEEDS
+task(`${PACKAGE_NAME}:${Task.feedRegistries}`, "Feed Registries Module")
+  .addOptionalPositionalParam("subtask", "Subtask")
+  .setAction(async (taskArgs, hre) => {
+    await resolveTask(hre, Task.feedRegistries, taskArgs);
+  });
 
 task(
-  "chainlink:functions-get-subscription-info",
-  "Retrieve Functions subscription info"
-)
-  .addPositionalParam(
-    "registryAddress",
-    "FunctionsBillingRegistry contract address"
-  )
-  .addPositionalParam("subscriptionId", "Subscription ID")
-  .setAction(getSubscriptionInfo);
+  `${PACKAGE_NAME}:${Task.feedRegistries}:subtasks`,
+  "Feed Registries Module: Subtasks List"
+).setAction(async () => {
+  console.log(JSON.stringify(subtasksRegistry[Task.feedRegistries], null, 2));
+});
+
+// ENS FEEDS RESOLVER
+task(`${PACKAGE_NAME}:${Task.ens}`, "ENS Feeds Resolver Module")
+  .addOptionalPositionalParam("subtask", "Subtask")
+  .setAction(async (taskArgs, hre) => {
+    await resolveTask(hre, Task.ens, taskArgs);
+  });
 
 task(
-  "chainlink:functions-deploy-consumer-contract",
-  "Deploys FunctionsConsumer contract"
-)
-  .addPositionalParam("oracleAddress", "FunctionsOracle contract address")
-  .addOptionalPositionalParam(
-    "verifyContract",
-    "Verify deployed contract with Etherscan"
-  )
-  .setAction(deployConsumerContract);
+  `${PACKAGE_NAME}:${Task.ens}:subtasks`,
+  "ENS Feeds Resolver Module: Subtasks List"
+).setAction(async () => {
+  console.log(JSON.stringify(subtasksRegistry[Task.ens], null, 2));
+});
+
+// LAYER 2 FEED UPTIME SEQUENCER
+task(`${PACKAGE_NAME}:${Task.l2Sequencer}`, "L2 Feeds Uptime Sequencers Module")
+  .addOptionalPositionalParam("subtask", "Subtask")
+  .setAction(async (taskArgs, hre) => {
+    await resolveTask(hre, Task.l2Sequencer, taskArgs);
+  });
 
 task(
-  "chainlink:functions-simulate-request",
-  "Simulates an end-to-end fulfillment locally for the FunctionsConsumer contract"
-)
-  .addPositionalParam(
-    "functionsPublicKey",
-    "Functions DON public key (hex without 0x prefix)"
-  )
-  .addOptionalParam(
-    "gasLimit",
-    "Maximum amount of gas that can be used to call fulfillRequest in the client contract (defaults to 100,000)"
-  )
-  .setAction(simulateRequestAction);
+  `${PACKAGE_NAME}:${Task.l2Sequencer}:subtasks`,
+  "L2 Feeds Uptime Sequencers Module: Subtasks List"
+).setAction(async () => {
+  console.log(JSON.stringify(subtasksRegistry[Task.l2Sequencer], null, 2));
+});
+
+// VRF
+task(`${PACKAGE_NAME}:${Task.vrf}`, "VRF Module")
+  .addOptionalPositionalParam("subtask", "Subtask")
+  .setAction(async (taskArgs, hre) => {
+    await resolveTask(hre, Task.vrf, taskArgs);
+  });
 
 task(
-  "chainlink:functions-generate-consumer-contract",
-  "Generates a new FunctionsConsumer.sol contract in your contracts directory"
-).setAction(generateConsumerContract);
+  `${PACKAGE_NAME}:${Task.vrf}:subtasks`,
+  "VRF Module: Subtasks List"
+).setAction(async () => {
+  console.log(JSON.stringify(subtasksRegistry[Task.vrf], null, 2));
+});
+
+// AUTOMATION
+task(`${PACKAGE_NAME}:${Task.automation}`, "Automation Module")
+  .addOptionalPositionalParam("subtask", "Subtask")
+  .setAction(async (taskArgs, hre) => {
+    await resolveTask(hre, Task.automation, taskArgs);
+  });
 
 task(
-  "chainlink:functions-fund-subscription",
-  "Funds an existing subscription with the given amount of LINK"
-)
-  .addPositionalParam("registryAddress", "FunctionsBillingRegistry address")
-  .addPositionalParam("subscriptionId", "A subscription ID")
-  .addPositionalParam("linkAmount", "Amount of LINK to fund the subscription")
-  .setAction(fundSubscriptionAction);
+  `${PACKAGE_NAME}:${Task.automation}:subtasks`,
+  "Automation Module: Subtasks List"
+).setAction(async () => {
+  console.log(JSON.stringify(subtasksRegistry[Task.automation], null, 2));
+});
 
-task("chainlink:functions-create-subscription", "Creates a new subscription")
-  .addPositionalParam("registryAddress", "FunctionsBillingRegistry address")
-  .addOptionalPositionalParam(
-    "clientContractAddress",
-    "Address of the client contract address authorized to use the new billing subscription"
-  )
-  .addOptionalPositionalParam(
-    "linkAmount",
-    "Initial amount used to fund the subscription in LINK"
-  )
-  .setAction(createSubscriptionAction);
+// SANDBOX
+task(`${PACKAGE_NAME}:${Task.sandbox}`, "Sandbox Module")
+  .addOptionalPositionalParam("subtask", "Subtask")
+  .setAction(async (taskArgs, hre) => {
+    await resolveTask(hre, Task.sandbox, taskArgs);
+  });
 
 task(
-  "chainlink:functions-add-subscription-consumer",
-  "Authorize a client contract address to consumer the subscription"
-)
-  .addPositionalParam("registryAddress", "FunctionsBillingRegistry address")
-  .addPositionalParam("subscriptionId", "A subscription ID")
-  .addPositionalParam("clientContractAddress", "A client contract address")
-  .setAction(addSubscriptionConsumerAction);
+  `${PACKAGE_NAME}:${Task.sandbox}:subtasks`,
+  "Sandbox Module: Subtasks List"
+).setAction(async () => {
+  console.log(JSON.stringify(subtasksRegistry[Task.sandbox], null, 2));
+});
+
+// REGISTRIES
+task(`${PACKAGE_NAME}:${Task.registries}`, "Registries Module")
+  .addOptionalPositionalParam("subtask", "Subtask")
+  .setAction(async (taskArgs, hre) => {
+    await resolveTask(hre, Task.registries, taskArgs);
+  });
 
 task(
-  "chainlink:functions-cancel-subscription",
-  "Cancels a subscription and refunds to a specified address"
-)
-  .addPositionalParam("registryAddress", "FunctionsBillingRegistry address")
-  .addPositionalParam("subscriptionId", "A subscription ID to cancel")
-  .addOptionalPositionalParam(
-    "refundAddress",
-    "An address to refund (defaults to subscription owner)"
-  )
-  .setAction(cancelSubscriptionAction);
+  `${PACKAGE_NAME}:${Task.registries}:subtasks`,
+  "Registries Module: Subtasks List"
+).setAction(async () => {
+  console.log(JSON.stringify(subtasksRegistry[Task.registries], null, 2));
+});
+
+registerSubtasks();
