@@ -89,7 +89,8 @@ export const inquireInput = async (parameter: string) => {
 };
 
 export const inquireDataFeedAddress = async (
-  hre: HardhatRuntimeEnvironment
+  hre: HardhatRuntimeEnvironment,
+  useHardhatNetwork: boolean = true
 ) => {
   const networksRegistry: NetworksRegistry =
     registries.networksRegistry as NetworksRegistry;
@@ -97,17 +98,32 @@ export const inquireDataFeedAddress = async (
   const dataFeedsRegistry: DataFeedsRegistry =
     registries.dataFeedsRegistry as DataFeedsRegistry;
 
-  const chainId = hre.network.config.chainId;
-  if (!chainId) {
-    console.log(
-      "Could not identify network, chainId is not specified in hardhat.config."
-    );
-    return input({
-      message: "Provide a valid Data Feed address",
+  let chainSlug = "";
+  if (useHardhatNetwork) {
+    const chainId = hre.network.config.chainId;
+    if (!chainId) {
+      console.log(
+        "Could not identify network, chainId is not specified in hardhat.config."
+      );
+      return input({
+        message: "Provide a valid Data Feed address",
+      });
+    }
+
+    chainSlug = networksRegistry[chainId].chainSlug;
+  } else {
+    chainSlug = await select({
+      message: "Select a network",
+      choices: Object.values(networksRegistry).reduce((agg, network) => {
+        agg.push({
+          name: network.name,
+          value: network.chainSlug,
+          description: network.name,
+        });
+        return agg;
+      }, [] as Choice[]),
     });
   }
-
-  const chainSlug = networksRegistry[chainId].chainSlug;
 
   if (!dataFeedsRegistry[chainSlug]) {
     console.log(
@@ -159,7 +175,8 @@ export const inquireDataFeedAddress = async (
 };
 
 export const inquireFeedRegistryAddress = async (
-  hre: HardhatRuntimeEnvironment
+  hre: HardhatRuntimeEnvironment,
+  useHardhatNetwork: boolean = true
 ) => {
   const networksRegistry: NetworksRegistry =
     registries.networksRegistry as NetworksRegistry;
@@ -167,17 +184,32 @@ export const inquireFeedRegistryAddress = async (
   const feedRegistriesRegistry: FeedRegistriesRegistry =
     registries.feedRegistriesRegistry as FeedRegistriesRegistry;
 
-  const chainId = hre.network.config.chainId;
-  if (!chainId) {
-    console.log(
-      "Could not identify network, chainId is not specified in hardhat.config."
-    );
-    return input({
-      message: "Provide a valid Feed Registry address",
+  let chainSlug = "";
+  if (useHardhatNetwork) {
+    const chainId = hre.network.config.chainId;
+    if (!chainId) {
+      console.log(
+        "Could not identify network, chainId is not specified in hardhat.config."
+      );
+      return input({
+        message: "Provide a valid Feed Registry address",
+      });
+    }
+
+    chainSlug = networksRegistry[chainId].chainSlug;
+  } else {
+    chainSlug = await select({
+      message: "Select a network",
+      choices: Object.values(networksRegistry).reduce((agg, network) => {
+        agg.push({
+          name: network.name,
+          value: network.chainSlug,
+          description: network.name,
+        });
+        return agg;
+      }, [] as Choice[]),
     });
   }
-
-  const chainSlug = networksRegistry[chainId].chainSlug;
 
   if (!feedRegistriesRegistry[chainSlug]) {
     console.log(
@@ -204,7 +236,8 @@ export const inquireFeedRegistryAddress = async (
 };
 
 export const inquireVRFCoordinatorAddress = async (
-  hre: HardhatRuntimeEnvironment
+  hre: HardhatRuntimeEnvironment,
+  useHardhatNetwork: boolean = true
 ) => {
   const networksRegistry: NetworksRegistry =
     registries.networksRegistry as NetworksRegistry;
@@ -212,17 +245,32 @@ export const inquireVRFCoordinatorAddress = async (
   const vrfCoordinatorsRegistry: VRFCoordinatorsRegistry =
     registries.vrfCoordinatorsRegistry as VRFCoordinatorsRegistry;
 
-  const chainId = hre.network.config.chainId;
-  if (!chainId) {
-    console.log(
-      "Could not identify network, chainId is not specified in hardhat.config."
-    );
-    return input({
-      message: "Provide a valid Data Feed address",
+  let chainSlug = "";
+  if (useHardhatNetwork) {
+    const chainId = hre.network.config.chainId;
+    if (!chainId) {
+      console.log(
+        "Could not identify network, chainId is not specified in hardhat.config."
+      );
+      return input({
+        message: "Provide a valid VRF coordinator address",
+      });
+    }
+
+    chainSlug = networksRegistry[chainId].chainSlug;
+  } else {
+    chainSlug = await select({
+      message: "Select a network",
+      choices: Object.values(networksRegistry).reduce((agg, network) => {
+        agg.push({
+          name: network.name,
+          value: network.chainSlug,
+          description: network.name,
+        });
+        return agg;
+      }, [] as Choice[]),
     });
   }
-
-  const chainSlug = networksRegistry[chainId].chainSlug;
 
   if (!vrfCoordinatorsRegistry[chainSlug]) {
     console.log(
@@ -250,7 +298,8 @@ export const inquireVRFCoordinatorAddress = async (
 };
 
 export const inquireLinkTokenAddress = async (
-  hre: HardhatRuntimeEnvironment
+  hre: HardhatRuntimeEnvironment,
+  useHardhatNetwork: boolean = true
 ) => {
   const networksRegistry: NetworksRegistry =
     registries.networksRegistry as NetworksRegistry;
@@ -258,17 +307,32 @@ export const inquireLinkTokenAddress = async (
   const linkTokensRegistry: LinkTokensRegistry =
     registries.linkTokensRegistry as LinkTokensRegistry;
 
-  const chainId = hre.network.config.chainId;
-  if (!chainId) {
-    console.log(
-      "Could not identify network, chainId is not specified in hardhat.config."
-    );
-    return input({
-      message: "Provide a valid Data Feed address",
+  let chainSlug = "";
+  if (useHardhatNetwork) {
+    const chainId = hre.network.config.chainId;
+    if (!chainId) {
+      console.log(
+        "Could not identify network, chainId is not specified in hardhat.config."
+      );
+      return input({
+        message: "Provide a valid Link Token address",
+      });
+    }
+
+    chainSlug = networksRegistry[chainId].chainSlug;
+  } else {
+    chainSlug = await select({
+      message: "Select a network",
+      choices: Object.values(networksRegistry).reduce((agg, network) => {
+        agg.push({
+          name: network.name,
+          value: network.chainSlug,
+          description: network.name,
+        });
+        return agg;
+      }, [] as Choice[]),
     });
   }
-
-  const chainSlug = networksRegistry[chainId].chainSlug;
 
   if (!linkTokensRegistry[chainSlug]) {
     console.log(
@@ -295,7 +359,8 @@ export const inquireLinkTokenAddress = async (
 };
 
 export const inquireKeeperRegistryAddress = async (
-  hre: HardhatRuntimeEnvironment
+  hre: HardhatRuntimeEnvironment,
+  useHardhatNetwork: boolean = true
 ) => {
   const networksRegistry: NetworksRegistry =
     registries.networksRegistry as NetworksRegistry;
@@ -303,17 +368,32 @@ export const inquireKeeperRegistryAddress = async (
   const keeperRegistriesRegistry: KeeperRegistriesRegistry =
     registries.keeperRegistriesRegistry as KeeperRegistriesRegistry;
 
-  const chainId = hre.network.config.chainId;
-  if (!chainId) {
-    console.log(
-      "Could not identify network, chainId is not specified in hardhat.config."
-    );
-    return input({
-      message: "Provide a valid Data Feed address",
+  let chainSlug = "";
+  if (useHardhatNetwork) {
+    const chainId = hre.network.config.chainId;
+    if (!chainId) {
+      console.log(
+        "Could not identify network, chainId is not specified in hardhat.config."
+      );
+      return input({
+        message: "Provide a valid Keeper Registry address",
+      });
+    }
+
+    chainSlug = networksRegistry[chainId].chainSlug;
+  } else {
+    chainSlug = await select({
+      message: "Select a network",
+      choices: Object.values(networksRegistry).reduce((agg, network) => {
+        agg.push({
+          name: network.name,
+          value: network.chainSlug,
+          description: network.name,
+        });
+        return agg;
+      }, [] as Choice[]),
     });
   }
-
-  const chainSlug = networksRegistry[chainId].chainSlug;
 
   if (!keeperRegistriesRegistry[chainSlug]) {
     console.log(
@@ -341,7 +421,8 @@ export const inquireKeeperRegistryAddress = async (
 };
 
 export const inquireKeeperRegistrarAddress = async (
-  hre: HardhatRuntimeEnvironment
+  hre: HardhatRuntimeEnvironment,
+  useHardhatNetwork: boolean = true
 ) => {
   const networksRegistry: NetworksRegistry =
     registries.networksRegistry as NetworksRegistry;
@@ -349,17 +430,32 @@ export const inquireKeeperRegistrarAddress = async (
   const keeperRegistriesRegistry: KeeperRegistriesRegistry =
     registries.keeperRegistriesRegistry as KeeperRegistriesRegistry;
 
-  const chainId = hre.network.config.chainId;
-  if (!chainId) {
-    console.log(
-      "Could not identify network, chainId is not specified in hardhat.config."
-    );
-    return input({
-      message: "Provide a valid Data Feed address",
+  let chainSlug = "";
+  if (useHardhatNetwork) {
+    const chainId = hre.network.config.chainId;
+    if (!chainId) {
+      console.log(
+        "Could not identify network, chainId is not specified in hardhat.config."
+      );
+      return input({
+        message: "Provide a valid Keeper Registrar address",
+      });
+    }
+
+    chainSlug = networksRegistry[chainId].chainSlug;
+  } else {
+    chainSlug = await select({
+      message: "Select a network",
+      choices: Object.values(networksRegistry).reduce((agg, network) => {
+        agg.push({
+          name: network.name,
+          value: network.chainSlug,
+          description: network.name,
+        });
+        return agg;
+      }, [] as Choice[]),
     });
   }
-
-  const chainSlug = networksRegistry[chainId].chainSlug;
 
   if (!keeperRegistriesRegistry[chainSlug]) {
     console.log(
@@ -387,7 +483,8 @@ export const inquireKeeperRegistrarAddress = async (
 };
 
 export const inquireL2SequencerAddress = async (
-  hre: HardhatRuntimeEnvironment
+  hre: HardhatRuntimeEnvironment,
+  useHardhatNetwork: boolean = true
 ) => {
   const networksRegistry: NetworksRegistry =
     registries.networksRegistry as NetworksRegistry;
@@ -395,17 +492,32 @@ export const inquireL2SequencerAddress = async (
   const l2SequencersRegistry: L2SequencersRegistry =
     registries.l2SequencersRegistry as L2SequencersRegistry;
 
-  const chainId = hre.network.config.chainId;
-  if (!chainId) {
-    console.log(
-      "Could not identify network, chainId is not specified in hardhat.config."
-    );
-    return input({
-      message: "Provide a valid Data Feed address",
+  let chainSlug = "";
+  if (useHardhatNetwork) {
+    const chainId = hre.network.config.chainId;
+    if (!chainId) {
+      console.log(
+        "Could not identify network, chainId is not specified in hardhat.config."
+      );
+      return input({
+        message: "Provide a valid L2 Sequencer address",
+      });
+    }
+
+    chainSlug = networksRegistry[chainId].chainSlug;
+  } else {
+    chainSlug = await select({
+      message: "Select a network",
+      choices: Object.values(networksRegistry).reduce((agg, network) => {
+        agg.push({
+          name: network.name,
+          value: network.chainSlug,
+          description: network.name,
+        });
+        return agg;
+      }, [] as Choice[]),
     });
   }
-
-  const chainSlug = networksRegistry[chainId].chainSlug;
 
   if (!l2SequencersRegistry[chainSlug]) {
     console.log(
@@ -432,7 +544,8 @@ export const inquireL2SequencerAddress = async (
 };
 
 export const inquireFunctionOracleAddress = async (
-  hre: HardhatRuntimeEnvironment
+  hre: HardhatRuntimeEnvironment,
+  useHardhatNetwork: boolean = true
 ) => {
   const networksRegistry: NetworksRegistry =
     registries.networksRegistry as NetworksRegistry;
@@ -440,17 +553,32 @@ export const inquireFunctionOracleAddress = async (
   const functionOraclesRegistry: FunctionOraclesRegistry =
     registries.functionOraclesRegistry as FunctionOraclesRegistry;
 
-  const chainId = hre.network.config.chainId;
-  if (!chainId) {
-    console.log(
-      "Could not identify network, chainId is not specified in hardhat.config."
-    );
-    return input({
-      message: "Provide a valid Data Feed address",
+  let chainSlug = "";
+  if (useHardhatNetwork) {
+    const chainId = hre.network.config.chainId;
+    if (!chainId) {
+      console.log(
+        "Could not identify network, chainId is not specified in hardhat.config."
+      );
+      return input({
+        message: "Provide a valid Function Oracle address",
+      });
+    }
+
+    chainSlug = networksRegistry[chainId].chainSlug;
+  } else {
+    chainSlug = await select({
+      message: "Select a network",
+      choices: Object.values(networksRegistry).reduce((agg, network) => {
+        agg.push({
+          name: network.name,
+          value: network.chainSlug,
+          description: network.name,
+        });
+        return agg;
+      }, [] as Choice[]),
     });
   }
-
-  const chainSlug = networksRegistry[chainId].chainSlug;
 
   if (!functionOraclesRegistry[chainSlug]) {
     console.log(
