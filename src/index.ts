@@ -53,7 +53,7 @@ task(
   `${PACKAGE_NAME}:${Task.dataFeeds}:subtasks`,
   "Data Feeds Module: Subtasks List"
 ).setAction(async () => {
-  console.log(JSON.stringify(subtasksRegistry[Task.dataFeeds], null, 2));
+  printSubtasks(Task.dataFeeds);
 });
 
 // DATA FEEDS
@@ -68,7 +68,7 @@ task(
   `${PACKAGE_NAME}:${Task.feedRegistries}:subtasks`,
   "Feed Registries Module: Subtasks List"
 ).setAction(async () => {
-  console.log(JSON.stringify(subtasksRegistry[Task.feedRegistries], null, 2));
+  printSubtasks(Task.feedRegistries);
 });
 
 // ENS FEEDS RESOLVER
@@ -83,7 +83,7 @@ task(
   `${PACKAGE_NAME}:${Task.ens}:subtasks`,
   "ENS Feeds Resolver Module: Subtasks List"
 ).setAction(async () => {
-  console.log(JSON.stringify(subtasksRegistry[Task.ens], null, 2));
+  printSubtasks(Task.ens);
 });
 
 // LAYER 2 FEED UPTIME SEQUENCER
@@ -98,7 +98,7 @@ task(
   `${PACKAGE_NAME}:${Task.l2Sequencer}:subtasks`,
   "L2 Feeds Uptime Sequencers Module: Subtasks List"
 ).setAction(async () => {
-  console.log(JSON.stringify(subtasksRegistry[Task.l2Sequencer], null, 2));
+  printSubtasks(Task.l2Sequencer);
 });
 
 // VRF
@@ -113,7 +113,7 @@ task(
   `${PACKAGE_NAME}:${Task.vrf}:subtasks`,
   "VRF Module: Subtasks List"
 ).setAction(async () => {
-  console.log(JSON.stringify(subtasksRegistry[Task.vrf], null, 2));
+  printSubtasks(Task.vrf);
 });
 
 // AUTOMATION
@@ -128,7 +128,7 @@ task(
   `${PACKAGE_NAME}:${Task.automation}:subtasks`,
   "Automation Module: Subtasks List"
 ).setAction(async () => {
-  console.log(JSON.stringify(subtasksRegistry[Task.automation], null, 2));
+  printSubtasks(Task.automation);
 });
 
 // SANDBOX
@@ -143,7 +143,7 @@ task(
   `${PACKAGE_NAME}:${Task.sandbox}:subtasks`,
   "Sandbox Module: Subtasks List"
 ).setAction(async () => {
-  console.log(JSON.stringify(subtasksRegistry[Task.sandbox], null, 2));
+  printSubtasks(Task.sandbox);
 });
 
 // REGISTRIES
@@ -158,7 +158,7 @@ task(
   `${PACKAGE_NAME}:${Task.registries}:subtasks`,
   "Plugin Registries Module: Subtasks List"
 ).setAction(async () => {
-  console.log(JSON.stringify(subtasksRegistry[Task.registries], null, 2));
+  printSubtasks(Task.registries);
 });
 
 registerSubtasks();
