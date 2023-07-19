@@ -7,4 +7,3 @@ export * from "./linkTokensRegistry";
 export * from "./keeperRegistriesRegistry";
 export * from "./l2SequencersRegistry";
 export * from "./denominationsRegistry";
-export * from "./subtasksRegistry";

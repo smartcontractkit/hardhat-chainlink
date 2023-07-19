@@ -1,8 +1,9 @@
 import { subtask } from "hardhat/config";
 
-import { subtasksRegistry, Task } from "../registries";
-
-import { PACKAGE_NAME } from "./constants";
+import { subtasks } from "../";
+import { PACKAGE_NAME, SUBTASK_PADDING } from "../../shared/constants";
+import { Task } from "../../shared/enums";
+import { SubtaskProperties } from "../interfaces";
 
 export const registerSubtasks = () => {
   for (const taskName of Object.keys(Task)) {

@@ -1,125 +1,21 @@
 import { camelToFlat, camelToKebab } from "../helpers/utils";
+import {
+  AutomationSubtask,
+  DataFeedSubtask,
+  ensFeedsResolverSubtask,
+  FeedRegistrySubtask,
+  L2SequencerSubtask,
+  PluginRegistriesSubtask,
+  Task,
+  VRFSubtask,
+} from "../shared/enums";
+import { Subtasks } from "../shared/types";
 import * as automationActions from "../tasks/automation";
 import * as feedsActions from "../tasks/feeds";
 import * as registriesActions from "../tasks/registries";
 import * as vrfActions from "../tasks/vrf";
 
-import { SubtaskProperties } from "./interfaces";
-
-export enum Task {
-  dataFeeds = "dataFeeds",
-  feedRegistries = "feedRegistries",
-  l2Sequencer = "l2Sequencer",
-  ens = "ens",
-  automation = "automation",
-  vrf = "vrf",
-  sandbox = "sandbox",
-  functions = "functions",
-  registries = "registries",
-}
-
-enum DataFeedSubtask {
-  getLatestRoundAnswer = "getLatestRoundAnswer",
-  getRoundAnswer = "getRoundAnswer",
-  getLatestRoundData = "getLatestRoundData",
-  getRoundData = "getRoundData",
-  getDecimals = "getDecimals",
-  getDescription = "getDescription",
-  getAggregatorVersion = "getAggregatorVersion",
-  getAggregatorAddress = "getAggregatorAddress",
-  getAggregatorRoundId = "getAggregatorRoundId",
-  getPhaseId = "getPhaseId",
-}
-
-enum FeedRegistrySubtasks {
-  getFeed = "getFeed",
-  isFeedEnabled = "isFeedEnabled",
-  getFeedRegistryDecimals = "getFeedRegistryDecimals",
-  getFeedRegistryDescription = "getFeedRegistryDescription",
-  getFeedRegistryAggregatorVersion = "getFeedRegistryAggregatorVersion",
-  getFeedRegistryLatestRoundData = "getFeedRegistryLatestRoundData",
-  getFeedRegistryRoundData = "getFeedRegistryRoundData",
-  getRoundFeed = "getRoundFeed",
-  getPhase = "getPhase",
-  getPhaseFeed = "getPhaseFeed",
-  getPhaseRange = "getPhaseRange",
-  getCurrentPhaseId = "getCurrentPhaseId",
-  getPreviousRoundId = "getPreviousRoundId",
-  getNextRoundId = "getNextRoundId",
-}
-
-enum L2SequencerSubtasks {
-  isL2SequencerUp = "isL2SequencerUp",
-  getTimeSinceL2SequencerIsUp = "getTimeSinceL2SequencerIsUp",
-}
-
-enum ensFeedsResolverSubtasks {
-  resolveAggregatorAddress = "resolveAggregatorAddress",
-  resolveAggregatorAddressWithSubdomains = "resolveAggregatorAddressWithSubdomains",
-}
-
-enum VRFSubtasks {
-  createSubscription = "createSubscription",
-  fundSubscription = "fundSubscription",
-  cancelSubscription = "cancelSubscription",
-  addConsumer = "addConsumer",
-  removeConsumer = "removeConsumer",
-  getSubscriptionDetails = "getSubscriptionDetails",
-  isPendingRequestExists = "isPendingRequestExists",
-  requestSubscriptionOwnerTransfer = "requestSubscriptionOwnerTransfer",
-  acceptSubscriptionOwnerTransfer = "acceptSubscriptionOwnerTransfer",
-  getMaxConsumers = "getMaxConsumers",
-  getMaxNumberOfWords = "getMaxNumberOfWords",
-  getMaxRequestConfirmations = "getMaxRequestConfirmations",
-  getMinRequestConfirmations = "getMinRequestConfirmations",
-  getMaxRequestGasLimit = "getMaxRequestGasLimit",
-  getCommitment = "getCommitment",
-  getCoordinatorConfig = "getCoordinatorConfig",
-  getCoordinatorTypeAndVersion = "getCoordinatorTypeAndVersion",
-}
-
-enum AutomationSubtasks {
-  registerUpkeep = "registerUpkeep",
-  getPendingRegistrationRequest = "getPendingRegistrationRequest",
-  cancelPendingRegistrationRequest = "cancelPendingRegistrationRequest",
-  getKeeperRegistrarConfig = "getKeeperRegistrarConfig",
-  getKeepersRegistrarTypeAndVersion = "getKeepersRegistrarTypeAndVersion",
-  fundUpkeep = "fundUpkeep",
-  checkUpkeep = "checkUpkeep",
-  migrateUpkeeps = "migrateUpkeeps",
-  receiveUpkeeps = "receiveUpkeeps",
-  cancelUpkeep = "cancelUpkeep",
-  withdrawFunds = "withdrawFunds",
-  transferKeeperPayeeship = "transferKeeperPayeeship",
-  acceptKeeperPayeeship = "acceptKeeperPayeeship",
-  withdrawKeeperPayment = "withdrawKeeperPayment",
-  getActiveUpkeepIDs = "getActiveUpkeepIDs",
-  getUpkeep = "getUpkeep",
-  getKeeperInfo = "getKeeperInfo",
-  getMaxPaymentForGas = "getMaxPaymentForGas",
-  getMinBalanceForUpkeep = "getMinBalanceForUpkeep",
-  getKeeperRegistryState = "getKeeperRegistryState  ",
-  isKeeperRegistryPaused = "isKeeperRegistryPaused",
-  getKeeperRegistryTypeAndVersion = "getKeeperRegistryTypeAndVersion",
-  getKeeperRegistryUpkeepTranscoderVersion = "getKeeperRegistryUpkeepTranscoderVersion",
-}
-
-enum PluginRegistriesSubtasks {
-  getDataFeedAddress = "getDataFeedAddress",
-  getFeedRegistryAddress = "getFeedRegistryAddress",
-  getVRFCoordinatorAddress = "getVRFCoordinatorAddress",
-  getLinkTokenAddress = "getLinkTokenAddress",
-  getKeeperRegistryAddress = "getKeeperRegistryAddress",
-  getKeeperRegistrarAddress = "getKeeperRegistrarAddress",
-  getL2SequencerAddress = "getL2SequencerAddress",
-  getFunctionOracleAddress = "getFunctionOracleAddress",
-  getDenomination = "getDenomination",
-}
-
-export const subtasksRegistry: Record<
-  string,
-  Record<string, SubtaskProperties>
-> = {
+export const subtasks: Subtasks = {
   [Task.dataFeeds]: {
     [DataFeedSubtask.getLatestRoundAnswer]: {
       action: feedsActions.getLatestRoundAnswer,
@@ -241,10 +137,10 @@ export const subtasksRegistry: Record<
     },
   },
   [Task.feedRegistries]: {
-    [FeedRegistrySubtasks.getFeed]: {
+    [FeedRegistrySubtask.getFeed]: {
       action: feedsActions.getFeed,
-      command: camelToKebab(FeedRegistrySubtasks.getFeed),
-      description: camelToFlat(FeedRegistrySubtasks.getFeed),
+      command: camelToKebab(FeedRegistrySubtask.getFeed),
+      description: camelToFlat(FeedRegistrySubtask.getFeed),
       args: [
         {
           name: "feedRegistryAddress",
@@ -260,10 +156,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [FeedRegistrySubtasks.isFeedEnabled]: {
+    [FeedRegistrySubtask.isFeedEnabled]: {
       action: feedsActions.isFeedEnabled,
-      command: camelToKebab(FeedRegistrySubtasks.isFeedEnabled),
-      description: camelToFlat(FeedRegistrySubtasks.isFeedEnabled),
+      command: camelToKebab(FeedRegistrySubtask.isFeedEnabled),
+      description: camelToFlat(FeedRegistrySubtask.isFeedEnabled),
       args: [
         {
           name: "feedRegistryAddress",
@@ -275,10 +171,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [FeedRegistrySubtasks.getFeedRegistryDecimals]: {
+    [FeedRegistrySubtask.getFeedRegistryDecimals]: {
       action: feedsActions.getFeedRegistryDecimals,
-      command: camelToKebab(FeedRegistrySubtasks.getFeedRegistryDecimals),
-      description: camelToFlat(FeedRegistrySubtasks.getFeedRegistryDecimals),
+      command: camelToKebab(FeedRegistrySubtask.getFeedRegistryDecimals),
+      description: camelToFlat(FeedRegistrySubtask.getFeedRegistryDecimals),
       args: [
         {
           name: "feedRegistryAddress",
@@ -294,10 +190,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [FeedRegistrySubtasks.getFeedRegistryDescription]: {
+    [FeedRegistrySubtask.getFeedRegistryDescription]: {
       action: feedsActions.getFeedRegistryDescription,
-      command: camelToKebab(FeedRegistrySubtasks.getFeedRegistryDescription),
-      description: camelToFlat(FeedRegistrySubtasks.getFeedRegistryDescription),
+      command: camelToKebab(FeedRegistrySubtask.getFeedRegistryDescription),
+      description: camelToFlat(FeedRegistrySubtask.getFeedRegistryDescription),
       args: [
         {
           name: "feedRegistryAddress",
@@ -313,13 +209,13 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [FeedRegistrySubtasks.getFeedRegistryAggregatorVersion]: {
+    [FeedRegistrySubtask.getFeedRegistryAggregatorVersion]: {
       action: feedsActions.getFeedRegistryAggregatorVersion,
       command: camelToKebab(
-        FeedRegistrySubtasks.getFeedRegistryAggregatorVersion
+        FeedRegistrySubtask.getFeedRegistryAggregatorVersion
       ),
       description: camelToFlat(
-        FeedRegistrySubtasks.getFeedRegistryAggregatorVersion
+        FeedRegistrySubtask.getFeedRegistryAggregatorVersion
       ),
       args: [
         {
@@ -336,13 +232,11 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [FeedRegistrySubtasks.getFeedRegistryLatestRoundData]: {
+    [FeedRegistrySubtask.getFeedRegistryLatestRoundData]: {
       action: feedsActions.getFeedRegistryLatestRoundData,
-      command: camelToKebab(
-        FeedRegistrySubtasks.getFeedRegistryLatestRoundData
-      ),
+      command: camelToKebab(FeedRegistrySubtask.getFeedRegistryLatestRoundData),
       description: camelToFlat(
-        FeedRegistrySubtasks.getFeedRegistryLatestRoundData
+        FeedRegistrySubtask.getFeedRegistryLatestRoundData
       ),
       args: [
         {
@@ -359,10 +253,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [FeedRegistrySubtasks.getFeedRegistryRoundData]: {
+    [FeedRegistrySubtask.getFeedRegistryRoundData]: {
       action: feedsActions.getFeedRegistryRoundData,
-      command: camelToKebab(FeedRegistrySubtasks.getFeedRegistryRoundData),
-      description: camelToFlat(FeedRegistrySubtasks.getFeedRegistryRoundData),
+      command: camelToKebab(FeedRegistrySubtask.getFeedRegistryRoundData),
+      description: camelToFlat(FeedRegistrySubtask.getFeedRegistryRoundData),
       args: [
         {
           name: "feedRegistryAddress",
@@ -382,10 +276,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [FeedRegistrySubtasks.getRoundFeed]: {
+    [FeedRegistrySubtask.getRoundFeed]: {
       action: feedsActions.getRoundFeed,
-      command: camelToKebab(FeedRegistrySubtasks.getRoundFeed),
-      description: camelToFlat(FeedRegistrySubtasks.getRoundFeed),
+      command: camelToKebab(FeedRegistrySubtask.getRoundFeed),
+      description: camelToFlat(FeedRegistrySubtask.getRoundFeed),
       args: [
         {
           name: "feedRegistryAddress",
@@ -405,10 +299,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [FeedRegistrySubtasks.getPhase]: {
+    [FeedRegistrySubtask.getPhase]: {
       action: feedsActions.getPhase,
-      command: camelToKebab(FeedRegistrySubtasks.getPhase),
-      description: camelToFlat(FeedRegistrySubtasks.getPhase),
+      command: camelToKebab(FeedRegistrySubtask.getPhase),
+      description: camelToFlat(FeedRegistrySubtask.getPhase),
       args: [
         {
           name: "feedRegistryAddress",
@@ -428,10 +322,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [FeedRegistrySubtasks.getPhaseFeed]: {
+    [FeedRegistrySubtask.getPhaseFeed]: {
       action: feedsActions.getPhaseFeed,
-      command: camelToKebab(FeedRegistrySubtasks.getPhaseFeed),
-      description: camelToFlat(FeedRegistrySubtasks.getPhaseFeed),
+      command: camelToKebab(FeedRegistrySubtask.getPhaseFeed),
+      description: camelToFlat(FeedRegistrySubtask.getPhaseFeed),
       args: [
         {
           name: "feedRegistryAddress",
@@ -451,10 +345,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [FeedRegistrySubtasks.getPhaseRange]: {
+    [FeedRegistrySubtask.getPhaseRange]: {
       action: feedsActions.getPhaseRange,
-      command: camelToKebab(FeedRegistrySubtasks.getPhaseRange),
-      description: camelToFlat(FeedRegistrySubtasks.getPhaseRange),
+      command: camelToKebab(FeedRegistrySubtask.getPhaseRange),
+      description: camelToFlat(FeedRegistrySubtask.getPhaseRange),
       args: [
         {
           name: "feedRegistryAddress",
@@ -474,10 +368,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [FeedRegistrySubtasks.getCurrentPhaseId]: {
+    [FeedRegistrySubtask.getCurrentPhaseId]: {
       action: feedsActions.getCurrentPhaseId,
-      command: camelToKebab(FeedRegistrySubtasks.getCurrentPhaseId),
-      description: camelToFlat(FeedRegistrySubtasks.getCurrentPhaseId),
+      command: camelToKebab(FeedRegistrySubtask.getCurrentPhaseId),
+      description: camelToFlat(FeedRegistrySubtask.getCurrentPhaseId),
       args: [
         {
           name: "feedRegistryAddress",
@@ -497,10 +391,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [FeedRegistrySubtasks.getPreviousRoundId]: {
+    [FeedRegistrySubtask.getPreviousRoundId]: {
       action: feedsActions.getPreviousRoundId,
-      command: camelToKebab(FeedRegistrySubtasks.getPreviousRoundId),
-      description: camelToFlat(FeedRegistrySubtasks.getPreviousRoundId),
+      command: camelToKebab(FeedRegistrySubtask.getPreviousRoundId),
+      description: camelToFlat(FeedRegistrySubtask.getPreviousRoundId),
       args: [
         {
           name: "feedRegistryAddress",
@@ -520,10 +414,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [FeedRegistrySubtasks.getNextRoundId]: {
+    [FeedRegistrySubtask.getNextRoundId]: {
       action: feedsActions.getNextRoundId,
-      command: camelToKebab(FeedRegistrySubtasks.getNextRoundId),
-      description: camelToFlat(FeedRegistrySubtasks.getNextRoundId),
+      command: camelToKebab(FeedRegistrySubtask.getNextRoundId),
+      description: camelToFlat(FeedRegistrySubtask.getNextRoundId),
       args: [
         {
           name: "feedRegistryAddress",
@@ -545,11 +439,11 @@ export const subtasksRegistry: Record<
     },
   },
   [Task.ens]: {
-    [ensFeedsResolverSubtasks.resolveAggregatorAddress]: {
+    [ensFeedsResolverSubtask.resolveAggregatorAddress]: {
       action: feedsActions.resolveAggregatorAddress,
-      command: camelToKebab(ensFeedsResolverSubtasks.resolveAggregatorAddress),
+      command: camelToKebab(ensFeedsResolverSubtask.resolveAggregatorAddress),
       description: camelToFlat(
-        ensFeedsResolverSubtasks.resolveAggregatorAddress
+        ensFeedsResolverSubtask.resolveAggregatorAddress
       ),
       args: [
         {
@@ -562,13 +456,13 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [ensFeedsResolverSubtasks.resolveAggregatorAddressWithSubdomains]: {
+    [ensFeedsResolverSubtask.resolveAggregatorAddressWithSubdomains]: {
       action: feedsActions.resolveAggregatorAddressWithSubdomains,
       command: camelToKebab(
-        ensFeedsResolverSubtasks.resolveAggregatorAddressWithSubdomains
+        ensFeedsResolverSubtask.resolveAggregatorAddressWithSubdomains
       ),
       description: camelToFlat(
-        ensFeedsResolverSubtasks.resolveAggregatorAddressWithSubdomains
+        ensFeedsResolverSubtask.resolveAggregatorAddressWithSubdomains
       ),
       args: [
         {
@@ -583,10 +477,10 @@ export const subtasksRegistry: Record<
     },
   },
   [Task.l2Sequencer]: {
-    [L2SequencerSubtasks.isL2SequencerUp]: {
+    [L2SequencerSubtask.isL2SequencerUp]: {
       action: feedsActions.isL2SequencerUp,
-      command: camelToKebab(L2SequencerSubtasks.isL2SequencerUp),
-      description: camelToFlat(L2SequencerSubtasks.isL2SequencerUp),
+      command: camelToKebab(L2SequencerSubtask.isL2SequencerUp),
+      description: camelToFlat(L2SequencerSubtask.isL2SequencerUp),
       args: [
         {
           name: "l2SequencerAddress",
@@ -594,10 +488,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [L2SequencerSubtasks.getTimeSinceL2SequencerIsUp]: {
+    [L2SequencerSubtask.getTimeSinceL2SequencerIsUp]: {
       action: feedsActions.getTimeSinceL2SequencerIsUp,
-      command: camelToKebab(L2SequencerSubtasks.getTimeSinceL2SequencerIsUp),
-      description: camelToFlat(L2SequencerSubtasks.getTimeSinceL2SequencerIsUp),
+      command: camelToKebab(L2SequencerSubtask.getTimeSinceL2SequencerIsUp),
+      description: camelToFlat(L2SequencerSubtask.getTimeSinceL2SequencerIsUp),
       args: [
         {
           name: "l2SequencerAddress",
@@ -611,10 +505,10 @@ export const subtasksRegistry: Record<
     },
   },
   [Task.vrf]: {
-    [VRFSubtasks.createSubscription]: {
+    [VRFSubtask.createSubscription]: {
       action: vrfActions.createSubscription,
-      command: camelToKebab(VRFSubtasks.createSubscription),
-      description: camelToFlat(VRFSubtasks.createSubscription),
+      command: camelToKebab(VRFSubtask.createSubscription),
+      description: camelToFlat(VRFSubtask.createSubscription),
       args: [
         {
           name: "vrfCoordinatorAddress",
@@ -622,10 +516,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [VRFSubtasks.fundSubscription]: {
+    [VRFSubtask.fundSubscription]: {
       action: vrfActions.fundSubscription,
-      command: camelToKebab(VRFSubtasks.fundSubscription),
-      description: camelToFlat(VRFSubtasks.fundSubscription),
+      command: camelToKebab(VRFSubtask.fundSubscription),
+      description: camelToFlat(VRFSubtask.fundSubscription),
       args: [
         {
           name: "vrfCoordinatorAddress",
@@ -645,10 +539,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [VRFSubtasks.cancelSubscription]: {
+    [VRFSubtask.cancelSubscription]: {
       action: vrfActions.cancelSubscription,
-      command: camelToKebab(VRFSubtasks.cancelSubscription),
-      description: camelToFlat(VRFSubtasks.cancelSubscription),
+      command: camelToKebab(VRFSubtask.cancelSubscription),
+      description: camelToFlat(VRFSubtask.cancelSubscription),
       args: [
         {
           name: "vrfCoordinatorAddress",
@@ -664,10 +558,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [VRFSubtasks.addConsumer]: {
+    [VRFSubtask.addConsumer]: {
       action: vrfActions.addConsumer,
-      command: camelToKebab(VRFSubtasks.addConsumer),
-      description: camelToFlat(VRFSubtasks.addConsumer),
+      command: camelToKebab(VRFSubtask.addConsumer),
+      description: camelToFlat(VRFSubtask.addConsumer),
       args: [
         {
           name: "vrfCoordinatorAddress",
@@ -683,10 +577,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [VRFSubtasks.removeConsumer]: {
+    [VRFSubtask.removeConsumer]: {
       action: vrfActions.removeConsumer,
-      command: camelToKebab(VRFSubtasks.removeConsumer),
-      description: camelToFlat(VRFSubtasks.removeConsumer),
+      command: camelToKebab(VRFSubtask.removeConsumer),
+      description: camelToFlat(VRFSubtask.removeConsumer),
       args: [
         {
           name: "vrfCoordinatorAddress",
@@ -702,10 +596,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [VRFSubtasks.getSubscriptionDetails]: {
+    [VRFSubtask.getSubscriptionDetails]: {
       action: vrfActions.getSubscriptionDetails,
-      command: camelToKebab(VRFSubtasks.getSubscriptionDetails),
-      description: camelToFlat(VRFSubtasks.getSubscriptionDetails),
+      command: camelToKebab(VRFSubtask.getSubscriptionDetails),
+      description: camelToFlat(VRFSubtask.getSubscriptionDetails),
       args: [
         {
           name: "vrfCoordinatorAddress",
@@ -717,10 +611,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [VRFSubtasks.isPendingRequestExists]: {
+    [VRFSubtask.isPendingRequestExists]: {
       action: vrfActions.isPendingRequestExists,
-      command: camelToKebab(VRFSubtasks.isPendingRequestExists),
-      description: camelToFlat(VRFSubtasks.isPendingRequestExists),
+      command: camelToKebab(VRFSubtask.isPendingRequestExists),
+      description: camelToFlat(VRFSubtask.isPendingRequestExists),
       args: [
         {
           name: "vrfCoordinatorAddress",
@@ -732,10 +626,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [VRFSubtasks.requestSubscriptionOwnerTransfer]: {
+    [VRFSubtask.requestSubscriptionOwnerTransfer]: {
       action: vrfActions.requestSubscriptionOwnerTransfer,
-      command: camelToKebab(VRFSubtasks.requestSubscriptionOwnerTransfer),
-      description: camelToFlat(VRFSubtasks.requestSubscriptionOwnerTransfer),
+      command: camelToKebab(VRFSubtask.requestSubscriptionOwnerTransfer),
+      description: camelToFlat(VRFSubtask.requestSubscriptionOwnerTransfer),
       args: [
         {
           name: "vrfCoordinatorAddress",
@@ -751,10 +645,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [VRFSubtasks.acceptSubscriptionOwnerTransfer]: {
+    [VRFSubtask.acceptSubscriptionOwnerTransfer]: {
       action: vrfActions.acceptSubscriptionOwnerTransfer,
-      command: camelToKebab(VRFSubtasks.acceptSubscriptionOwnerTransfer),
-      description: camelToFlat(VRFSubtasks.acceptSubscriptionOwnerTransfer),
+      command: camelToKebab(VRFSubtask.acceptSubscriptionOwnerTransfer),
+      description: camelToFlat(VRFSubtask.acceptSubscriptionOwnerTransfer),
       args: [
         {
           name: "vrfCoordinatorAddress",
@@ -766,10 +660,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [VRFSubtasks.getMaxConsumers]: {
+    [VRFSubtask.getMaxConsumers]: {
       action: vrfActions.getMaxConsumers,
-      command: camelToKebab(VRFSubtasks.getMaxConsumers),
-      description: camelToFlat(VRFSubtasks.getMaxConsumers),
+      command: camelToKebab(VRFSubtask.getMaxConsumers),
+      description: camelToFlat(VRFSubtask.getMaxConsumers),
       args: [
         {
           name: "vrfCoordinatorAddress",
@@ -777,10 +671,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [VRFSubtasks.getMaxNumberOfWords]: {
+    [VRFSubtask.getMaxNumberOfWords]: {
       action: vrfActions.getMaxNumberOfWords,
-      command: camelToKebab(VRFSubtasks.getMaxNumberOfWords),
-      description: camelToFlat(VRFSubtasks.getMaxNumberOfWords),
+      command: camelToKebab(VRFSubtask.getMaxNumberOfWords),
+      description: camelToFlat(VRFSubtask.getMaxNumberOfWords),
       args: [
         {
           name: "vrfCoordinatorAddress",
@@ -788,10 +682,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [VRFSubtasks.getMaxRequestConfirmations]: {
+    [VRFSubtask.getMaxRequestConfirmations]: {
       action: vrfActions.getMaxRequestConfirmations,
-      command: camelToKebab(VRFSubtasks.getMaxRequestConfirmations),
-      description: camelToFlat(VRFSubtasks.getMaxRequestConfirmations),
+      command: camelToKebab(VRFSubtask.getMaxRequestConfirmations),
+      description: camelToFlat(VRFSubtask.getMaxRequestConfirmations),
       args: [
         {
           name: "vrfCoordinatorAddress",
@@ -799,10 +693,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [VRFSubtasks.getMinRequestConfirmations]: {
+    [VRFSubtask.getMinRequestConfirmations]: {
       action: vrfActions.getMinRequestConfirmations,
-      command: camelToKebab(VRFSubtasks.getMinRequestConfirmations),
-      description: camelToFlat(VRFSubtasks.getMinRequestConfirmations),
+      command: camelToKebab(VRFSubtask.getMinRequestConfirmations),
+      description: camelToFlat(VRFSubtask.getMinRequestConfirmations),
       args: [
         {
           name: "vrfCoordinatorAddress",
@@ -810,10 +704,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [VRFSubtasks.getMaxRequestGasLimit]: {
+    [VRFSubtask.getMaxRequestGasLimit]: {
       action: vrfActions.getMaxRequestGasLimit,
-      command: camelToKebab(VRFSubtasks.getMaxRequestGasLimit),
-      description: camelToFlat(VRFSubtasks.getMaxRequestGasLimit),
+      command: camelToKebab(VRFSubtask.getMaxRequestGasLimit),
+      description: camelToFlat(VRFSubtask.getMaxRequestGasLimit),
       args: [
         {
           name: "vrfCoordinatorAddress",
@@ -821,10 +715,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [VRFSubtasks.getCommitment]: {
+    [VRFSubtask.getCommitment]: {
       action: vrfActions.getCommitment,
-      command: camelToKebab(VRFSubtasks.getCommitment),
-      description: camelToFlat(VRFSubtasks.getCommitment),
+      command: camelToKebab(VRFSubtask.getCommitment),
+      description: camelToFlat(VRFSubtask.getCommitment),
       args: [
         {
           name: "vrfCoordinatorAddress",
@@ -836,10 +730,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [VRFSubtasks.getCoordinatorConfig]: {
+    [VRFSubtask.getCoordinatorConfig]: {
       action: vrfActions.getCoordinatorConfig,
-      command: camelToKebab(VRFSubtasks.getCoordinatorConfig),
-      description: camelToFlat(VRFSubtasks.getCoordinatorConfig),
+      command: camelToKebab(VRFSubtask.getCoordinatorConfig),
+      description: camelToFlat(VRFSubtask.getCoordinatorConfig),
       args: [
         {
           name: "vrfCoordinatorAddress",
@@ -847,10 +741,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [VRFSubtasks.getCoordinatorTypeAndVersion]: {
+    [VRFSubtask.getCoordinatorTypeAndVersion]: {
       action: vrfActions.getCoordinatorTypeAndVersion,
-      command: camelToKebab(VRFSubtasks.getCoordinatorTypeAndVersion),
-      description: camelToFlat(VRFSubtasks.getCoordinatorTypeAndVersion),
+      command: camelToKebab(VRFSubtask.getCoordinatorTypeAndVersion),
+      description: camelToFlat(VRFSubtask.getCoordinatorTypeAndVersion),
       args: [
         {
           name: "vrfCoordinatorAddress",
@@ -860,10 +754,10 @@ export const subtasksRegistry: Record<
     },
   },
   [Task.automation]: {
-    [AutomationSubtasks.registerUpkeep]: {
+    [AutomationSubtask.registerUpkeep]: {
       action: automationActions.registerUpkeep,
-      command: camelToKebab(AutomationSubtasks.registerUpkeep),
-      description: camelToFlat(AutomationSubtasks.registerUpkeep),
+      command: camelToKebab(AutomationSubtask.registerUpkeep),
+      description: camelToFlat(AutomationSubtask.registerUpkeep),
       args: [
         {
           name: "linkTokenAddress",
@@ -912,12 +806,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [AutomationSubtasks.getPendingRegistrationRequest]: {
+    [AutomationSubtask.getPendingRegistrationRequest]: {
       action: automationActions.getPendingRegistrationRequest,
-      command: camelToKebab(AutomationSubtasks.getPendingRegistrationRequest),
-      description: camelToFlat(
-        AutomationSubtasks.getPendingRegistrationRequest
-      ),
+      command: camelToKebab(AutomationSubtask.getPendingRegistrationRequest),
+      description: camelToFlat(AutomationSubtask.getPendingRegistrationRequest),
       args: [
         {
           name: "keepersRegistrarAddress",
@@ -929,13 +821,11 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [AutomationSubtasks.cancelPendingRegistrationRequest]: {
+    [AutomationSubtask.cancelPendingRegistrationRequest]: {
       action: automationActions.cancelPendingRegistrationRequest,
-      command: camelToKebab(
-        AutomationSubtasks.cancelPendingRegistrationRequest
-      ),
+      command: camelToKebab(AutomationSubtask.cancelPendingRegistrationRequest),
       description: camelToFlat(
-        AutomationSubtasks.cancelPendingRegistrationRequest
+        AutomationSubtask.cancelPendingRegistrationRequest
       ),
       args: [
         {
@@ -948,10 +838,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [AutomationSubtasks.getKeeperRegistrarConfig]: {
+    [AutomationSubtask.getKeeperRegistrarConfig]: {
       action: automationActions.getKeeperRegistrarConfig,
-      command: camelToKebab(AutomationSubtasks.getKeeperRegistrarConfig),
-      description: camelToFlat(AutomationSubtasks.getKeeperRegistrarConfig),
+      command: camelToKebab(AutomationSubtask.getKeeperRegistrarConfig),
+      description: camelToFlat(AutomationSubtask.getKeeperRegistrarConfig),
       args: [
         {
           name: "keepersRegistrarAddress",
@@ -959,13 +849,13 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [AutomationSubtasks.getKeepersRegistrarTypeAndVersion]: {
+    [AutomationSubtask.getKeepersRegistrarTypeAndVersion]: {
       action: automationActions.getKeepersRegistrarTypeAndVersion,
       command: camelToKebab(
-        AutomationSubtasks.getKeepersRegistrarTypeAndVersion
+        AutomationSubtask.getKeepersRegistrarTypeAndVersion
       ),
       description: camelToFlat(
-        AutomationSubtasks.getKeepersRegistrarTypeAndVersion
+        AutomationSubtask.getKeepersRegistrarTypeAndVersion
       ),
       args: [
         {
@@ -974,10 +864,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [AutomationSubtasks.fundUpkeep]: {
+    [AutomationSubtask.fundUpkeep]: {
       action: automationActions.fundUpkeep,
-      command: camelToKebab(AutomationSubtasks.fundUpkeep),
-      description: camelToFlat(AutomationSubtasks.fundUpkeep),
+      command: camelToKebab(AutomationSubtask.fundUpkeep),
+      description: camelToFlat(AutomationSubtask.fundUpkeep),
       args: [
         {
           name: "keepersRegistryAddress",
@@ -993,10 +883,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [AutomationSubtasks.checkUpkeep]: {
+    [AutomationSubtask.checkUpkeep]: {
       action: automationActions.checkUpkeep,
-      command: camelToKebab(AutomationSubtasks.checkUpkeep),
-      description: camelToFlat(AutomationSubtasks.checkUpkeep),
+      command: camelToKebab(AutomationSubtask.checkUpkeep),
+      description: camelToFlat(AutomationSubtask.checkUpkeep),
       args: [
         {
           name: "keepersRegistryAddress",
@@ -1012,10 +902,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [AutomationSubtasks.cancelUpkeep]: {
+    [AutomationSubtask.cancelUpkeep]: {
       action: automationActions.cancelUpkeep,
-      command: camelToKebab(AutomationSubtasks.cancelUpkeep),
-      description: camelToFlat(AutomationSubtasks.cancelUpkeep),
+      command: camelToKebab(AutomationSubtask.cancelUpkeep),
+      description: camelToFlat(AutomationSubtask.cancelUpkeep),
       args: [
         {
           name: "keepersRegistryAddress",
@@ -1027,10 +917,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [AutomationSubtasks.withdrawFunds]: {
+    [AutomationSubtask.withdrawFunds]: {
       action: automationActions.withdrawFunds,
-      command: camelToKebab(AutomationSubtasks.withdrawFunds),
-      description: camelToFlat(AutomationSubtasks.withdrawFunds),
+      command: camelToKebab(AutomationSubtask.withdrawFunds),
+      description: camelToFlat(AutomationSubtask.withdrawFunds),
       args: [
         {
           name: "keepersRegistryAddress",
@@ -1046,10 +936,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [AutomationSubtasks.getActiveUpkeepIDs]: {
+    [AutomationSubtask.getActiveUpkeepIDs]: {
       action: automationActions.getActiveUpkeepIDs,
-      command: camelToKebab(AutomationSubtasks.getActiveUpkeepIDs),
-      description: camelToFlat(AutomationSubtasks.getActiveUpkeepIDs),
+      command: camelToKebab(AutomationSubtask.getActiveUpkeepIDs),
+      description: camelToFlat(AutomationSubtask.getActiveUpkeepIDs),
       args: [
         {
           name: "keepersRegistryAddress",
@@ -1065,10 +955,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [AutomationSubtasks.getUpkeep]: {
+    [AutomationSubtask.getUpkeep]: {
       action: automationActions.getUpkeep,
-      command: camelToKebab(AutomationSubtasks.getUpkeep),
-      description: camelToFlat(AutomationSubtasks.getUpkeep),
+      command: camelToKebab(AutomationSubtask.getUpkeep),
+      description: camelToFlat(AutomationSubtask.getUpkeep),
       args: [
         {
           name: "keepersRegistryAddress",
@@ -1080,10 +970,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [AutomationSubtasks.migrateUpkeeps]: {
+    [AutomationSubtask.migrateUpkeeps]: {
       action: automationActions.migrateUpkeeps,
-      command: camelToKebab(AutomationSubtasks.migrateUpkeeps),
-      description: camelToFlat(AutomationSubtasks.migrateUpkeeps),
+      command: camelToKebab(AutomationSubtask.migrateUpkeeps),
+      description: camelToFlat(AutomationSubtask.migrateUpkeeps),
       args: [
         {
           name: "keepersRegistryAddress",
@@ -1099,10 +989,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [AutomationSubtasks.receiveUpkeeps]: {
+    [AutomationSubtask.receiveUpkeeps]: {
       action: automationActions.receiveUpkeeps,
-      command: camelToKebab(AutomationSubtasks.receiveUpkeeps),
-      description: camelToFlat(AutomationSubtasks.receiveUpkeeps),
+      command: camelToKebab(AutomationSubtask.receiveUpkeeps),
+      description: camelToFlat(AutomationSubtask.receiveUpkeeps),
       args: [
         {
           name: "keepersRegistryAddress",
@@ -1114,10 +1004,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [AutomationSubtasks.withdrawKeeperPayment]: {
+    [AutomationSubtask.withdrawKeeperPayment]: {
       action: automationActions.withdrawKeeperPayment,
-      command: camelToKebab(AutomationSubtasks.withdrawKeeperPayment),
-      description: camelToFlat(AutomationSubtasks.withdrawKeeperPayment),
+      command: camelToKebab(AutomationSubtask.withdrawKeeperPayment),
+      description: camelToFlat(AutomationSubtask.withdrawKeeperPayment),
       args: [
         {
           name: "keepersRegistryAddress",
@@ -1133,10 +1023,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [AutomationSubtasks.transferKeeperPayeeship]: {
+    [AutomationSubtask.transferKeeperPayeeship]: {
       action: automationActions.transferKeeperPayeeship,
-      command: camelToKebab(AutomationSubtasks.transferKeeperPayeeship),
-      description: camelToFlat(AutomationSubtasks.transferKeeperPayeeship),
+      command: camelToKebab(AutomationSubtask.transferKeeperPayeeship),
+      description: camelToFlat(AutomationSubtask.transferKeeperPayeeship),
       args: [
         {
           name: "keepersRegistryAddress",
@@ -1152,10 +1042,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [AutomationSubtasks.acceptKeeperPayeeship]: {
+    [AutomationSubtask.acceptKeeperPayeeship]: {
       action: automationActions.acceptKeeperPayeeship,
-      command: camelToKebab(AutomationSubtasks.acceptKeeperPayeeship),
-      description: camelToFlat(AutomationSubtasks.acceptKeeperPayeeship),
+      command: camelToKebab(AutomationSubtask.acceptKeeperPayeeship),
+      description: camelToFlat(AutomationSubtask.acceptKeeperPayeeship),
       args: [
         {
           name: "keepersRegistryAddress",
@@ -1167,10 +1057,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [AutomationSubtasks.getKeeperInfo]: {
+    [AutomationSubtask.getKeeperInfo]: {
       action: automationActions.getKeeperInfo,
-      command: camelToKebab(AutomationSubtasks.getKeeperInfo),
-      description: camelToFlat(AutomationSubtasks.getKeeperInfo),
+      command: camelToKebab(AutomationSubtask.getKeeperInfo),
+      description: camelToFlat(AutomationSubtask.getKeeperInfo),
       args: [
         {
           name: "keepersRegistryAddress",
@@ -1182,10 +1072,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [AutomationSubtasks.getMaxPaymentForGas]: {
+    [AutomationSubtask.getMaxPaymentForGas]: {
       action: automationActions.getMaxPaymentForGas,
-      command: camelToKebab(AutomationSubtasks.getMaxPaymentForGas),
-      description: camelToFlat(AutomationSubtasks.getMaxPaymentForGas),
+      command: camelToKebab(AutomationSubtask.getMaxPaymentForGas),
+      description: camelToFlat(AutomationSubtask.getMaxPaymentForGas),
       args: [
         {
           name: "keepersRegistryAddress",
@@ -1197,10 +1087,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [AutomationSubtasks.getMinBalanceForUpkeep]: {
+    [AutomationSubtask.getMinBalanceForUpkeep]: {
       action: automationActions.getMinBalanceForUpkeep,
-      command: camelToKebab(AutomationSubtasks.getMinBalanceForUpkeep),
-      description: camelToFlat(AutomationSubtasks.getMinBalanceForUpkeep),
+      command: camelToKebab(AutomationSubtask.getMinBalanceForUpkeep),
+      description: camelToFlat(AutomationSubtask.getMinBalanceForUpkeep),
       args: [
         {
           name: "keepersRegistryAddress",
@@ -1212,10 +1102,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [AutomationSubtasks.getKeeperRegistryState]: {
+    [AutomationSubtask.getKeeperRegistryState]: {
       action: automationActions.getKeeperRegistryState,
-      command: camelToKebab(AutomationSubtasks.getKeeperRegistryState),
-      description: camelToFlat(AutomationSubtasks.getKeeperRegistryState),
+      command: camelToKebab(AutomationSubtask.getKeeperRegistryState),
+      description: camelToFlat(AutomationSubtask.getKeeperRegistryState),
       args: [
         {
           name: "keepersRegistryAddress",
@@ -1223,10 +1113,10 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [AutomationSubtasks.isKeeperRegistryPaused]: {
+    [AutomationSubtask.isKeeperRegistryPaused]: {
       action: automationActions.isKeeperRegistryPaused,
-      command: camelToKebab(AutomationSubtasks.isKeeperRegistryPaused),
-      description: camelToFlat(AutomationSubtasks.isKeeperRegistryPaused),
+      command: camelToKebab(AutomationSubtask.isKeeperRegistryPaused),
+      description: camelToFlat(AutomationSubtask.isKeeperRegistryPaused),
       args: [
         {
           name: "keepersRegistryAddress",
@@ -1234,11 +1124,11 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [AutomationSubtasks.getKeeperRegistryTypeAndVersion]: {
+    [AutomationSubtask.getKeeperRegistryTypeAndVersion]: {
       action: automationActions.getKeeperRegistryTypeAndVersion,
-      command: camelToKebab(AutomationSubtasks.getKeeperRegistryTypeAndVersion),
+      command: camelToKebab(AutomationSubtask.getKeeperRegistryTypeAndVersion),
       description: camelToFlat(
-        AutomationSubtasks.getKeeperRegistryTypeAndVersion
+        AutomationSubtask.getKeeperRegistryTypeAndVersion
       ),
       args: [
         {
@@ -1247,13 +1137,13 @@ export const subtasksRegistry: Record<
         },
       ],
     },
-    [AutomationSubtasks.getKeeperRegistryUpkeepTranscoderVersion]: {
+    [AutomationSubtask.getKeeperRegistryUpkeepTranscoderVersion]: {
       action: automationActions.getKeeperRegistryUpkeepTranscoderVersion,
       command: camelToKebab(
-        AutomationSubtasks.getKeeperRegistryUpkeepTranscoderVersion
+        AutomationSubtask.getKeeperRegistryUpkeepTranscoderVersion
       ),
       description: camelToFlat(
-        AutomationSubtasks.getKeeperRegistryUpkeepTranscoderVersion
+        AutomationSubtask.getKeeperRegistryUpkeepTranscoderVersion
       ),
       args: [
         {
@@ -1266,66 +1156,66 @@ export const subtasksRegistry: Record<
   [Task.functions]: {},
   [Task.sandbox]: {},
   [Task.registries]: {
-    [PluginRegistriesSubtasks.getDataFeedAddress]: {
+    [PluginRegistriesSubtask.getDataFeedAddress]: {
       action: registriesActions.getDataFeedAddress,
-      command: camelToKebab(PluginRegistriesSubtasks.getDataFeedAddress),
-      description: camelToFlat(PluginRegistriesSubtasks.getDataFeedAddress),
+      command: camelToKebab(PluginRegistriesSubtask.getDataFeedAddress),
+      description: camelToFlat(PluginRegistriesSubtask.getDataFeedAddress),
       args: [],
     },
-    [PluginRegistriesSubtasks.getFeedRegistryAddress]: {
+    [PluginRegistriesSubtask.getFeedRegistryAddress]: {
       action: registriesActions.getFeedRegistryAddress,
-      command: camelToKebab(PluginRegistriesSubtasks.getFeedRegistryAddress),
-      description: camelToFlat(PluginRegistriesSubtasks.getFeedRegistryAddress),
+      command: camelToKebab(PluginRegistriesSubtask.getFeedRegistryAddress),
+      description: camelToFlat(PluginRegistriesSubtask.getFeedRegistryAddress),
       args: [],
     },
-    [PluginRegistriesSubtasks.getVRFCoordinatorAddress]: {
+    [PluginRegistriesSubtask.getVRFCoordinatorAddress]: {
       action: registriesActions.getVRFCoordinatorAddress,
-      command: camelToKebab(PluginRegistriesSubtasks.getVRFCoordinatorAddress),
+      command: camelToKebab(PluginRegistriesSubtask.getVRFCoordinatorAddress),
       description: camelToFlat(
-        PluginRegistriesSubtasks.getVRFCoordinatorAddress
+        PluginRegistriesSubtask.getVRFCoordinatorAddress
       ),
       args: [],
     },
-    [PluginRegistriesSubtasks.getLinkTokenAddress]: {
+    [PluginRegistriesSubtask.getLinkTokenAddress]: {
       action: registriesActions.getLinkTokenAddress,
-      command: camelToKebab(PluginRegistriesSubtasks.getLinkTokenAddress),
-      description: camelToFlat(PluginRegistriesSubtasks.getLinkTokenAddress),
+      command: camelToKebab(PluginRegistriesSubtask.getLinkTokenAddress),
+      description: camelToFlat(PluginRegistriesSubtask.getLinkTokenAddress),
       args: [],
     },
-    [PluginRegistriesSubtasks.getKeeperRegistryAddress]: {
+    [PluginRegistriesSubtask.getKeeperRegistryAddress]: {
       action: registriesActions.getKeeperRegistryAddress,
-      command: camelToKebab(PluginRegistriesSubtasks.getKeeperRegistryAddress),
+      command: camelToKebab(PluginRegistriesSubtask.getKeeperRegistryAddress),
       description: camelToFlat(
-        PluginRegistriesSubtasks.getKeeperRegistryAddress
+        PluginRegistriesSubtask.getKeeperRegistryAddress
       ),
       args: [],
     },
-    [PluginRegistriesSubtasks.getKeeperRegistrarAddress]: {
+    [PluginRegistriesSubtask.getKeeperRegistrarAddress]: {
       action: registriesActions.getKeeperRegistrarAddress,
-      command: camelToKebab(PluginRegistriesSubtasks.getKeeperRegistrarAddress),
+      command: camelToKebab(PluginRegistriesSubtask.getKeeperRegistrarAddress),
       description: camelToFlat(
-        PluginRegistriesSubtasks.getKeeperRegistrarAddress
+        PluginRegistriesSubtask.getKeeperRegistrarAddress
       ),
       args: [],
     },
-    [PluginRegistriesSubtasks.getL2SequencerAddress]: {
+    [PluginRegistriesSubtask.getL2SequencerAddress]: {
       action: registriesActions.getL2SequencerAddress,
-      command: camelToKebab(PluginRegistriesSubtasks.getL2SequencerAddress),
-      description: camelToFlat(PluginRegistriesSubtasks.getL2SequencerAddress),
+      command: camelToKebab(PluginRegistriesSubtask.getL2SequencerAddress),
+      description: camelToFlat(PluginRegistriesSubtask.getL2SequencerAddress),
       args: [],
     },
-    [PluginRegistriesSubtasks.getFunctionOracleAddress]: {
+    [PluginRegistriesSubtask.getFunctionOracleAddress]: {
       action: registriesActions.getFunctionOracleAddress,
-      command: camelToKebab(PluginRegistriesSubtasks.getFunctionOracleAddress),
+      command: camelToKebab(PluginRegistriesSubtask.getFunctionOracleAddress),
       description: camelToFlat(
-        PluginRegistriesSubtasks.getFunctionOracleAddress
+        PluginRegistriesSubtask.getFunctionOracleAddress
       ),
       args: [],
     },
-    [PluginRegistriesSubtasks.getDenomination]: {
+    [PluginRegistriesSubtask.getDenomination]: {
       action: registriesActions.getDenomination,
-      command: camelToKebab(PluginRegistriesSubtasks.getDenomination),
-      description: camelToFlat(PluginRegistriesSubtasks.getDenomination),
+      command: camelToKebab(PluginRegistriesSubtask.getDenomination),
+      description: camelToFlat(PluginRegistriesSubtask.getDenomination),
       args: [],
     },
   },

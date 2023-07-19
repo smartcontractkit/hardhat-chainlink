@@ -3,79 +3,49 @@ import input from "@inquirer/input";
 import select from "@inquirer/select";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import * as registries from "../";
-import { camelToFlat } from "../../helpers/utils";
+import * as registries from "../registries";
+import { InquirableParameter, Task } from "../shared/enums";
 import {
-  DataFeed,
-  FeedRegistry,
-  FunctionOracle,
-  KeeperRegistry,
-  L2Sequencer,
-  LinkToken,
-  Network,
-  SubtaskProperties,
-  VRFCoordinator,
-} from "../interfaces";
-import { subtasksRegistry, Task } from "../subtasksRegistry";
+  Choice,
+  DataFeedsRegistry,
+  DenominationsRegistry,
+  FeedRegistriesRegistry,
+  FunctionOraclesRegistry,
+  KeeperRegistriesRegistry,
+  L2SequencersRegistry,
+  LinkTokensRegistry,
+  NetworksRegistry,
+  VRFCoordinatorsRegistry,
+} from "../shared/types";
+import { subtasks } from "../subtasks";
+import { SubtaskProperties } from "../subtasks/interfaces";
 
-type Choice = {
-  value: string;
-  name?: string;
-  description?: string;
-  disabled?: boolean | string;
-  type?: never;
-};
-
-const enum Parameter {
-  dataFeedAddress = "dataFeedAddress",
-  feedRegistryAddress = "feedRegistryAddress",
-  vrfCoordinatorAddress = "vrfCoordinatorAddress",
-  linkTokenAddress = "linkTokenAddress",
-  keeperRegistryAddress = "keeperRegistryAddress",
-  keeperRegistrarAddress = "keeperRegistrarAddress",
-  l2SequencerAddress = "l2SequencerAddress",
-  functionOracleAddress = "functionOracleAddress",
-  feedRegistryBaseTick = "feedRegistryBaseTick",
-  feedRegistryQuoteTick = "feedRegistryQuoteTick",
-}
-
-export type NetworksRegistry = Record<string, Network>;
-export type DataFeedsRegistry = Record<
-  string,
-  Record<string, Record<string, DataFeed>>
->;
-export type FeedRegistriesRegistry = Record<string, FeedRegistry>;
-export type VRFCoordinatorsRegistry = Record<string, VRFCoordinator>;
-export type LinkTokensRegistry = Record<string, LinkToken>;
-export type KeeperRegistriesRegistry = Record<string, KeeperRegistry>;
-export type L2SequencersRegistry = Record<string, L2Sequencer>;
-export type DenominationsRegistry = Record<string, string>;
-export type FunctionOraclesRegistry = Record<string, FunctionOracle>;
+import { camelToFlat } from "./utils";
 
 export const inquire = async (
   hre: HardhatRuntimeEnvironment,
   parameter: string
 ) => {
   switch (parameter) {
-    case Parameter.dataFeedAddress:
+    case InquirableParameter.dataFeedAddress:
       return inquireDataFeedAddress(hre);
-    case Parameter.feedRegistryAddress:
+    case InquirableParameter.feedRegistryAddress:
       return inquireFeedRegistryAddress(hre);
-    case Parameter.vrfCoordinatorAddress:
+    case InquirableParameter.vrfCoordinatorAddress:
       return inquireVRFCoordinatorAddress(hre);
-    case Parameter.linkTokenAddress:
+    case InquirableParameter.linkTokenAddress:
       return inquireLinkTokenAddress(hre);
-    case Parameter.keeperRegistryAddress:
+    case InquirableParameter.keeperRegistryAddress:
       return inquireKeeperRegistryAddress(hre);
-    case Parameter.keeperRegistrarAddress:
+    case InquirableParameter.keeperRegistrarAddress:
       return inquireKeeperRegistrarAddress(hre);
-    case Parameter.l2SequencerAddress:
+    case InquirableParameter.l2SequencerAddress:
       return inquireL2SequencerAddress(hre);
-    case Parameter.functionOracleAddress:
+    case InquirableParameter.functionOracleAddress:
       return inquireFunctionOracleAddress(hre);
-    case Parameter.feedRegistryBaseTick:
+    case InquirableParameter.feedRegistryBaseTick:
       return inquireFeedRegistryBaseTick();
-    case Parameter.feedRegistryQuoteTick:
+    case InquirableParameter.feedRegistryQuoteTick:
       return inquireFeedRegistryQuoteTick();
     default:
       return inquireInput(camelToFlat(parameter));
@@ -652,10 +622,10 @@ export const inquireDenomination = async () => {
   return denomination;
 };
 
-export const inquireSubtask = async (
+export const inquireSubtaskProperties = async (
   task: Task
 ): Promise<SubtaskProperties> => {
-  const subtasksAvailable = subtasksRegistry[task];
+  const subtasksAvailable = subtasks[task];
   const subtaskName = await select({
     message: "Select a subtask",
     choices: Object.keys(subtasksAvailable).reduce((agg, key) => {
@@ -667,5 +637,5 @@ export const inquireSubtask = async (
       return agg;
     }, [] as Choice[]),
   });
-  return subtasksRegistry[task][subtaskName];
+  return subtasks[task][subtaskName];
 };

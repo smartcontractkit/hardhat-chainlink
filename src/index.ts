@@ -7,10 +7,10 @@ import {
 } from "hardhat/types";
 
 import { HardhatChainlink } from "./HardhatChainlink";
-import { PACKAGE_NAME } from "./helpers/constants";
-import { registerSubtasks } from "./helpers/subtasks";
-import { resolveTask } from "./helpers/tasks";
-import { subtasksRegistry, Task } from "./registries";
+import { PACKAGE_NAME } from "./shared/constants";
+import { Task } from "./shared/enums";
+import { printSubtasks, registerSubtasks } from "./subtasks/helpers";
+import { resolveTask } from "./tasks/helpers";
 import "./type-extensions";
 
 export interface ChainlinkUserConfig {

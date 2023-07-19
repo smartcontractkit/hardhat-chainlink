@@ -1,6 +1,16 @@
 import fs from "fs";
 
 import {
+  DataFeedsRegistry,
+  FeedRegistriesRegistry,
+  FunctionOraclesRegistry,
+  KeeperRegistriesRegistry,
+  L2SequencersRegistry,
+  LinkTokensRegistry,
+  NetworksRegistry,
+  VRFCoordinatorsRegistry,
+} from "../../shared/types";
+import {
   DataFeed,
   FeedRegistry,
   FunctionOracle,
@@ -9,15 +19,15 @@ import {
   LinkToken,
   Network,
   VRFCoordinator,
-} from "./interfaces";
-import dataFeedsJSON from "./json/DataFeeds.json";
-import feedRegistriesJSON from "./json/FeedRegistries.json";
-import functionOraclesJSON from "./json/FunctionOracles.json";
-import keeperRegistriesJSON from "./json/KeeperRegistries.json";
-import l2SequencersJson from "./json/L2Sequencers.json";
-import linkTokensJSON from "./json/LinkTokens.json";
-import networksJSON from "./json/Networks.json";
-import vrfCoordinatorsJSON from "./json/VRFCoordinators.json";
+} from "../interfaces";
+import dataFeedsJSON from "../json/DataFeeds.json";
+import feedRegistriesJSON from "../json/FeedRegistries.json";
+import functionOraclesJSON from "../json/FunctionOracles.json";
+import keeperRegistriesJSON from "../json/KeeperRegistries.json";
+import l2SequencersJson from "../json/L2Sequencers.json";
+import linkTokensJSON from "../json/LinkTokens.json";
+import networksJSON from "../json/Networks.json";
+import vrfCoordinatorsJSON from "../json/VRFCoordinators.json";
 
 const dataFeeds: DataFeed[] = dataFeedsJSON as DataFeed[];
 const feedRegistries: FeedRegistry[] = feedRegistriesJSON as FeedRegistry[];
@@ -31,17 +41,14 @@ const keeperRegistries: KeeperRegistry[] =
   keeperRegistriesJSON as KeeperRegistry[];
 const l2Sequencers: L2Sequencer[] = l2SequencersJson as L2Sequencer[];
 
-const networksMap: Record<string, Network> = {};
-const dataFeedsMap: Record<
-  string,
-  Record<string, Record<string, DataFeed>>
-> = {};
-const feedRegistriesMap: Record<string, FeedRegistry> = {};
-const vrfCoordinatorsMap: Record<string, VRFCoordinator> = {};
-const functionOraclesMap: Record<string, FunctionOracle> = {};
-const linkTokensMap: Record<string, LinkToken> = {};
-const keeperRegistriesMap: Record<string, KeeperRegistry> = {};
-const l2SequencersMap: Record<string, L2Sequencer> = {};
+const networksMap: NetworksRegistry = {};
+const dataFeedsMap: DataFeedsRegistry = {};
+const feedRegistriesMap: FeedRegistriesRegistry = {};
+const vrfCoordinatorsMap: VRFCoordinatorsRegistry = {};
+const functionOraclesMap: FunctionOraclesRegistry = {};
+const linkTokensMap: LinkTokensRegistry = {};
+const keeperRegistriesMap: KeeperRegistriesRegistry = {};
+const l2SequencersMap: L2SequencersRegistry = {};
 
 networks.forEach((network: Network) => {
   networksMap[network.chainId] = network;
@@ -115,11 +122,11 @@ const tsCodeL2Sequencers = `export const l2SequencersRegistry = ${JSON.stringify
   l2SequencersMap
 )};`;
 
-fs.writeFileSync("networksRegistry.ts", tsCodeNetworks);
-fs.writeFileSync("dataFeedsRegistry.ts", tsCodeDataFeeds);
-fs.writeFileSync("feedRegistriesRegistry.ts", tsCodeFeedRegistries);
-fs.writeFileSync("vrfCoordinatorsRegistry.ts", tsCodeVRFCoordinators);
-fs.writeFileSync("functionOraclesRegistry.ts", tsCodeFunctionOracles);
-fs.writeFileSync("linkTokensRegistry.ts", tsCodeLinkTokens);
-fs.writeFileSync("keeperRegistriesRegistry.ts", tsCodeKeeperRegistries);
-fs.writeFileSync("l2SequencersRegistry.ts", tsCodeL2Sequencers);
+fs.writeFileSync("../networksRegistry.ts", tsCodeNetworks);
+fs.writeFileSync("../dataFeedsRegistry.ts", tsCodeDataFeeds);
+fs.writeFileSync("../feedRegistriesRegistry.ts", tsCodeFeedRegistries);
+fs.writeFileSync("../vrfCoordinatorsRegistry.ts", tsCodeVRFCoordinators);
+fs.writeFileSync("../functionOraclesRegistry.ts", tsCodeFunctionOracles);
+fs.writeFileSync("../linkTokensRegistry.ts", tsCodeLinkTokens);
+fs.writeFileSync("../keeperRegistriesRegistry.ts", tsCodeKeeperRegistries);
+fs.writeFileSync("../l2SequencersRegistry.ts", tsCodeL2Sequencers);

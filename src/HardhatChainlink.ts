@@ -1,34 +1,30 @@
 import "@nomiclabs/hardhat-ethers";
-import {BigNumber, BigNumberish, BytesLike} from "ethers";
+import { BigNumber, BigNumberish, BytesLike } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import * as automation from "./automation";
-import * as registries from "./registries";
 import * as feeds from "./feeds";
-import * as vrf from "./vrf";
-import * as net from "net";
+import * as registries from "./registries";
 import {
   DataFeedsRegistry,
+  DenominationsRegistry,
+  FunctionOraclesRegistry,
   KeeperRegistriesRegistry,
   LinkTokensRegistry,
-  FunctionOraclesRegistry,
-  VRFCoordinatorsRegistry,
   NetworksRegistry,
-  DenominationsRegistry
-} from "./registries/helpers";
-import { FeedRegistryInterface } from "../types";
-import { getFeed } from "./feeds";
-import { getKeeperRegistrarConfig, getPendingRegistrationRequest } from "./automation";
+  VRFCoordinatorsRegistry,
+} from "./shared/types";
+import * as vrf from "./vrf";
 
 export class HardhatChainlink {
   public registries: {
-    dataFeeds: DataFeedsRegistry,
-    vrfCoordinators: VRFCoordinatorsRegistry,
-    keeperRegistries: KeeperRegistriesRegistry,
-    functionOracles: FunctionOraclesRegistry,
-    linkTokens: LinkTokensRegistry,
-    networks: NetworksRegistry,
-    denominations: DenominationsRegistry,
+    dataFeeds: DataFeedsRegistry;
+    vrfCoordinators: VRFCoordinatorsRegistry;
+    keeperRegistries: KeeperRegistriesRegistry;
+    functionOracles: FunctionOraclesRegistry;
+    linkTokens: LinkTokensRegistry;
+    networks: NetworksRegistry;
+    denominations: DenominationsRegistry;
   };
   public dataFeed: DataFeed;
   public feedRegistry: FeedRegistry;
@@ -62,18 +58,18 @@ export class HardhatChainlink {
 
 class DataFeed {
   private hre: HardhatRuntimeEnvironment;
-  
+
   constructor(hre: HardhatRuntimeEnvironment) {
     this.hre = hre;
   }
 
-  public async getLatestRoundAnswer(dataFeedAddress: string): Promise<BigNumber> {
+  public async getLatestRoundAnswer(
+    dataFeedAddress: string
+  ): Promise<BigNumber> {
     return feeds.getLatestRoundAnswer(this.hre, dataFeedAddress);
   }
 
-  public async getLatestRoundData(
-    dataFeedAddress: string
-  ): Promise<{
+  public async getLatestRoundData(dataFeedAddress: string): Promise<{
     roundId: BigNumber;
     answer: BigNumber;
     startedAt: BigNumber;
@@ -107,9 +103,7 @@ class DataFeed {
     return feeds.getDecimals(this.hre, dataFeedAddress);
   }
 
-  public async getDescription(
-    dataFeedAddress: string
-  ): Promise<string> {
+  public async getDescription(dataFeedAddress: string): Promise<string> {
     return feeds.getDescription(this.hre, dataFeedAddress);
   }
 
@@ -146,14 +140,23 @@ class FeedRegistry {
     feedRegistryBaseTick: string,
     feedRegistryQuoteTick: string
   ): Promise<string> {
-    return feeds.getFeed(this.hre, feedRegistryAddress, feedRegistryBaseTick, feedRegistryQuoteTick);
+    return feeds.getFeed(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick
+    );
   }
 
   public async isFeedEnabled(
     feedRegistryAddress: string,
     aggregatorAddress: string
   ): Promise<boolean> {
-    return feeds.isFeedEnabled(this.hre, feedRegistryAddress, aggregatorAddress);
+    return feeds.isFeedEnabled(
+      this.hre,
+      feedRegistryAddress,
+      aggregatorAddress
+    );
   }
 
   public async getDecimals(
@@ -161,7 +164,12 @@ class FeedRegistry {
     feedRegistryBaseTick: string,
     feedRegistryQuoteTick: string
   ): Promise<number> {
-    return feeds.getFeedRegistryDecimals(this.hre, feedRegistryAddress, feedRegistryBaseTick, feedRegistryQuoteTick);
+    return feeds.getFeedRegistryDecimals(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick
+    );
   }
 
   public async getDescription(
@@ -236,7 +244,13 @@ class FeedRegistry {
     feedRegistryQuoteTick: string,
     roundId: BigNumber
   ): Promise<string> {
-    return feeds.getRoundFeed(this.hre, feedRegistryAddress, feedRegistryBaseTick, feedRegistryQuoteTick, roundId);
+    return feeds.getRoundFeed(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick,
+      roundId
+    );
   }
 
   public async getPhase(
@@ -249,7 +263,13 @@ class FeedRegistry {
     startingAggregatorRoundId: BigNumber;
     endingAggregatorRoundId: BigNumber;
   }> {
-    return feeds.getPhase(this.hre, feedRegistryAddress, feedRegistryBaseTick, feedRegistryQuoteTick, phaseId);
+    return feeds.getPhase(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick,
+      phaseId
+    );
   }
 
   public async getPhaseFeed(
@@ -258,7 +278,13 @@ class FeedRegistry {
     feedRegistryQuoteTick: string,
     phaseId: BigNumber
   ): Promise<string> {
-    return feeds.getPhaseFeed(this.hre, feedRegistryAddress, feedRegistryBaseTick, feedRegistryQuoteTick, phaseId);
+    return feeds.getPhaseFeed(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick,
+      phaseId
+    );
   }
 
   public async getPhaseRange(
@@ -270,7 +296,13 @@ class FeedRegistry {
     startingRoundId: BigNumber;
     endingRoundId: BigNumber;
   }> {
-    return feeds.getPhaseRange(this.hre, feedRegistryAddress, feedRegistryBaseTick, feedRegistryQuoteTick, phaseId);
+    return feeds.getPhaseRange(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick,
+      phaseId
+    );
   }
 
   public async getCurrentPhaseId(
@@ -278,7 +310,12 @@ class FeedRegistry {
     feedRegistryBaseTick: string,
     feedRegistryQuoteTick: string
   ): Promise<number> {
-    return feeds.getCurrentPhaseId(this.hre, feedRegistryAddress, feedRegistryBaseTick, feedRegistryQuoteTick);
+    return feeds.getCurrentPhaseId(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick
+    );
   }
 
   public async getPreviousRoundId(
@@ -302,7 +339,13 @@ class FeedRegistry {
     feedRegistryQuoteTick: string,
     roundId: BigNumber
   ): Promise<BigNumber> {
-    return feeds.getNextRoundId(this.hre, feedRegistryAddress, feedRegistryBaseTick, feedRegistryQuoteTick, roundId);
+    return feeds.getNextRoundId(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick,
+      roundId
+    );
   }
 }
 
@@ -343,9 +386,7 @@ class L2Sequencer {
     this.hre = hre;
   }
 
-  public async isL2SequencerUp(
-    l2SequencerAddress: string
-  ): Promise<boolean> {
+  public async isL2SequencerUp(l2SequencerAddress: string): Promise<boolean> {
     return feeds.isL2SequencerUp(this.hre, l2SequencerAddress);
   }
 
@@ -373,65 +414,62 @@ class VRF {
   }
 
   public async createSubscription(
-    vrfCoordinatorAddress: string,
+    vrfCoordinatorAddress: string
   ): Promise<{ subscriptionId: BigNumber; transactionHash: string }> {
-    return vrf.createSubscription(
-      this.hre,
-      vrfCoordinatorAddress,
-    );
+    return vrf.createSubscription(this.hre, vrfCoordinatorAddress);
   }
 
   public async fundSubscription(
     vrfCoordinatorAddress: string,
     linkTokenAddress: string,
     amountInJuels: BigNumber,
-    subscriptionId: BigNumber,
+    subscriptionId: BigNumber
   ): Promise<{ transactionHash: string }> {
     return vrf.fundSubscription(
       this.hre,
       vrfCoordinatorAddress,
       linkTokenAddress,
       amountInJuels,
-      subscriptionId,
+      subscriptionId
     );
   }
 
   public async cancelSubscription(
     vrfCoordinatorAddress: string,
     subscriptionId: BigNumber,
-    receivingWallet: string,
+    receivingWallet: string
   ): Promise<{ transactionHash: string }> {
     return vrf.cancelSubscription(
       this.hre,
       vrfCoordinatorAddress,
       subscriptionId,
-      receivingWallet,
+      receivingWallet
     );
   }
 
   public async addConsumer(
     vrfCoordinatorAddress: string,
     consumerAddress: string,
-    subscriptionId: BigNumber,
+    subscriptionId: BigNumber
   ): Promise<{ transactionHash: string }> {
     return vrf.addConsumer(
       this.hre,
       vrfCoordinatorAddress,
       consumerAddress,
-      subscriptionId,
+      subscriptionId
     );
   }
 
   public async removeConsumer(
     vrfCoordinatorAddress: string,
     consumerAddress: string,
-    subscriptionId: BigNumber,
+    subscriptionId: BigNumber
   ): Promise<{ transactionHash: string }> {
     return vrf.removeConsumer(
       this.hre,
       vrfCoordinatorAddress,
       consumerAddress,
-      subscriptionId,
+      subscriptionId
     );
   }
 
@@ -465,30 +503,28 @@ class VRF {
   public async requestSubscriptionOwnerTransfer(
     vrfCoordinatorAddress: string,
     subscriptionId: BigNumber,
-    newOwnerAddress: string,
+    newOwnerAddress: string
   ): Promise<{ transactionHash: string }> {
     return vrf.requestSubscriptionOwnerTransfer(
       this.hre,
       vrfCoordinatorAddress,
       subscriptionId,
-      newOwnerAddress,
+      newOwnerAddress
     );
   }
 
   public async acceptSubscriptionOwnerTransfer(
     vrfCoordinatorAddress: string,
-    subscriptionId: BigNumber,
+    subscriptionId: BigNumber
   ): Promise<{ transactionHash: string }> {
     return vrf.acceptSubscriptionOwnerTransfer(
       this.hre,
       vrfCoordinatorAddress,
-      subscriptionId,
+      subscriptionId
     );
   }
 
-  public async getMaxConsumers(
-    vrfCoordinatorAddress: string
-  ): Promise<number> {
+  public async getMaxConsumers(vrfCoordinatorAddress: string): Promise<number> {
     return vrf.getMaxConsumers(this.hre, vrfCoordinatorAddress);
   }
 
@@ -523,9 +559,7 @@ class VRF {
     return vrf.getCommitment(this.hre, vrfCoordinatorAddress, requestId);
   }
 
-  public async getCoordinatorConfig(
-    vrfCoordinatorAddress: string
-  ): Promise<{
+  public async getCoordinatorConfig(vrfCoordinatorAddress: string): Promise<{
     minimumRequestConfirmations: number;
     maxGasLimit: number;
     stalenessSeconds: number;
@@ -560,7 +594,7 @@ class Automation {
     adminAddress: string,
     checkData: BytesLike,
     source: number,
-    sender: string,
+    sender: string
   ): Promise<{ transactionHash: string }> {
     return automation.registerUpkeep(
       this.hre,
@@ -574,7 +608,7 @@ class Automation {
       adminAddress,
       checkData,
       source,
-      sender,
+      sender
     );
   }
 
@@ -594,12 +628,12 @@ class Automation {
 
   public async cancelPendingRegistrationRequest(
     keepersRegistrarAddress: string,
-    requestHash: BytesLike,
+    requestHash: BytesLike
   ): Promise<{ transactionHash: string }> {
     return automation.cancelPendingRegistrationRequest(
       this.hre,
       keepersRegistrarAddress,
-      requestHash,
+      requestHash
     );
   }
 
@@ -612,7 +646,10 @@ class Automation {
     keeperRegistry: string;
     minLINKJuels: BigNumber;
   }> {
-    return automation.getKeeperRegistrarConfig(this.hre, keepersRegistrarAddress);
+    return automation.getKeeperRegistrarConfig(
+      this.hre,
+      keepersRegistrarAddress
+    );
   }
 
   public async getKeepersRegistrarTypeAndVersion(
@@ -628,13 +665,13 @@ class Automation {
   public async fundUpkeep(
     keepersRegistryAddress: string,
     upkeepId: BigNumber,
-    amountInJuels: BigNumber,
+    amountInJuels: BigNumber
   ): Promise<{ transactionHash: string }> {
     return automation.fundUpkeep(
       this.hre,
       keepersRegistryAddress,
       upkeepId,
-      amountInJuels,
+      amountInJuels
     );
   }
 
@@ -649,30 +686,31 @@ class Automation {
     adjustedGasWei: BigNumber;
     linkEth: BigNumber;
   }> {
-    return automation.checkUpkeep(this.hre, keepersRegistryAddress, upkeepId, fromAddress);
+    return automation.checkUpkeep(
+      this.hre,
+      keepersRegistryAddress,
+      upkeepId,
+      fromAddress
+    );
   }
 
   public async cancelUpkeep(
     keepersRegistryAddress: string,
-    upkeepId: BigNumber,
+    upkeepId: BigNumber
   ): Promise<{ transactionHash: string }> {
-    return automation.cancelUpkeep(
-      this.hre,
-      keepersRegistryAddress,
-      upkeepId,
-    );
+    return automation.cancelUpkeep(this.hre, keepersRegistryAddress, upkeepId);
   }
 
   public async withdrawFundsFromCanceledUpkeep(
     keepersRegistryAddress: string,
     upkeepId: BigNumber,
-    receivingAddress: string,
+    receivingAddress: string
   ): Promise<{ transactionHash: string }> {
     return automation.withdrawFunds(
       this.hre,
       keepersRegistryAddress,
       upkeepId,
-      receivingAddress,
+      receivingAddress
     );
   }
 
@@ -708,61 +746,61 @@ class Automation {
   public async migrateUpkeeps(
     keepersRegistryAddress: string,
     upkeepIds: BigNumber[],
-    destination: string,
+    destination: string
   ): Promise<{ transactionHash: string }> {
     return automation.migrateUpkeeps(
       this.hre,
       keepersRegistryAddress,
       upkeepIds,
-      destination,
+      destination
     );
   }
 
   public async receiveUpkeeps(
     keepersRegistryAddress: string,
-    encodedUpkeeps: BytesLike,
+    encodedUpkeeps: BytesLike
   ): Promise<{ transactionHash: string }> {
     return automation.receiveUpkeeps(
       this.hre,
       keepersRegistryAddress,
-      encodedUpkeeps,
+      encodedUpkeeps
     );
   }
 
   public async withdrawKeeperPayment(
     keepersRegistryAddress: string,
     fromAddress: string,
-    toAddress: string,
+    toAddress: string
   ): Promise<{ transactionHash: string }> {
     return automation.withdrawKeeperPayment(
       this.hre,
       keepersRegistryAddress,
       fromAddress,
-      toAddress,
+      toAddress
     );
   }
 
   public async transferKeeperPayeeship(
     keepersRegistryAddress: string,
     keeper: string,
-    proposed: string,
+    proposed: string
   ): Promise<{ transactionHash: string }> {
     return automation.transferKeeperPayeeship(
       this.hre,
       keepersRegistryAddress,
       keeper,
-      proposed,
+      proposed
     );
   }
 
   public async acceptKeeperPayeeship(
     keepersRegistryAddress: string,
-    keeper: string,
+    keeper: string
   ): Promise<{ transactionHash: string }> {
     return automation.acceptKeeperPayeeship(
       this.hre,
       keepersRegistryAddress,
-      keeper,
+      keeper
     );
   }
 
@@ -788,7 +826,11 @@ class Automation {
     keepersRegistryAddress: string,
     upkeepId: BigNumber
   ): Promise<BigNumber> {
-    return automation.getMinBalanceForUpkeep(this.hre, keepersRegistryAddress, upkeepId);
+    return automation.getMinBalanceForUpkeep(
+      this.hre,
+      keepersRegistryAddress,
+      upkeepId
+    );
   }
 
   public async getKeepersRegistryState(

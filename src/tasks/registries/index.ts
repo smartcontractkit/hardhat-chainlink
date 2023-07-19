@@ -10,7 +10,7 @@ import {
   inquireL2SequencerAddress,
   inquireLinkTokenAddress,
   inquireVRFCoordinatorAddress,
-} from "../../registries/helpers";
+} from "../../helpers/inquirers";
 
 type Choice = {
   value: string;
