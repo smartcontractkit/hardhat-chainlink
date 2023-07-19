@@ -7,9 +7,9 @@ import { SubtaskProperties } from "../interfaces";
 
 export const registerSubtasks = () => {
   for (const taskName of Object.keys(Task)) {
-    const subtasks = subtasksRegistry[taskName] ?? {};
-    for (const subtaskName of Object.keys(subtasks)) {
-      const subtaskProperties = subtasks[subtaskName];
+    const taskSubtasks = subtasks[taskName] ?? {};
+    for (const subtaskName of Object.keys(taskSubtasks)) {
+      const subtaskProperties = taskSubtasks[subtaskName];
       const subtaskDefinition = subtask(
         `${PACKAGE_NAME}:${taskName}:${subtaskProperties.command}`
       );

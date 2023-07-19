@@ -44,6 +44,7 @@ extendEnvironment((hre: HardhatRuntimeEnvironment) => {
 // DATA FEEDS
 task(`${PACKAGE_NAME}:${Task.dataFeeds}`, "Data Feeds Module")
   .addOptionalPositionalParam("subtask", "Subtask")
+  .addOptionalParam("args", "Subtask args")
   .setAction(async (taskArgs, hre) => {
     await resolveTask(hre, Task.dataFeeds, taskArgs);
   });
@@ -58,6 +59,7 @@ task(
 // DATA FEEDS
 task(`${PACKAGE_NAME}:${Task.feedRegistries}`, "Feed Registries Module")
   .addOptionalPositionalParam("subtask", "Subtask")
+  .addOptionalParam("args", "Subtask args")
   .setAction(async (taskArgs, hre) => {
     await resolveTask(hre, Task.feedRegistries, taskArgs);
   });
@@ -72,6 +74,7 @@ task(
 // ENS FEEDS RESOLVER
 task(`${PACKAGE_NAME}:${Task.ens}`, "ENS Feeds Resolver Module")
   .addOptionalPositionalParam("subtask", "Subtask")
+  .addOptionalParam("args", "Subtask args")
   .setAction(async (taskArgs, hre) => {
     await resolveTask(hre, Task.ens, taskArgs);
   });
@@ -86,6 +89,7 @@ task(
 // LAYER 2 FEED UPTIME SEQUENCER
 task(`${PACKAGE_NAME}:${Task.l2Sequencer}`, "L2 Feeds Uptime Sequencers Module")
   .addOptionalPositionalParam("subtask", "Subtask")
+  .addOptionalParam("args", "Subtask args")
   .setAction(async (taskArgs, hre) => {
     await resolveTask(hre, Task.l2Sequencer, taskArgs);
   });
@@ -100,6 +104,7 @@ task(
 // VRF
 task(`${PACKAGE_NAME}:${Task.vrf}`, "VRF Module")
   .addOptionalPositionalParam("subtask", "Subtask")
+  .addOptionalParam("args", "Subtask args")
   .setAction(async (taskArgs, hre) => {
     await resolveTask(hre, Task.vrf, taskArgs);
   });
@@ -114,6 +119,7 @@ task(
 // AUTOMATION
 task(`${PACKAGE_NAME}:${Task.automation}`, "Automation Module")
   .addOptionalPositionalParam("subtask", "Subtask")
+  .addOptionalParam("args", "Subtask args")
   .setAction(async (taskArgs, hre) => {
     await resolveTask(hre, Task.automation, taskArgs);
   });
@@ -128,6 +134,7 @@ task(
 // SANDBOX
 task(`${PACKAGE_NAME}:${Task.sandbox}`, "Sandbox Module")
   .addOptionalPositionalParam("subtask", "Subtask")
+  .addOptionalParam("args", "Subtask args")
   .setAction(async (taskArgs, hre) => {
     await resolveTask(hre, Task.sandbox, taskArgs);
   });
@@ -140,15 +147,16 @@ task(
 });
 
 // REGISTRIES
-task(`${PACKAGE_NAME}:${Task.registries}`, "Registries Module")
+task(`${PACKAGE_NAME}:${Task.registries}`, "Plugin Registries Module")
   .addOptionalPositionalParam("subtask", "Subtask")
+  .addOptionalParam("args", "Subtask args")
   .setAction(async (taskArgs, hre) => {
     await resolveTask(hre, Task.registries, taskArgs);
   });
 
 task(
   `${PACKAGE_NAME}:${Task.registries}:subtasks`,
-  "Registries Module: Subtasks List"
+  "Plugin Registries Module: Subtasks List"
 ).setAction(async () => {
   console.log(JSON.stringify(subtasksRegistry[Task.registries], null, 2));
 });
