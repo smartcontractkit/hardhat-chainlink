@@ -1,0 +1,40 @@
+name: Publish Hardhat-Chainlink plugin to NPM
+
+on:
+  push:
+    tags:
+      - '@chainlink/hardhat-chainlink@*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'yarn'
+
+      - name: Setup environment
+        working-directory: packages/hardhat-chainlink
+        run: yarn && yarn build && yarn typechain
+
+      - name: Publish Hardhat-Chainlink to NPM
+        working-directory: packages/hardhat-plugin
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [[ ${{ github.ref }} == *"beta"* ]]; then
+            echo "Publishing package with beta tag"
+            yarn publish --tag beta --access public
+          elif [[ ${{ github.ref }} == *"test"* ]]; then
+            echo "Publishing package with test tag and private access"
+            yarn publish --tag test --access restricted
+          else
+            echo "Publishing package with latest tag"
+            yarn publish --tag latest --access public
+          fi

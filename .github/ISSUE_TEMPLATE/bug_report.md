@@ -20,8 +20,8 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Node Version [e.g. 18.0.0]
+ - OS: [e.g. MacOS]
+ - Node Version [e.g. 16.0.0]
  - Hardhat Version [e.g. 2.0.0]
 
 **Additional context**

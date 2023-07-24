@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: main-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  hardhat-chainlink:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          cache: 'yarn'
+
+      - name: Setup environment
+        working-directory: packages/hardhat-chainlink
+        run: yarn && yarn build && yarn typechain
+
+      - name: Test Hardhat-Chainlink plugin
+        working-directory: packages/hardhat-chainlink
+        run: yarn test
