@@ -1,1 +1,0 @@
-export const feedRegistriesRegistry = {"ethereum":{"contractAddress":"0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf","chainId":"1"}};
