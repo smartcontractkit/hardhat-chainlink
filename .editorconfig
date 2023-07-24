@@ -1,4 +1,5 @@
-# EditorConfig is awesome: https://EditorConfig.org
+# https://EditorConfig.org
+# Is used by default by Prettier
 root = true
 
 [*]
