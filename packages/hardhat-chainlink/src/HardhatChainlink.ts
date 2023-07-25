@@ -15,6 +15,7 @@ import * as utils from "./utils";
 export class HardhatChainlink {
   public registries: {
     dataFeeds: typeof registries.dataFeedsRegistry;
+    l2Sequencers: typeof registries.l2SequencersRegistry;
     vrfCoordinators: typeof registries.vrfCoordinatorsRegistry;
     keeperRegistries: typeof registries.keeperRegistriesRegistry;
     functionOracles: typeof registries.functionOraclesRegistry;
@@ -37,6 +38,7 @@ export class HardhatChainlink {
     this.hre = hre;
     this.registries = {
       dataFeeds: registries.dataFeedsRegistry,
+      l2Sequencers: registries.l2SequencersRegistry,
       vrfCoordinators: registries.vrfCoordinatorsRegistry,
       keeperRegistries: registries.keeperRegistriesRegistry,
       functionOracles: registries.functionOraclesRegistry,

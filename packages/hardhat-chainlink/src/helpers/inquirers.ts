@@ -84,14 +84,17 @@ const inquireDataFeed = async (
   } else {
     chainSlug = await select({
       message: "Select a network",
-      choices: Object.values(networksRegistry).reduce((agg, network) => {
-        agg.push({
-          name: network.name,
-          value: network.chainSlug,
-          description: network.name,
-        });
-        return agg;
-      }, [] as Choice[]),
+      choices: Object.values(Object.keys(dataFeedsRegistry)).reduce(
+        (agg, networkName) => {
+          agg.push({
+            name: networksRegistry[networkName].name,
+            value: networksRegistry[networkName].chainSlug,
+            description: networksRegistry[networkName].name,
+          });
+          return agg;
+        },
+        [] as Choice[]
+      ),
     });
   }
 
@@ -192,14 +195,17 @@ export const inquireFeedRegistryAddress = async (
   } else {
     chainSlug = await select({
       message: "Select a network",
-      choices: Object.values(networksRegistry).reduce((agg, network) => {
-        agg.push({
-          name: network.name,
-          value: network.chainSlug,
-          description: network.name,
-        });
-        return agg;
-      }, [] as Choice[]),
+      choices: Object.values(Object.keys(feedRegistriesRegistry)).reduce(
+        (agg, networkName) => {
+          agg.push({
+            name: networksRegistry[networkName].name,
+            value: networksRegistry[networkName].chainSlug,
+            description: networksRegistry[networkName].name,
+          });
+          return agg;
+        },
+        [] as Choice[]
+      ),
     });
   }
 
@@ -253,14 +259,17 @@ export const inquireVRFCoordinatorAddress = async (
   } else {
     chainSlug = await select({
       message: "Select a network",
-      choices: Object.values(networksRegistry).reduce((agg, network) => {
-        agg.push({
-          name: network.name,
-          value: network.chainSlug,
-          description: network.name,
-        });
-        return agg;
-      }, [] as Choice[]),
+      choices: Object.values(Object.keys(vrfCoordinatorsRegistry)).reduce(
+        (agg, networkName) => {
+          agg.push({
+            name: networksRegistry[networkName].name,
+            value: networksRegistry[networkName].chainSlug,
+            description: networksRegistry[networkName].name,
+          });
+          return agg;
+        },
+        [] as Choice[]
+      ),
     });
   }
 
@@ -315,14 +324,17 @@ export const inquireLinkTokenAddress = async (
   } else {
     chainSlug = await select({
       message: "Select a network",
-      choices: Object.values(networksRegistry).reduce((agg, network) => {
-        agg.push({
-          name: network.name,
-          value: network.chainSlug,
-          description: network.name,
-        });
-        return agg;
-      }, [] as Choice[]),
+      choices: Object.values(Object.keys(linkTokensRegistry)).reduce(
+        (agg, networkName) => {
+          agg.push({
+            name: networksRegistry[networkName].name,
+            value: networksRegistry[networkName].chainSlug,
+            description: networksRegistry[networkName].name,
+          });
+          return agg;
+        },
+        [] as Choice[]
+      ),
     });
   }
 
@@ -376,14 +388,17 @@ export const inquireKeeperRegistryAddress = async (
   } else {
     chainSlug = await select({
       message: "Select a network",
-      choices: Object.values(networksRegistry).reduce((agg, network) => {
-        agg.push({
-          name: network.name,
-          value: network.chainSlug,
-          description: network.name,
-        });
-        return agg;
-      }, [] as Choice[]),
+      choices: Object.values(Object.keys(keeperRegistriesRegistry)).reduce(
+        (agg, networkName) => {
+          agg.push({
+            name: networksRegistry[networkName].name,
+            value: networksRegistry[networkName].chainSlug,
+            description: networksRegistry[networkName].name,
+          });
+          return agg;
+        },
+        [] as Choice[]
+      ),
     });
   }
 
@@ -438,14 +453,17 @@ export const inquireKeeperRegistrarAddress = async (
   } else {
     chainSlug = await select({
       message: "Select a network",
-      choices: Object.values(networksRegistry).reduce((agg, network) => {
-        agg.push({
-          name: network.name,
-          value: network.chainSlug,
-          description: network.name,
-        });
-        return agg;
-      }, [] as Choice[]),
+      choices: Object.values(Object.keys(keeperRegistriesRegistry)).reduce(
+        (agg, networkName) => {
+          agg.push({
+            name: networksRegistry[networkName].name,
+            value: networksRegistry[networkName].chainSlug,
+            description: networksRegistry[networkName].name,
+          });
+          return agg;
+        },
+        [] as Choice[]
+      ),
     });
   }
 
@@ -500,14 +518,17 @@ export const inquireL2SequencerAddress = async (
   } else {
     chainSlug = await select({
       message: "Select a network",
-      choices: Object.values(networksRegistry).reduce((agg, network) => {
-        agg.push({
-          name: network.name,
-          value: network.chainSlug,
-          description: network.name,
-        });
-        return agg;
-      }, [] as Choice[]),
+      choices: Object.values(Object.keys(l2SequencersRegistry)).reduce(
+        (agg, networkName) => {
+          agg.push({
+            name: networksRegistry[networkName].name,
+            value: networksRegistry[networkName].chainSlug,
+            description: networksRegistry[networkName].name,
+          });
+          return agg;
+        },
+        [] as Choice[]
+      ),
     });
   }
 
@@ -561,14 +582,17 @@ export const inquireFunctionOracleAddress = async (
   } else {
     chainSlug = await select({
       message: "Select a network",
-      choices: Object.values(networksRegistry).reduce((agg, network) => {
-        agg.push({
-          name: network.name,
-          value: network.chainSlug,
-          description: network.name,
-        });
-        return agg;
-      }, [] as Choice[]),
+      choices: Object.values(Object.keys(functionOraclesRegistry)).reduce(
+        (agg, networkName) => {
+          agg.push({
+            name: networksRegistry[networkName].name,
+            value: networksRegistry[networkName].chainSlug,
+            description: networksRegistry[networkName].name,
+          });
+          return agg;
+        },
+        [] as Choice[]
+      ),
     });
   }
 
