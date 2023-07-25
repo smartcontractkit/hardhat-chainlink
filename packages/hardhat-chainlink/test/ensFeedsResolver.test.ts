@@ -7,7 +7,7 @@ import { useEnvironment } from "./helpers";
 
 const isGithubActions = !!process.env.GITHUB_ACTIONS;
 
-describe("Test chainlink:ens module [SKIP]", function () {
+describe("Test chainlink:ens module [SKIP FOR GITHUB ACTIONS]", function () {
   useEnvironment("hardhat-chainlink-ethereum");
 
   beforeEach(async function () {
