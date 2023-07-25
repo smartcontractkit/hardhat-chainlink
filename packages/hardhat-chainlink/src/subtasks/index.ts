@@ -3,7 +3,7 @@ import {
   AutomationSubtask,
   DataFeedProxySubtask,
   DataFeedSubtask,
-  ensFeedsResolverSubtask,
+  ENSFeedsResolverSubtask,
   FeedRegistrySubtask,
   L2SequencerSubtask,
   PluginRegistriesSubtask,
@@ -578,10 +578,10 @@ export const subtasks: Subtasks = {
     },
   },
   [Task.ens]: {
-    [ensFeedsResolverSubtask.resolveAggregatorAddress]: {
+    [ENSFeedsResolverSubtask.resolveAggregatorAddress]: {
       action: ensFeedsResolverActions.resolveAggregatorAddress,
       description: camelToFlat(
-        ensFeedsResolverSubtask.resolveAggregatorAddress
+        ENSFeedsResolverSubtask.resolveAggregatorAddress
       ),
       args: [
         {
@@ -594,10 +594,10 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [ensFeedsResolverSubtask.resolveAggregatorAddressWithSubdomains]: {
+    [ENSFeedsResolverSubtask.resolveAggregatorAddressWithSubdomains]: {
       action: ensFeedsResolverActions.resolveAggregatorAddressWithSubdomains,
       description: camelToFlat(
-        ensFeedsResolverSubtask.resolveAggregatorAddressWithSubdomains
+        ENSFeedsResolverSubtask.resolveAggregatorAddressWithSubdomains
       ),
       args: [
         {

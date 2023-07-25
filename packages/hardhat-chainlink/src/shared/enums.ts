@@ -62,7 +62,7 @@ export enum L2SequencerSubtask {
   getTimeSinceL2SequencerIsUp = "getTimeSinceL2SequencerIsUp",
 }
 
-export enum ensFeedsResolverSubtask {
+export enum ENSFeedsResolverSubtask {
   resolveAggregatorAddress = "resolveAggregatorAddress",
   resolveAggregatorAddressWithSubdomains = "resolveAggregatorAddressWithSubdomains",
 }

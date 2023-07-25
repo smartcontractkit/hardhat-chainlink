@@ -289,4 +289,8 @@ describe("Test chainlink:feedRegistry module", function () {
       expect(currentPhaseId).to.eq(CURRENT_PHASE_ID);
     });
   });
+
+  describe("Run methods as hre subtasks", function () {});
+
+  describe("Run methods as subtasks of a hre task", function () {});
 });

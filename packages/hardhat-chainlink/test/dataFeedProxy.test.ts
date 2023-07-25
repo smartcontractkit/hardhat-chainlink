@@ -1,5 +1,4 @@
 import { expect } from "chai";
-import { BigNumber } from "ethers";
 
 import { PACKAGE_NAME } from "../src/shared/constants";
 import { DataFeedProxySubtask, Task, UtilsSubtask } from "../src/shared/enums";
@@ -16,7 +15,7 @@ describe("Test chainlink:dataFeedProxy module", function () {
   const LATEST_ANSWER = 2_000;
   const CURRENT_PHASE_ID = 1;
   const DESCRIPTION = "v0.8/tests/MockV3Aggregator.sol";
-  const VERSION = BigNumber.from(0);
+  const VERSION = 0;
 
   beforeEach(async function () {
     const ethers = this.hre.ethers;
