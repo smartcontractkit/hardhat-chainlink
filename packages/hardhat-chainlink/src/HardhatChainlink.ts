@@ -9,26 +9,18 @@ import * as ensFeedsResolver from "./feeds/ensFeedsResolver";
 import * as feedRegistry from "./feeds/feedRegistry";
 import * as l2FeedUptimeSequencer from "./feeds/l2FeedUptimeSequencer";
 import * as registries from "./registries";
-import {
-  DataFeedsRegistry,
-  DenominationsRegistry,
-  FunctionOraclesRegistry,
-  KeeperRegistriesRegistry,
-  LinkTokensRegistry,
-  NetworksRegistry,
-  VRFCoordinatorsRegistry,
-} from "./shared/types";
 import * as vrf from "./vrf";
+import * as utils from "./utils";
 
 export class HardhatChainlink {
   public registries: {
-    dataFeeds: DataFeedsRegistry;
-    vrfCoordinators: VRFCoordinatorsRegistry;
-    keeperRegistries: KeeperRegistriesRegistry;
-    functionOracles: FunctionOraclesRegistry;
-    linkTokens: LinkTokensRegistry;
-    networks: NetworksRegistry;
-    denominations: DenominationsRegistry;
+    dataFeeds: typeof registries.dataFeedsRegistry;
+    vrfCoordinators: typeof registries.vrfCoordinatorsRegistry;
+    keeperRegistries: typeof registries.keeperRegistriesRegistry;
+    functionOracles: typeof registries.functionOraclesRegistry;
+    linkTokens: typeof registries.linkTokensRegistry;
+    networks: typeof registries.networksRegistry;
+    denominations: typeof registries.denominationsRegistry;
   };
   public dataFeed: DataFeed;
   public dataFeedProxy: DataFeedProxy;
@@ -38,6 +30,7 @@ export class HardhatChainlink {
   public vrf: VRF;
   public automation: Automation;
   public functionOracle: FunctionOracle;
+  public utils: Utils;
   private hre: HardhatRuntimeEnvironment;
 
   constructor(hre: HardhatRuntimeEnvironment) {
@@ -59,6 +52,7 @@ export class HardhatChainlink {
     this.vrf = new VRF(this.hre);
     this.automation = new Automation(this.hre);
     this.functionOracle = new FunctionOracle(this.hre);
+    this.utils = new Utils(this.hre);
   }
 }
 
@@ -205,20 +199,6 @@ class DataFeedProxy {
       phaseId
     );
   }
-
-  public getRoundId(
-    phaseId: BigNumberish,
-    aggregatorRoundId: BigNumberish
-  ): BigNumber {
-    return dataFeedProxy.getRoundId(phaseId, aggregatorRoundId);
-  }
-
-  public parseRoundId(roundId: BigNumberish): {
-    phaseId: BigNumber;
-    aggregatorRoundId: BigNumber;
-  } {
-    return dataFeedProxy.parseRoundId(roundId);
-  }
 }
 
 class FeedRegistry {
@@ -226,69 +206,6 @@ class FeedRegistry {
 
   constructor(hre: HardhatRuntimeEnvironment) {
     this.hre = hre;
-  }
-
-  public async getFeed(
-    feedRegistryAddress: string,
-    feedRegistryBaseTick: string,
-    feedRegistryQuoteTick: string
-  ): Promise<string> {
-    return feedRegistry.getFeed(
-      this.hre,
-      feedRegistryAddress,
-      feedRegistryBaseTick,
-      feedRegistryQuoteTick
-    );
-  }
-
-  public async isFeedEnabled(
-    feedRegistryAddress: string,
-    aggregatorAddress: string
-  ): Promise<boolean> {
-    return feedRegistry.isFeedEnabled(
-      this.hre,
-      feedRegistryAddress,
-      aggregatorAddress
-    );
-  }
-
-  public async getDecimals(
-    feedRegistryAddress: string,
-    feedRegistryBaseTick: string,
-    feedRegistryQuoteTick: string
-  ): Promise<number> {
-    return feedRegistry.getFeedRegistryDecimals(
-      this.hre,
-      feedRegistryAddress,
-      feedRegistryBaseTick,
-      feedRegistryQuoteTick
-    );
-  }
-
-  public async getDescription(
-    feedRegistryAddress: string,
-    feedRegistryBaseTick: string,
-    feedRegistryQuoteTick: string
-  ): Promise<string> {
-    return feedRegistry.getFeedRegistryDescription(
-      this.hre,
-      feedRegistryAddress,
-      feedRegistryBaseTick,
-      feedRegistryQuoteTick
-    );
-  }
-
-  public async getAggregatorVersion(
-    feedRegistryAddress: string,
-    feedRegistryBaseTick: string,
-    feedRegistryQuoteTick: string
-  ): Promise<BigNumber> {
-    return feedRegistry.getFeedRegistryAggregatorVersion(
-      this.hre,
-      feedRegistryAddress,
-      feedRegistryBaseTick,
-      feedRegistryQuoteTick
-    );
   }
 
   public async getLatestRoundData(
@@ -302,7 +219,7 @@ class FeedRegistry {
     updatedAt: BigNumber;
     answeredInRound: BigNumber;
   }> {
-    return feedRegistry.getFeedRegistryLatestRoundData(
+    return feedRegistry.getLatestRoundData(
       this.hre,
       feedRegistryAddress,
       feedRegistryBaseTick,
@@ -322,7 +239,47 @@ class FeedRegistry {
     updatedAt: BigNumber;
     answeredInRound: BigNumber;
   }> {
-    return feedRegistry.getFeedRegistryRoundData(
+    return feedRegistry.getRoundData(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick,
+      roundId
+    );
+  }
+
+  public async proposedGetLatestRoundData(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string
+  ): Promise<{
+    roundId: BigNumber;
+    answer: BigNumber;
+    startedAt: BigNumber;
+    updatedAt: BigNumber;
+    answeredInRound: BigNumber;
+  }> {
+    return feedRegistry.proposedGetLatestRoundData(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick
+    );
+  }
+
+  public async proposedGetRoundData(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string,
+    roundId: BigNumberish
+  ): Promise<{
+    roundId: BigNumber;
+    answer: BigNumber;
+    startedAt: BigNumber;
+    updatedAt: BigNumber;
+    answeredInRound: BigNumber;
+  }> {
+    return feedRegistry.proposedGetRoundData(
       this.hre,
       feedRegistryAddress,
       feedRegistryBaseTick,
@@ -343,6 +300,112 @@ class FeedRegistry {
       feedRegistryBaseTick,
       feedRegistryQuoteTick,
       roundId
+    );
+  }
+
+  public async getFeed(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string
+  ): Promise<string> {
+    return feedRegistry.getFeed(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick
+    );
+  }
+
+  public async getProposedFeed(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string
+  ): Promise<string> {
+    return feedRegistry.getProposedFeed(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick
+    );
+  }
+
+  public async isFeedEnabled(
+    feedRegistryAddress: string,
+    aggregatorAddress: string
+  ): Promise<boolean> {
+    return feedRegistry.isFeedEnabled(
+      this.hre,
+      feedRegistryAddress,
+      aggregatorAddress
+    );
+  }
+
+  public async getPreviousRoundId(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string,
+    roundId: BigNumberish
+  ): Promise<BigNumber> {
+    return feedRegistry.getPreviousRoundId(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick,
+      roundId
+    );
+  }
+
+  public async getNextRoundId(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string,
+    roundId: BigNumberish
+  ): Promise<BigNumber> {
+    return feedRegistry.getNextRoundId(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick,
+      roundId
+    );
+  }
+
+  public async getDecimals(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string
+  ): Promise<number> {
+    return feedRegistry.getDecimals(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick
+    );
+  }
+
+  public async getDescription(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string
+  ): Promise<string> {
+    return feedRegistry.getDescription(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick
+    );
+  }
+
+  public async getVersion(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string
+  ): Promise<BigNumber> {
+    return feedRegistry.getVersion(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick
     );
   }
 
@@ -408,36 +471,6 @@ class FeedRegistry {
       feedRegistryAddress,
       feedRegistryBaseTick,
       feedRegistryQuoteTick
-    );
-  }
-
-  public async getPreviousRoundId(
-    feedRegistryAddress: string,
-    feedRegistryBaseTick: string,
-    feedRegistryQuoteTick: string,
-    roundId: BigNumberish
-  ): Promise<BigNumber> {
-    return feedRegistry.getPreviousRoundId(
-      this.hre,
-      feedRegistryAddress,
-      feedRegistryBaseTick,
-      feedRegistryQuoteTick,
-      roundId
-    );
-  }
-
-  public async getNextRoundId(
-    feedRegistryAddress: string,
-    feedRegistryBaseTick: string,
-    feedRegistryQuoteTick: string,
-    roundId: BigNumberish
-  ): Promise<BigNumber> {
-    return feedRegistry.getNextRoundId(
-      this.hre,
-      feedRegistryAddress,
-      feedRegistryBaseTick,
-      feedRegistryQuoteTick,
-      roundId
     );
   }
 }
@@ -992,5 +1025,27 @@ class LinkToken {
 
   constructor(hre: HardhatRuntimeEnvironment) {
     this.hre = hre;
+  }
+}
+
+class Utils {
+  private hre: HardhatRuntimeEnvironment;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
+  }
+
+  public getRoundId(
+    phaseId: BigNumberish,
+    aggregatorRoundId: BigNumberish
+  ): BigNumber {
+    return utils.getRoundId(phaseId, aggregatorRoundId);
+  }
+
+  public parseRoundId(roundId: BigNumberish): {
+    phaseId: BigNumber;
+    aggregatorRoundId: BigNumber;
+  } {
+    return utils.parseRoundId(roundId);
   }
 }

@@ -8,6 +8,7 @@ import {
   L2SequencerSubtask,
   PluginRegistriesSubtask,
   Task,
+  UtilsSubtask,
   VRFSubtask,
 } from "../shared/enums";
 import { Subtasks } from "../shared/types";
@@ -18,6 +19,7 @@ import * as ensFeedsResolverActions from "../tasks/feeds/ensFeedsResolver";
 import * as feedRegistryActions from "../tasks/feeds/feedRegistry";
 import * as l2FeedUptimeSequencerActions from "../tasks/feeds/l2FeedUptimeSequencer";
 import * as registriesActions from "../tasks/registries";
+import * as utilsActions from "../tasks/utils";
 import * as vrfActions from "../tasks/vrf";
 
 export const subtasks: Subtasks = {
@@ -234,35 +236,11 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [DataFeedProxySubtask.getRoundId]: {
-      action: dataFeedProxyActions.getRoundId,
-      description: "Get Data Feed Proxy round ID",
-      args: [
-        {
-          name: "phaseId",
-          description: "Data Feed Proxy phase ID",
-        },
-        {
-          name: "aggregatorRoundId",
-          description: "Aggregator round ID",
-        },
-      ],
-    },
-    [DataFeedProxySubtask.parseRoundId]: {
-      action: dataFeedProxyActions.parseRoundId,
-      description: "Parse Data Feed Proxy round ID",
-      args: [
-        {
-          name: "roundId",
-          description: "Data Feed Proxy round ID",
-        },
-      ],
-    },
   },
   [Task.feedRegistry]: {
-    [FeedRegistrySubtask.getFeed]: {
-      action: feedRegistryActions.getFeed,
-      description: camelToFlat(FeedRegistrySubtask.getFeed),
+    [FeedRegistrySubtask.getLatestRoundData]: {
+      action: feedRegistryActions.getLatestRoundData,
+      description: camelToFlat(FeedRegistrySubtask.getLatestRoundData),
       args: [
         {
           name: "feedRegistryAddress",
@@ -278,23 +256,31 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [FeedRegistrySubtask.isFeedEnabled]: {
-      action: feedRegistryActions.isFeedEnabled,
-      description: camelToFlat(FeedRegistrySubtask.isFeedEnabled),
+    [FeedRegistrySubtask.getRoundData]: {
+      action: feedRegistryActions.getRoundData,
+      description: camelToFlat(FeedRegistrySubtask.getRoundData),
       args: [
         {
           name: "feedRegistryAddress",
           description: "Address of Feed Registry",
         },
         {
-          name: "aggregatorAddress",
-          description: "Address or a Data Feed Offchain Aggregator",
+          name: "feedRegistryBaseTick",
+          description: "Address or denomination of base tick in a token pair",
+        },
+        {
+          name: "feedRegistryQuoteTick",
+          description: "Address or denomination of quote tick in a token pair",
+        },
+        {
+          name: "roundId",
+          description: "Data Feed Round ID",
         },
       ],
     },
-    [FeedRegistrySubtask.getFeedRegistryDecimals]: {
-      action: feedRegistryActions.getFeedRegistryDecimals,
-      description: camelToFlat(FeedRegistrySubtask.getFeedRegistryDecimals),
+    [FeedRegistrySubtask.proposedGetLatestRoundData]: {
+      action: feedRegistryActions.getLatestRoundData,
+      description: camelToFlat(FeedRegistrySubtask.proposedGetLatestRoundData),
       args: [
         {
           name: "feedRegistryAddress",
@@ -310,67 +296,9 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [FeedRegistrySubtask.getFeedRegistryDescription]: {
-      action: feedRegistryActions.getFeedRegistryDescription,
-      description: camelToFlat(FeedRegistrySubtask.getFeedRegistryDescription),
-      args: [
-        {
-          name: "feedRegistryAddress",
-          description: "Address of Feed Registry",
-        },
-        {
-          name: "feedRegistryBaseTick",
-          description: "Address or denomination of base tick in a token pair",
-        },
-        {
-          name: "feedRegistryQuoteTick",
-          description: "Address or denomination of quote tick in a token pair",
-        },
-      ],
-    },
-    [FeedRegistrySubtask.getFeedRegistryAggregatorVersion]: {
-      action: feedRegistryActions.getFeedRegistryAggregatorVersion,
-      description: camelToFlat(
-        FeedRegistrySubtask.getFeedRegistryAggregatorVersion
-      ),
-      args: [
-        {
-          name: "feedRegistryAddress",
-          description: "Address of Feed Registry",
-        },
-        {
-          name: "feedRegistryBaseTick",
-          description: "Address or denomination of base tick in a token pair",
-        },
-        {
-          name: "feedRegistryQuoteTick",
-          description: "Address or denomination of quote tick in a token pair",
-        },
-      ],
-    },
-    [FeedRegistrySubtask.getFeedRegistryLatestRoundData]: {
-      action: feedRegistryActions.getFeedRegistryLatestRoundData,
-      description: camelToFlat(
-        FeedRegistrySubtask.getFeedRegistryLatestRoundData
-      ),
-      args: [
-        {
-          name: "feedRegistryAddress",
-          description: "Address of Feed Registry",
-        },
-        {
-          name: "feedRegistryBaseTick",
-          description: "Address or denomination of base tick in a token pair",
-        },
-        {
-          name: "feedRegistryQuoteTick",
-          description: "Address or denomination of quote tick in a token pair",
-        },
-      ],
-    },
-    [FeedRegistrySubtask.getFeedRegistryRoundData]: {
-      action: feedRegistryActions.getFeedRegistryRoundData,
-      description: camelToFlat(FeedRegistrySubtask.getFeedRegistryRoundData),
+    [FeedRegistrySubtask.proposedGetRoundData]: {
+      action: feedRegistryActions.getRoundData,
+      description: camelToFlat(FeedRegistrySubtask.proposedGetRoundData),
       args: [
         {
           name: "feedRegistryAddress",
@@ -409,6 +337,154 @@ export const subtasks: Subtasks = {
         {
           name: "roundId",
           description: "Data Feed Round ID",
+        },
+      ],
+    },
+    [FeedRegistrySubtask.getFeed]: {
+      action: feedRegistryActions.getFeed,
+      description: camelToFlat(FeedRegistrySubtask.getFeed),
+      args: [
+        {
+          name: "feedRegistryAddress",
+          description: "Address of Feed Registry",
+        },
+        {
+          name: "feedRegistryBaseTick",
+          description: "Address or denomination of base tick in a token pair",
+        },
+        {
+          name: "feedRegistryQuoteTick",
+          description: "Address or denomination of quote tick in a token pair",
+        },
+      ],
+    },
+    [FeedRegistrySubtask.getProposedFeed]: {
+      action: feedRegistryActions.getProposedFeed,
+      description: camelToFlat(FeedRegistrySubtask.getProposedFeed),
+      args: [
+        {
+          name: "feedRegistryAddress",
+          description: "Address of Feed Registry",
+        },
+        {
+          name: "feedRegistryBaseTick",
+          description: "Address or denomination of base tick in a token pair",
+        },
+        {
+          name: "feedRegistryQuoteTick",
+          description: "Address or denomination of quote tick in a token pair",
+        },
+      ],
+    },
+    [FeedRegistrySubtask.isFeedEnabled]: {
+      action: feedRegistryActions.isFeedEnabled,
+      description: camelToFlat(FeedRegistrySubtask.isFeedEnabled),
+      args: [
+        {
+          name: "feedRegistryAddress",
+          description: "Address of Feed Registry",
+        },
+        {
+          name: "aggregatorAddress",
+          description: "Address or a Data Feed Offchain Aggregator",
+        },
+      ],
+    },
+    [FeedRegistrySubtask.getPreviousRoundId]: {
+      action: feedRegistryActions.getPreviousRoundId,
+      description: camelToFlat(FeedRegistrySubtask.getPreviousRoundId),
+      args: [
+        {
+          name: "feedRegistryAddress",
+          description: "Address of Feed Registry",
+        },
+        {
+          name: "feedRegistryBaseTick",
+          description: "Address or denomination of base tick in a token pair",
+        },
+        {
+          name: "feedRegistryQuoteTick",
+          description: "Address or denomination of quote tick in a token pair",
+        },
+        {
+          name: "roundId",
+          description: "Data Feed Round ID",
+        },
+      ],
+    },
+    [FeedRegistrySubtask.getNextRoundId]: {
+      action: feedRegistryActions.getNextRoundId,
+      description: camelToFlat(FeedRegistrySubtask.getNextRoundId),
+      args: [
+        {
+          name: "feedRegistryAddress",
+          description: "Address of Feed Registry",
+        },
+        {
+          name: "feedRegistryBaseTick",
+          description: "Address or denomination of base tick in a token pair",
+        },
+        {
+          name: "feedRegistryQuoteTick",
+          description: "Address or denomination of quote tick in a token pair",
+        },
+        {
+          name: "roundId",
+          description: "Data Feed Round ID",
+        },
+      ],
+    },
+    [FeedRegistrySubtask.getDecimals]: {
+      action: feedRegistryActions.getDecimals,
+      description: camelToFlat(FeedRegistrySubtask.getDecimals),
+      args: [
+        {
+          name: "feedRegistryAddress",
+          description: "Address of Feed Registry",
+        },
+        {
+          name: "feedRegistryBaseTick",
+          description: "Address or denomination of base tick in a token pair",
+        },
+        {
+          name: "feedRegistryQuoteTick",
+          description: "Address or denomination of quote tick in a token pair",
+        },
+      ],
+    },
+    [FeedRegistrySubtask.getDescription]: {
+      action: feedRegistryActions.getDescription,
+      description: camelToFlat(FeedRegistrySubtask.getDescription),
+      args: [
+        {
+          name: "feedRegistryAddress",
+          description: "Address of Feed Registry",
+        },
+        {
+          name: "feedRegistryBaseTick",
+          description: "Address or denomination of base tick in a token pair",
+        },
+        {
+          name: "feedRegistryQuoteTick",
+          description: "Address or denomination of quote tick in a token pair",
+        },
+      ],
+    },
+    [FeedRegistrySubtask.getVersion]: {
+      action: feedRegistryActions.getVersion,
+      description: camelToFlat(FeedRegistrySubtask.getVersion),
+      args: [
+        {
+          name: "feedRegistryAddress",
+          description: "Address of Feed Registry",
+        },
+        {
+          name: "feedRegistryBaseTick",
+          description: "Address or denomination of base tick in a token pair",
+        },
+        {
+          name: "feedRegistryQuoteTick",
+          description: "Address or denomination of quote tick in a token pair",
         },
       ],
     },
@@ -497,50 +573,6 @@ export const subtasks: Subtasks = {
         {
           name: "phaseId",
           description: "Feed Registry Phase ID",
-        },
-      ],
-    },
-    [FeedRegistrySubtask.getPreviousRoundId]: {
-      action: feedRegistryActions.getPreviousRoundId,
-      description: camelToFlat(FeedRegistrySubtask.getPreviousRoundId),
-      args: [
-        {
-          name: "feedRegistryAddress",
-          description: "Address of Feed Registry",
-        },
-        {
-          name: "feedRegistryBaseTick",
-          description: "Address or denomination of base tick in a token pair",
-        },
-        {
-          name: "feedRegistryQuoteTick",
-          description: "Address or denomination of quote tick in a token pair",
-        },
-        {
-          name: "roundId",
-          description: "Data Feed Round ID",
-        },
-      ],
-    },
-    [FeedRegistrySubtask.getNextRoundId]: {
-      action: feedRegistryActions.getNextRoundId,
-      description: camelToFlat(FeedRegistrySubtask.getNextRoundId),
-      args: [
-        {
-          name: "feedRegistryAddress",
-          description: "Address of Feed Registry",
-        },
-        {
-          name: "feedRegistryBaseTick",
-          description: "Address or denomination of base tick in a token pair",
-        },
-        {
-          name: "feedRegistryQuoteTick",
-          description: "Address or denomination of quote tick in a token pair",
-        },
-        {
-          name: "roundId",
-          description: "Data Feed Round ID",
         },
       ],
     },
@@ -1265,6 +1297,32 @@ export const subtasks: Subtasks = {
       action: registriesActions.getDenomination,
       description: camelToFlat(PluginRegistriesSubtask.getDenomination),
       args: [],
+    },
+  },
+  [Task.utils]: {
+    [UtilsSubtask.getRoundId]: {
+      action: utilsActions.getRoundId,
+      description: "Get Data Feed Proxy/Registry round ID",
+      args: [
+        {
+          name: "phaseId",
+          description: "Data Feed Proxy/Registry phase ID",
+        },
+        {
+          name: "aggregatorRoundId",
+          description: "Aggregator round ID",
+        },
+      ],
+    },
+    [UtilsSubtask.parseRoundId]: {
+      action: utilsActions.parseRoundId,
+      description: "Parse Data Feed Proxy/Registry round ID",
+      args: [
+        {
+          name: "roundId",
+          description: "Data Feed Proxy/Registry round ID",
+        },
+      ],
     },
   },
 };

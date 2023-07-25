@@ -161,4 +161,19 @@ task(
   printSubtasks(Task.registries);
 });
 
+// UTILS
+task(`${PACKAGE_NAME}:${Task.utils}`, "Plugin Utils Module")
+  .addOptionalPositionalParam("subtask", "Subtask")
+  .addOptionalParam("args", "Subtask args")
+  .setAction(async (taskArgs, hre) => {
+    return resolveTask(hre, Task.utils, taskArgs);
+  });
+
+task(
+  `${PACKAGE_NAME}:${Task.utils}:subtasks`,
+  "Plugin Utils Module: Subtasks List"
+).setAction(async () => {
+  printSubtasks(Task.utils);
+});
+
 registerSubtasks();

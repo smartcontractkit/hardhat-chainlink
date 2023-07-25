@@ -9,6 +9,7 @@ export enum Task {
   sandbox = "sandbox",
   functions = "functions",
   registries = "registries",
+  utils = "utils",
 }
 
 export enum DataFeedSubtask {
@@ -34,25 +35,26 @@ export enum DataFeedProxySubtask {
   getAggregator = "getAggregator",
   getPhaseId = "getPhaseId",
   getPhaseAggregators = "getPhaseAggregators",
-  getRoundId = "getRoundId",
-  parseRoundId = "parseRoundId",
 }
 
 export enum FeedRegistrySubtask {
-  getFeed = "getFeed",
-  isFeedEnabled = "isFeedEnabled",
-  getFeedRegistryDecimals = "getFeedRegistryDecimals",
-  getFeedRegistryDescription = "getFeedRegistryDescription",
-  getFeedRegistryAggregatorVersion = "getFeedRegistryAggregatorVersion",
-  getFeedRegistryLatestRoundData = "getFeedRegistryLatestRoundData",
-  getFeedRegistryRoundData = "getFeedRegistryRoundData",
+  getLatestRoundData = "getLatestRoundData",
+  getRoundData = "getRoundData",
+  proposedGetLatestRoundData = "proposedGetLatestRoundData",
+  proposedGetRoundData = "proposedGetRoundData",
   getRoundFeed = "getRoundFeed",
+  getFeed = "getFeed",
+  getProposedFeed = "getProposedFeed",
+  isFeedEnabled = "isFeedEnabled",
+  getPreviousRoundId = "getPreviousRoundId",
+  getNextRoundId = "getNextRoundId",
+  getDecimals = "getDecimals",
+  getDescription = "getDescription",
+  getVersion = "getVersion",
   getPhase = "getPhase",
   getPhaseFeed = "getPhaseFeed",
   getPhaseRange = "getPhaseRange",
   getCurrentPhaseId = "getCurrentPhaseId",
-  getPreviousRoundId = "getPreviousRoundId",
-  getNextRoundId = "getNextRoundId",
 }
 
 export enum L2SequencerSubtask {
@@ -121,6 +123,11 @@ export enum PluginRegistriesSubtask {
   getL2SequencerAddress = "getL2SequencerAddress",
   getFunctionOracleAddress = "getFunctionOracleAddress",
   getDenomination = "getDenomination",
+}
+
+export enum UtilsSubtask {
+  getRoundId = "getRoundId",
+  parseRoundId = "parseRoundId",
 }
 
 export const enum InquirableParameter {

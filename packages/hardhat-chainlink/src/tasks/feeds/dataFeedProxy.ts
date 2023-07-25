@@ -83,16 +83,3 @@ export const getPhaseAggregators: ActionType<{
     taskArgs.phaseId
   );
 };
-
-export const getRoundId: ActionType<{
-  phaseId: BigNumberish;
-  aggregatorRoundId: BigNumberish;
-}> = async (taskArgs, hre) => {
-  return dataFeedProxy.getRoundId(taskArgs.phaseId, taskArgs.aggregatorRoundId);
-};
-
-export const parseRoundId: ActionType<{
-  roundId: BigNumberish;
-}> = async (taskArgs, hre) => {
-  return dataFeedProxy.parseRoundId(taskArgs.roundId);
-};

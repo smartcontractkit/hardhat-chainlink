@@ -2,12 +2,12 @@ import { ActionType } from "hardhat/types";
 
 import * as feedRegistry from "../../feeds/feedRegistry";
 
-export const getFeed: ActionType<{
+export const getLatestRoundData: ActionType<{
   feedRegistryAddress: string;
   feedRegistryBaseTick: string;
   feedRegistryQuoteTick: string;
 }> = async (taskArgs, hre) => {
-  return feedRegistry.getFeed(
+  return feedRegistry.getLatestRoundData(
     hre,
     taskArgs.feedRegistryAddress,
     taskArgs.feedRegistryBaseTick,
@@ -15,76 +15,41 @@ export const getFeed: ActionType<{
   );
 };
 
-export const isFeedEnabled: ActionType<{
-  feedRegistryAddress: string;
-  aggregatorAddress: string;
-}> = async (taskArgs, hre) => {
-  return feedRegistry.isFeedEnabled(
-    hre,
-    taskArgs.feedRegistryAddress,
-    taskArgs.aggregatorAddress
-  );
-};
-
-export const getFeedRegistryDecimals: ActionType<{
-  feedRegistryAddress: string;
-  feedRegistryBaseTick: string;
-  feedRegistryQuoteTick: string;
-}> = async (taskArgs, hre) => {
-  return feedRegistry.getFeedRegistryDecimals(
-    hre,
-    taskArgs.feedRegistryAddress,
-    taskArgs.feedRegistryBaseTick,
-    taskArgs.feedRegistryQuoteTick
-  );
-};
-
-export const getFeedRegistryDescription: ActionType<{
-  feedRegistryAddress: string;
-  feedRegistryBaseTick: string;
-  feedRegistryQuoteTick: string;
-}> = async (taskArgs, hre) => {
-  return feedRegistry.getFeedRegistryDescription(
-    hre,
-    taskArgs.feedRegistryAddress,
-    taskArgs.feedRegistryBaseTick,
-    taskArgs.feedRegistryQuoteTick
-  );
-};
-
-export const getFeedRegistryAggregatorVersion: ActionType<{
-  feedRegistryAddress: string;
-  feedRegistryBaseTick: string;
-  feedRegistryQuoteTick: string;
-}> = async (taskArgs, hre) => {
-  return feedRegistry.getFeedRegistryAggregatorVersion(
-    hre,
-    taskArgs.feedRegistryAddress,
-    taskArgs.feedRegistryBaseTick,
-    taskArgs.feedRegistryQuoteTick
-  );
-};
-
-export const getFeedRegistryLatestRoundData: ActionType<{
-  feedRegistryAddress: string;
-  feedRegistryBaseTick: string;
-  feedRegistryQuoteTick: string;
-}> = async (taskArgs, hre) => {
-  return feedRegistry.getFeedRegistryLatestRoundData(
-    hre,
-    taskArgs.feedRegistryAddress,
-    taskArgs.feedRegistryBaseTick,
-    taskArgs.feedRegistryQuoteTick
-  );
-};
-
-export const getFeedRegistryRoundData: ActionType<{
+export const getRoundData: ActionType<{
   feedRegistryAddress: string;
   feedRegistryBaseTick: string;
   feedRegistryQuoteTick: string;
   roundId: string;
 }> = async (taskArgs, hre) => {
-  return feedRegistry.getFeedRegistryRoundData(
+  return feedRegistry.getRoundData(
+    hre,
+    taskArgs.feedRegistryAddress,
+    taskArgs.feedRegistryBaseTick,
+    taskArgs.feedRegistryQuoteTick,
+    taskArgs.roundId
+  );
+};
+
+export const proposedGetLatestRoundData: ActionType<{
+  feedRegistryAddress: string;
+  feedRegistryBaseTick: string;
+  feedRegistryQuoteTick: string;
+}> = async (taskArgs, hre) => {
+  return feedRegistry.proposedGetLatestRoundData(
+    hre,
+    taskArgs.feedRegistryAddress,
+    taskArgs.feedRegistryBaseTick,
+    taskArgs.feedRegistryQuoteTick
+  );
+};
+
+export const proposedGetRoundData: ActionType<{
+  feedRegistryAddress: string;
+  feedRegistryBaseTick: string;
+  feedRegistryQuoteTick: string;
+  roundId: string;
+}> = async (taskArgs, hre) => {
+  return feedRegistry.proposedGetRoundData(
     hre,
     taskArgs.feedRegistryAddress,
     taskArgs.feedRegistryBaseTick,
@@ -105,6 +70,112 @@ export const getRoundFeed: ActionType<{
     taskArgs.feedRegistryBaseTick,
     taskArgs.feedRegistryQuoteTick,
     taskArgs.roundId
+  );
+};
+
+export const getFeed: ActionType<{
+  feedRegistryAddress: string;
+  feedRegistryBaseTick: string;
+  feedRegistryQuoteTick: string;
+}> = async (taskArgs, hre) => {
+  return feedRegistry.getFeed(
+    hre,
+    taskArgs.feedRegistryAddress,
+    taskArgs.feedRegistryBaseTick,
+    taskArgs.feedRegistryQuoteTick
+  );
+};
+
+export const getProposedFeed: ActionType<{
+  feedRegistryAddress: string;
+  feedRegistryBaseTick: string;
+  feedRegistryQuoteTick: string;
+}> = async (taskArgs, hre) => {
+  return feedRegistry.getProposedFeed(
+    hre,
+    taskArgs.feedRegistryAddress,
+    taskArgs.feedRegistryBaseTick,
+    taskArgs.feedRegistryQuoteTick
+  );
+};
+
+export const isFeedEnabled: ActionType<{
+  feedRegistryAddress: string;
+  aggregatorAddress: string;
+}> = async (taskArgs, hre) => {
+  return feedRegistry.isFeedEnabled(
+    hre,
+    taskArgs.feedRegistryAddress,
+    taskArgs.aggregatorAddress
+  );
+};
+
+export const getPreviousRoundId: ActionType<{
+  feedRegistryAddress: string;
+  feedRegistryBaseTick: string;
+  feedRegistryQuoteTick: string;
+  roundId: string;
+}> = async (taskArgs, hre) => {
+  return feedRegistry.getPreviousRoundId(
+    hre,
+    taskArgs.feedRegistryAddress,
+    taskArgs.feedRegistryBaseTick,
+    taskArgs.feedRegistryQuoteTick,
+    taskArgs.roundId
+  );
+};
+
+export const getNextRoundId: ActionType<{
+  feedRegistryAddress: string;
+  feedRegistryBaseTick: string;
+  feedRegistryQuoteTick: string;
+  roundId: string;
+}> = async (taskArgs, hre) => {
+  return feedRegistry.getNextRoundId(
+    hre,
+    taskArgs.feedRegistryAddress,
+    taskArgs.feedRegistryBaseTick,
+    taskArgs.feedRegistryQuoteTick,
+    taskArgs.roundId
+  );
+};
+
+export const getDecimals: ActionType<{
+  feedRegistryAddress: string;
+  feedRegistryBaseTick: string;
+  feedRegistryQuoteTick: string;
+}> = async (taskArgs, hre) => {
+  return feedRegistry.getDecimals(
+    hre,
+    taskArgs.feedRegistryAddress,
+    taskArgs.feedRegistryBaseTick,
+    taskArgs.feedRegistryQuoteTick
+  );
+};
+
+export const getDescription: ActionType<{
+  feedRegistryAddress: string;
+  feedRegistryBaseTick: string;
+  feedRegistryQuoteTick: string;
+}> = async (taskArgs, hre) => {
+  return feedRegistry.getDescription(
+    hre,
+    taskArgs.feedRegistryAddress,
+    taskArgs.feedRegistryBaseTick,
+    taskArgs.feedRegistryQuoteTick
+  );
+};
+
+export const getVersion: ActionType<{
+  feedRegistryAddress: string;
+  feedRegistryBaseTick: string;
+  feedRegistryQuoteTick: string;
+}> = async (taskArgs, hre) => {
+  return feedRegistry.getVersion(
+    hre,
+    taskArgs.feedRegistryAddress,
+    taskArgs.feedRegistryBaseTick,
+    taskArgs.feedRegistryQuoteTick
   );
 };
 
@@ -163,35 +234,5 @@ export const getCurrentPhaseId: ActionType<{
     taskArgs.feedRegistryAddress,
     taskArgs.feedRegistryBaseTick,
     taskArgs.feedRegistryQuoteTick
-  );
-};
-
-export const getPreviousRoundId: ActionType<{
-  feedRegistryAddress: string;
-  feedRegistryBaseTick: string;
-  feedRegistryQuoteTick: string;
-  roundId: string;
-}> = async (taskArgs, hre) => {
-  return feedRegistry.getPreviousRoundId(
-    hre,
-    taskArgs.feedRegistryAddress,
-    taskArgs.feedRegistryBaseTick,
-    taskArgs.feedRegistryQuoteTick,
-    taskArgs.roundId
-  );
-};
-
-export const getNextRoundId: ActionType<{
-  feedRegistryAddress: string;
-  feedRegistryBaseTick: string;
-  feedRegistryQuoteTick: string;
-  roundId: string;
-}> = async (taskArgs, hre) => {
-  return feedRegistry.getNextRoundId(
-    hre,
-    taskArgs.feedRegistryAddress,
-    taskArgs.feedRegistryBaseTick,
-    taskArgs.feedRegistryQuoteTick,
-    taskArgs.roundId
   );
 };

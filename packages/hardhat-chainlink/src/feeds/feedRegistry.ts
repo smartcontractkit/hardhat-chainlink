@@ -18,6 +18,24 @@ export const getFeed = async (
   return feedRegistry.getFeed(feedRegistryBaseTick, feedRegistryQuoteTick);
 };
 
+export const getProposedFeed = async (
+  hre: HardhatRuntimeEnvironment,
+  feedRegistryAddress: string,
+  feedRegistryBaseTick: string,
+  feedRegistryQuoteTick: string
+): Promise<string> => {
+  const [signer] = await hre.ethers.getSigners();
+  const feedRegistry = FeedRegistryInterface__factory.connect(
+    feedRegistryAddress,
+    signer
+  );
+
+  return feedRegistry.getProposedFeed(
+    feedRegistryBaseTick,
+    feedRegistryQuoteTick
+  );
+};
+
 export const isFeedEnabled = async (
   hre: HardhatRuntimeEnvironment,
   feedRegistryAddress: string,
@@ -32,7 +50,7 @@ export const isFeedEnabled = async (
   return feedRegistry.isFeedEnabled(aggregatorAddress);
 };
 
-export const getFeedRegistryDecimals = async (
+export const getDecimals = async (
   hre: HardhatRuntimeEnvironment,
   feedRegistryAddress: string,
   feedRegistryBaseTick: string,
@@ -47,7 +65,7 @@ export const getFeedRegistryDecimals = async (
   return feedRegistry.decimals(feedRegistryBaseTick, feedRegistryQuoteTick);
 };
 
-export const getFeedRegistryDescription = async (
+export const getDescription = async (
   hre: HardhatRuntimeEnvironment,
   feedRegistryAddress: string,
   feedRegistryBaseTick: string,
@@ -62,7 +80,7 @@ export const getFeedRegistryDescription = async (
   return feedRegistry.description(feedRegistryBaseTick, feedRegistryQuoteTick);
 };
 
-export const getFeedRegistryAggregatorVersion = async (
+export const getVersion = async (
   hre: HardhatRuntimeEnvironment,
   feedRegistryAddress: string,
   feedRegistryBaseTick: string,
@@ -77,7 +95,7 @@ export const getFeedRegistryAggregatorVersion = async (
   return feedRegistry.version(feedRegistryBaseTick, feedRegistryQuoteTick);
 };
 
-export const getFeedRegistryLatestRoundData = async (
+export const getLatestRoundData = async (
   hre: HardhatRuntimeEnvironment,
   feedRegistryAddress: string,
   feedRegistryBaseTick: string,
@@ -109,7 +127,7 @@ export const getFeedRegistryLatestRoundData = async (
   };
 };
 
-export const getFeedRegistryRoundData = async (
+export const getRoundData = async (
   hre: HardhatRuntimeEnvironment,
   feedRegistryAddress: string,
   feedRegistryBaseTick: string,
@@ -136,6 +154,72 @@ export const getFeedRegistryRoundData = async (
 
   return {
     roundId: roundData.roundId,
+    answer: roundData.answer,
+    startedAt: roundData.startedAt,
+    updatedAt: roundData.updatedAt,
+    answeredInRound: roundData.answeredInRound,
+  };
+};
+
+export const proposedGetLatestRoundData = async (
+  hre: HardhatRuntimeEnvironment,
+  feedRegistryAddress: string,
+  feedRegistryBaseTick: string,
+  feedRegistryQuoteTick: string
+): Promise<{
+  roundId: BigNumber;
+  answer: BigNumber;
+  startedAt: BigNumber;
+  updatedAt: BigNumber;
+  answeredInRound: BigNumber;
+}> => {
+  const [signer] = await hre.ethers.getSigners();
+  const feedRegistry = FeedRegistryInterface__factory.connect(
+    feedRegistryAddress,
+    signer
+  );
+
+  const roundData = await feedRegistry.proposedLatestRoundData(
+    feedRegistryBaseTick,
+    feedRegistryQuoteTick
+  );
+
+  return {
+    roundId: roundData.id,
+    answer: roundData.answer,
+    startedAt: roundData.startedAt,
+    updatedAt: roundData.updatedAt,
+    answeredInRound: roundData.answeredInRound,
+  };
+};
+
+export const proposedGetRoundData = async (
+  hre: HardhatRuntimeEnvironment,
+  feedRegistryAddress: string,
+  feedRegistryBaseTick: string,
+  feedRegistryQuoteTick: string,
+  roundId: BigNumberish
+): Promise<{
+  roundId: BigNumber;
+  answer: BigNumber;
+  startedAt: BigNumber;
+  updatedAt: BigNumber;
+  answeredInRound: BigNumber;
+}> => {
+  const [signer] = await hre.ethers.getSigners();
+  const feedRegistry = FeedRegistryInterface__factory.connect(
+    feedRegistryAddress,
+    signer
+  );
+
+  const roundData = await feedRegistry.proposedGetRoundData(
+    feedRegistryBaseTick,
+    feedRegistryQuoteTick,
+    roundId
+  );
+
+  return {
+    roundId: roundData.id,
     answer: roundData.answer,
     startedAt: roundData.startedAt,
     updatedAt: roundData.updatedAt,
@@ -180,17 +264,11 @@ export const getPhase = async (
     signer
   );
 
-  const phase = await feedRegistry.getPhase(
+  return feedRegistry.getPhase(
     feedRegistryBaseTick,
     feedRegistryQuoteTick,
     phaseId
   );
-
-  return {
-    phaseId: phase.phaseId,
-    startingAggregatorRoundId: phase.startingAggregatorRoundId,
-    endingAggregatorRoundId: phase.endingAggregatorRoundId,
-  };
 };
 
 export const getPhaseFeed = async (
