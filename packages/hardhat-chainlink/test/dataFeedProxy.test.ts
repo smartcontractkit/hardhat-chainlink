@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { BigNumber } from "ethers";
 
 import { PACKAGE_NAME } from "../src/shared/constants";
-import { DataFeedProxySubtask, Task } from "../src/shared/enums";
+import { DataFeedProxySubtask, Task, UtilsSubtask } from "../src/shared/enums";
 
 import { useEnvironment } from "./helpers";
 
@@ -36,7 +36,7 @@ describe("Test chainlink:dataFeedProxy module", function () {
           this.dataFeedProxy.address
         );
 
-      const roundId = this.hre.chainlink.dataFeedProxy.getRoundId(
+      const roundId = this.hre.chainlink.utils.getRoundId(
         CURRENT_PHASE_ID,
         LATEST_ROUND
       );
@@ -46,7 +46,7 @@ describe("Test chainlink:dataFeedProxy module", function () {
     });
 
     it("Gets round data", async function () {
-      const roundId = this.hre.chainlink.dataFeedProxy.getRoundId(
+      const roundId = this.hre.chainlink.utils.getRoundId(
         CURRENT_PHASE_ID,
         INITIAL_ROUND
       );
@@ -70,7 +70,7 @@ describe("Test chainlink:dataFeedProxy module", function () {
     });
 
     it("Gets round answer", async function () {
-      const roundId = this.hre.chainlink.dataFeedProxy.getRoundId(
+      const roundId = this.hre.chainlink.utils.getRoundId(
         CURRENT_PHASE_ID,
         INITIAL_ROUND
       );
@@ -89,7 +89,7 @@ describe("Test chainlink:dataFeedProxy module", function () {
       );
 
       const { phaseId, aggregatorRoundId } =
-        this.hre.chainlink.dataFeedProxy.parseRoundId(roundId);
+        this.hre.chainlink.utils.parseRoundId(roundId);
 
       expect(phaseId.toString()).to.eq(CURRENT_PHASE_ID.toString());
       expect(aggregatorRoundId.toString()).to.eq(LATEST_ROUND.toString());
@@ -148,7 +148,7 @@ describe("Test chainlink:dataFeedProxy module", function () {
       );
 
       const roundId = await this.hre.run(
-        `${PACKAGE_NAME}:${Task.dataFeedProxy}:${DataFeedProxySubtask.getRoundId}`,
+        `${PACKAGE_NAME}:${Task.utils}:${UtilsSubtask.getRoundId}`,
         {
           phaseId: CURRENT_PHASE_ID.toString(),
           aggregatorRoundId: LATEST_ROUND.toString(),
@@ -161,7 +161,7 @@ describe("Test chainlink:dataFeedProxy module", function () {
 
     it("Gets round data", async function () {
       const roundId = await this.hre.run(
-        `${PACKAGE_NAME}:${Task.dataFeedProxy}:${DataFeedProxySubtask.getRoundId}`,
+        `${PACKAGE_NAME}:${Task.utils}:${UtilsSubtask.getRoundId}`,
         {
           phaseId: CURRENT_PHASE_ID.toString(),
           aggregatorRoundId: INITIAL_ROUND.toString(),
@@ -193,7 +193,7 @@ describe("Test chainlink:dataFeedProxy module", function () {
 
     it("Gets round answer", async function () {
       const roundId = await this.hre.run(
-        `${PACKAGE_NAME}:${Task.dataFeedProxy}:${DataFeedProxySubtask.getRoundId}`,
+        `${PACKAGE_NAME}:${Task.utils}:${UtilsSubtask.getRoundId}`,
         {
           phaseId: CURRENT_PHASE_ID.toString(),
           aggregatorRoundId: INITIAL_ROUND.toString(),
@@ -220,7 +220,7 @@ describe("Test chainlink:dataFeedProxy module", function () {
       );
 
       const { phaseId, aggregatorRoundId } = await this.hre.run(
-        `${PACKAGE_NAME}:${Task.dataFeedProxy}:${DataFeedProxySubtask.parseRoundId}`,
+        `${PACKAGE_NAME}:${Task.utils}:${UtilsSubtask.parseRoundId}`,
         {
           roundId: roundId.toString(),
         }
@@ -299,32 +299,26 @@ describe("Test chainlink:dataFeedProxy module", function () {
         }
       );
 
-      const roundId = await this.hre.run(
-        `${PACKAGE_NAME}:${Task.dataFeedProxy}`,
-        {
-          subtask: DataFeedProxySubtask.getRoundId,
-          args: JSON.stringify({
-            phaseId: CURRENT_PHASE_ID.toString(),
-            aggregatorRoundId: LATEST_ROUND.toString(),
-          }),
-        }
-      );
+      const roundId = await this.hre.run(`${PACKAGE_NAME}:${Task.utils}`, {
+        subtask: UtilsSubtask.getRoundId,
+        args: JSON.stringify({
+          phaseId: CURRENT_PHASE_ID.toString(),
+          aggregatorRoundId: LATEST_ROUND.toString(),
+        }),
+      });
 
       expect(roundData.roundId.toString()).to.eq(roundId.toString());
       expect(roundData.answer.toString()).to.eq(LATEST_ANSWER.toString());
     });
 
     it("Gets round data", async function () {
-      const roundId = await this.hre.run(
-        `${PACKAGE_NAME}:${Task.dataFeedProxy}`,
-        {
-          subtask: DataFeedProxySubtask.getRoundId,
-          args: JSON.stringify({
-            phaseId: CURRENT_PHASE_ID.toString(),
-            aggregatorRoundId: INITIAL_ROUND.toString(),
-          }),
-        }
-      );
+      const roundId = await this.hre.run(`${PACKAGE_NAME}:${Task.utils}`, {
+        subtask: UtilsSubtask.getRoundId,
+        args: JSON.stringify({
+          phaseId: CURRENT_PHASE_ID.toString(),
+          aggregatorRoundId: INITIAL_ROUND.toString(),
+        }),
+      });
 
       const roundData = await this.hre.run(
         `${PACKAGE_NAME}:${Task.dataFeedProxy}`,
@@ -356,16 +350,13 @@ describe("Test chainlink:dataFeedProxy module", function () {
     });
 
     it("Gets round answer", async function () {
-      const roundId = await this.hre.run(
-        `${PACKAGE_NAME}:${Task.dataFeedProxy}`,
-        {
-          subtask: DataFeedProxySubtask.getRoundId,
-          args: JSON.stringify({
-            phaseId: CURRENT_PHASE_ID.toString(),
-            aggregatorRoundId: INITIAL_ROUND.toString(),
-          }),
-        }
-      );
+      const roundId = await this.hre.run(`${PACKAGE_NAME}:${Task.utils}`, {
+        subtask: UtilsSubtask.getRoundId,
+        args: JSON.stringify({
+          phaseId: CURRENT_PHASE_ID.toString(),
+          aggregatorRoundId: INITIAL_ROUND.toString(),
+        }),
+      });
 
       const answer = await this.hre.run(
         `${PACKAGE_NAME}:${Task.dataFeedProxy}`,
@@ -393,9 +384,9 @@ describe("Test chainlink:dataFeedProxy module", function () {
       );
 
       const { phaseId, aggregatorRoundId } = await this.hre.run(
-        `${PACKAGE_NAME}:${Task.dataFeedProxy}`,
+        `${PACKAGE_NAME}:${Task.utils}`,
         {
-          subtask: DataFeedProxySubtask.parseRoundId,
+          subtask: UtilsSubtask.parseRoundId,
           args: JSON.stringify({
             roundId: roundId.toString(),
           }),
