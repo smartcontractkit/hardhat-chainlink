@@ -3,7 +3,7 @@ export const l2SequencersRegistry = {
     contractAddress: "0xFdB631F5EE196F0ed6FAa767959853A9F217697D",
     chainId: "42161",
   },
-  "arbitrum-goerli": {
+  arbitrumGoerli: {
     contractAddress: "0x4da69F028a5790fCCAfe81a75C0D24f46ceCDd69",
     chainId: "421613",
   },
@@ -11,7 +11,7 @@ export const l2SequencersRegistry = {
     contractAddress: "0x371EAD81c9102C9BF4874A9075FFFf170F2Ee389",
     chainId: "10",
   },
-  "optimism-goerli": {
+  optimismGoerli: {
     contractAddress: "0x4C4814aa04433e0FB31310379a4D6946D5e1D353\n",
     chainId: "420",
   },

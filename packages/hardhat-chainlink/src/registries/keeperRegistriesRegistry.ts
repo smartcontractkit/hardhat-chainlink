@@ -19,7 +19,7 @@ export const keeperRegistriesRegistry = {
     registrarAddress: "0xDb8e8e2ccb5C033938736aa89Fe4fa1eDfD15a1d",
     chainId: "56",
   },
-  "bnb-chain-testnet": {
+  bnbChainTestnet: {
     contractAddress: "0xE16Df59B887e3Caa439E0b29B42bA2e7976FD8b2",
     registrarAddress: "0x57A4a13b35d25EE78e084168aBaC5ad360252467",
     chainId: "97",
@@ -33,18 +33,20 @@ export const keeperRegistriesRegistry = {
     contractAddress: "0x02777053d6764996e594c3E88AF1D58D5363a2e6",
     registrarAddress: "0xDb8e8e2ccb5C033938736aa89Fe4fa1eDfD15a1d",
     chainId: "1",
+    version: "1",
   },
   sepolia: {
     contractAddress: "0xE16Df59B887e3Caa439E0b29B42bA2e7976FD8b2",
     registrarAddress: "0x9a811502d843E5a03913d5A2cfb646c11463467A",
     chainId: "11155111",
+    version: "2",
   },
   fantom: {
     contractAddress: "0x02777053d6764996e594c3E88AF1D58D5363a2e6",
     registrarAddress: "0xDb8e8e2ccb5C033938736aa89Fe4fa1eDfD15a1d",
     chainId: "250",
   },
-  "fantom-testnet": {
+  fantomTestnet: {
     contractAddress: "0xE16Df59B887e3Caa439E0b29B42bA2e7976FD8b2",
     registrarAddress: "0x57A4a13b35d25EE78e084168aBaC5ad360252467",
     chainId: "4002",

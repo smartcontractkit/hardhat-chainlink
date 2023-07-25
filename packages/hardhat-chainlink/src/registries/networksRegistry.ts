@@ -167,7 +167,7 @@ export const networksRegistry = {
     networkSlug: "mainnet",
     chainId: "56",
   },
-  "bnb-chain-testnet": {
+  bnbChainTestnet: {
     name: "BNB Chain Testnet",
     chainSlug: "bnb-chain-testnet",
     networkSlug: "testnet",
@@ -191,7 +191,7 @@ export const networksRegistry = {
     networkSlug: "mainnet",
     chainId: "42161",
   },
-  "arbitrum-goerli": {
+  arbitrumGoerli: {
     name: "Arbitrum Goerli",
     chainSlug: "arbitrum-goerli",
     networkSlug: "testnet",
@@ -203,7 +203,7 @@ export const networksRegistry = {
     networkSlug: "mainnet",
     chainId: "10",
   },
-  "optimism-goerli": {
+  optimismGoerli: {
     name: "Optimism Goerli",
     chainSlug: "optimism-goerli",
     networkSlug: "testnet",
@@ -233,7 +233,7 @@ export const networksRegistry = {
     networkSlug: "mainnet",
     chainId: "250",
   },
-  "fantom-testnet": {
+  fantomTestnet: {
     name: "Fantom Testnet",
     chainSlug: "fantom-testnet",
     networkSlug: "testnet",
@@ -269,7 +269,7 @@ export const networksRegistry = {
     networkSlug: "mainnet",
     chainId: "100",
   },
-  "base-goerli": {
+  baseGoerli: {
     name: "Base Goerli",
     chainSlug: "base-goerli",
     networkSlug: "testnet",

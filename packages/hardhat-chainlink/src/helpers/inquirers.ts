@@ -20,7 +20,7 @@ import {
 import { subtasks } from "../subtasks";
 import { SubtaskProperties } from "../subtasks/interfaces";
 
-import { camelToFlat } from "./utils";
+import { camelToFlat, kebabToCamelCase } from "./utils";
 
 export const inquire = async (
   hre: HardhatRuntimeEnvironment,
@@ -88,7 +88,7 @@ const inquireDataFeed = async (
         (agg, networkName) => {
           agg.push({
             name: networksRegistry[networkName].name,
-            value: networksRegistry[networkName].chainSlug,
+            value: kebabToCamelCase(networksRegistry[networkName].chainSlug),
             description: networksRegistry[networkName].name,
           });
           return agg;
@@ -199,7 +199,7 @@ export const inquireFeedRegistryAddress = async (
         (agg, networkName) => {
           agg.push({
             name: networksRegistry[networkName].name,
-            value: networksRegistry[networkName].chainSlug,
+            value: kebabToCamelCase(networksRegistry[networkName].chainSlug),
             description: networksRegistry[networkName].name,
           });
           return agg;
@@ -263,7 +263,7 @@ export const inquireVRFCoordinatorAddress = async (
         (agg, networkName) => {
           agg.push({
             name: networksRegistry[networkName].name,
-            value: networksRegistry[networkName].chainSlug,
+            value: kebabToCamelCase(networksRegistry[networkName].chainSlug),
             description: networksRegistry[networkName].name,
           });
           return agg;
@@ -328,7 +328,7 @@ export const inquireLinkTokenAddress = async (
         (agg, networkName) => {
           agg.push({
             name: networksRegistry[networkName].name,
-            value: networksRegistry[networkName].chainSlug,
+            value: kebabToCamelCase(networksRegistry[networkName].chainSlug),
             description: networksRegistry[networkName].name,
           });
           return agg;
@@ -392,7 +392,7 @@ export const inquireKeeperRegistryAddress = async (
         (agg, networkName) => {
           agg.push({
             name: networksRegistry[networkName].name,
-            value: networksRegistry[networkName].chainSlug,
+            value: kebabToCamelCase(networksRegistry[networkName].chainSlug),
             description: networksRegistry[networkName].name,
           });
           return agg;
@@ -457,7 +457,7 @@ export const inquireKeeperRegistrarAddress = async (
         (agg, networkName) => {
           agg.push({
             name: networksRegistry[networkName].name,
-            value: networksRegistry[networkName].chainSlug,
+            value: kebabToCamelCase(networksRegistry[networkName].chainSlug),
             description: networksRegistry[networkName].name,
           });
           return agg;
@@ -522,7 +522,7 @@ export const inquireL2SequencerAddress = async (
         (agg, networkName) => {
           agg.push({
             name: networksRegistry[networkName].name,
-            value: networksRegistry[networkName].chainSlug,
+            value: kebabToCamelCase(networksRegistry[networkName].chainSlug),
             description: networksRegistry[networkName].name,
           });
           return agg;
@@ -586,7 +586,7 @@ export const inquireFunctionOracleAddress = async (
         (agg, networkName) => {
           agg.push({
             name: networksRegistry[networkName].name,
-            value: networksRegistry[networkName].chainSlug,
+            value: kebabToCamelCase(networksRegistry[networkName].chainSlug),
             description: networksRegistry[networkName].name,
           });
           return agg;

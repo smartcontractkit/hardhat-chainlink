@@ -1,5 +1,6 @@
 import fs from "fs";
 
+import { kebabToCamelCase } from "../../helpers/utils";
 import {
   DataFeedsRegistry,
   FeedRegistriesRegistry,
@@ -52,7 +53,7 @@ const l2SequencersMap: L2SequencersRegistry = {};
 
 networks.forEach((network: Network) => {
   networksMap[network.chainId] = network;
-  networksMap[network.chainSlug] = network;
+  networksMap[kebabToCamelCase(network.chainSlug)] = network;
 });
 
 dataFeeds.forEach((priceFeed: DataFeed) => {
@@ -64,37 +65,37 @@ dataFeeds.forEach((priceFeed: DataFeed) => {
   if (!dataFeedsMap[chainSlug][pair[0]]) {
     dataFeedsMap[chainSlug][pair[0]] = {};
   }
-  dataFeedsMap[chainSlug][pair[0]][pair[1]] = priceFeed;
+  dataFeedsMap[kebabToCamelCase(chainSlug)][pair[0]][pair[1]] = priceFeed;
 });
 
 feedRegistries.forEach((feedRegistry: FeedRegistry) => {
   const chainSlug = networksMap[feedRegistry.chainId].chainSlug;
-  feedRegistriesMap[chainSlug] = feedRegistry;
+  feedRegistriesMap[kebabToCamelCase(chainSlug)] = feedRegistry;
 });
 
 vrfCoordinators.forEach((vrfCoordinator: VRFCoordinator) => {
   const chainSlug = networksMap[vrfCoordinator.chainId].chainSlug;
-  vrfCoordinatorsMap[chainSlug] = vrfCoordinator;
+  vrfCoordinatorsMap[kebabToCamelCase(chainSlug)] = vrfCoordinator;
 });
 
 functionOracles.forEach((functionOracle: FunctionOracle) => {
   const chainSlug = networksMap[functionOracle.chainId].chainSlug;
-  functionOraclesMap[chainSlug] = functionOracle;
+  functionOraclesMap[kebabToCamelCase(chainSlug)] = functionOracle;
 });
 
 linkTokens.forEach((linkToken: LinkToken) => {
   const chainSlug = networksMap[linkToken.chainId].chainSlug;
-  linkTokensMap[chainSlug] = linkToken;
+  linkTokensMap[kebabToCamelCase(chainSlug)] = linkToken;
 });
 
 keeperRegistries.forEach((keeperRegistry: KeeperRegistry) => {
   const chainSlug = networksMap[keeperRegistry.chainId].chainSlug;
-  keeperRegistriesMap[chainSlug] = keeperRegistry;
+  keeperRegistriesMap[kebabToCamelCase(chainSlug)] = keeperRegistry;
 });
 
 l2Sequencers.forEach((l2Sequencer: L2Sequencer) => {
   const chainSlug = networksMap[l2Sequencer.chainId].chainSlug;
-  l2SequencersMap[chainSlug] = l2Sequencer;
+  l2SequencersMap[kebabToCamelCase(chainSlug)] = l2Sequencer;
 });
 
 const tsCodeNetworks = `export const networksRegistry = ${JSON.stringify(

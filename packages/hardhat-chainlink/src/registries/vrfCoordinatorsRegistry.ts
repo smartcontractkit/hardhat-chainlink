@@ -52,7 +52,7 @@ export const vrfCoordinatorsRegistry = {
       },
     ],
   },
-  "arbitrum-goerli": {
+  arbitrumGoerli: {
     contractAddress: "0x6d80646beadd07ce68cab36c27c626790bbcf17f",
     chainId: "421613",
     maxGasPrices: [
@@ -84,7 +84,7 @@ export const vrfCoordinatorsRegistry = {
       },
     ],
   },
-  "bnb-chain-testnet": {
+  bnbChainTestnet: {
     contractAddress: "0x6a2aad07396b36fe02a22b33cf443582f682c82f",
     chainId: "97",
     maxGasPrices: [
@@ -159,7 +159,7 @@ export const vrfCoordinatorsRegistry = {
       },
     ],
   },
-  "fantom-testnet": {
+  fantomTestnet: {
     contractAddress: "0xbd13f08b8352a3635218ab9418e340c60d6eb418",
     chainId: "4002",
     maxGasPrices: [

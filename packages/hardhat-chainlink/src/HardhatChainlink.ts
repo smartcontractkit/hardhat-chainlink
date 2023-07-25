@@ -9,8 +9,8 @@ import * as ensFeedsResolver from "./feeds/ensFeedsResolver";
 import * as feedRegistry from "./feeds/feedRegistry";
 import * as l2FeedUptimeSequencer from "./feeds/l2FeedUptimeSequencer";
 import * as registries from "./registries";
-import * as vrf from "./vrf";
 import * as utils from "./utils";
+import * as vrf from "./vrf";
 
 export class HardhatChainlink {
   public registries: {

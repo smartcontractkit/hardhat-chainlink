@@ -37,3 +37,9 @@ export const camelToFlat = (camel: string) => {
   });
   return flat.trim();
 };
+
+export const kebabToCamelCase = (kebabCaseString: string) => {
+  return kebabCaseString.replace(/-./g, (match) =>
+    match.charAt(1).toUpperCase()
+  );
+};

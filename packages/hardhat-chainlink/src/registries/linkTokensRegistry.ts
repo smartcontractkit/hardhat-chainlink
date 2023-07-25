@@ -19,7 +19,7 @@ export const linkTokensRegistry = {
     symbol: "LINK",
     chainId: "56",
   },
-  "bnb-chain-testnet": {
+  bnbChainTestnet: {
     contractAddress: "0x84b9B910527Ad5C03A9Ca831909E21e236EA7b06",
     symbol: "LINK",
     chainId: "97",
@@ -59,7 +59,7 @@ export const linkTokensRegistry = {
     symbol: "LINK",
     chainId: "250",
   },
-  "fantom-testnet": {
+  fantomTestnet: {
     contractAddress: "0xfaFedb041c0DD4fA2Dc0d87a6B0979Ee6FA7af5F",
     symbol: "LINK",
     chainId: "4002",
@@ -69,7 +69,7 @@ export const linkTokensRegistry = {
     symbol: "LINK",
     chainId: "42161",
   },
-  "arbitrum-goerli": {
+  arbitrumGoerli: {
     contractAddress: "0xd14838A68E8AFBAdE5efb411d5871ea0011AFd28",
     symbol: "LINK",
     chainId: "421613",
@@ -79,7 +79,7 @@ export const linkTokensRegistry = {
     symbol: "LINK",
     chainId: "10",
   },
-  "optimism-goerli": {
+  optimismGoerli: {
     contractAddress: "0xdc2CC710e42857672E7907CF474a69B63B93089f",
     symbol: "LINK",
     chainId: "420",
@@ -104,7 +104,7 @@ export const linkTokensRegistry = {
     symbol: "LINK",
     chainId: "1088",
   },
-  "base-goerli": {
+  baseGoerli: {
     contractAddress: "0x6D0F8D488B669aa9BA2D0f0b7B75a88bf5051CD3",
     symbol: "LINK",
     chainId: "84531",
