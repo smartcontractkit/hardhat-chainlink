@@ -605,6 +605,25 @@ class VRF {
     );
   }
 
+  public async requestRandomWords(
+    vrfCoordinatorAddress: string,
+    keyHash: BytesLike,
+    subscriptionId: BigNumberish,
+    requestConfirmations: BigNumberish,
+    callbackGasLimit: BigNumberish,
+    numWords: BigNumberish
+  ): Promise<{ transactionHash: string }> {
+    return vrf.requestRandomWords(
+      this.hre,
+      vrfCoordinatorAddress,
+      keyHash,
+      subscriptionId,
+      requestConfirmations,
+      callbackGasLimit,
+      numWords
+    );
+  }
+
   public async getSubscriptionDetails(
     vrfCoordinatorAddress: string,
     subscriptionId: BigNumberish
@@ -656,6 +675,13 @@ class VRF {
     );
   }
 
+  public async getCommitment(
+    vrfCoordinatorAddress: string,
+    requestId: BigNumberish
+  ): Promise<BytesLike> {
+    return vrf.getCommitment(this.hre, vrfCoordinatorAddress, requestId);
+  }
+
   public async getMaxConsumers(vrfCoordinatorAddress: string): Promise<number> {
     return vrf.getMaxConsumers(this.hre, vrfCoordinatorAddress);
   }
@@ -684,26 +710,19 @@ class VRF {
     return vrf.getMaxRequestGasLimit(this.hre, vrfCoordinatorAddress);
   }
 
-  public async getCommitment(
-    vrfCoordinatorAddress: string,
-    requestId: BigNumberish
-  ): Promise<BytesLike> {
-    return vrf.getCommitment(this.hre, vrfCoordinatorAddress, requestId);
-  }
-
-  public async getCoordinatorConfig(vrfCoordinatorAddress: string): Promise<{
+  public async getConfig(vrfCoordinatorAddress: string): Promise<{
     minimumRequestConfirmations: number;
     maxGasLimit: number;
     stalenessSeconds: number;
     gasAfterPaymentCalculation: number;
   }> {
-    return vrf.getCoordinatorConfig(this.hre, vrfCoordinatorAddress);
+    return vrf.getConfig(this.hre, vrfCoordinatorAddress);
   }
 
-  public async getCoordinatorTypeAndVersion(
+  public async getTypeAndVersion(
     vrfCoordinatorAddress: string
   ): Promise<string> {
-    return vrf.getCoordinatorTypeAndVersion(this.hre, vrfCoordinatorAddress);
+    return vrf.getTypeAndVersion(this.hre, vrfCoordinatorAddress);
   }
 }
 

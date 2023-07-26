@@ -73,6 +73,7 @@ export enum VRFSubtask {
   cancelSubscription = "cancelSubscription",
   addConsumer = "addConsumer",
   removeConsumer = "removeConsumer",
+  requestRandomWords = "requestRandomWords",
   getSubscriptionDetails = "getSubscriptionDetails",
   isPendingRequestExists = "isPendingRequestExists",
   requestSubscriptionOwnerTransfer = "requestSubscriptionOwnerTransfer",
@@ -83,8 +84,8 @@ export enum VRFSubtask {
   getMinRequestConfirmations = "getMinRequestConfirmations",
   getMaxRequestGasLimit = "getMaxRequestGasLimit",
   getCommitment = "getCommitment",
-  getCoordinatorConfig = "getCoordinatorConfig",
-  getCoordinatorTypeAndVersion = "getCoordinatorTypeAndVersion",
+  getConfig = "getConfig",
+  getTypeAndVersion = "getTypeAndVersion",
 }
 
 export enum AutomationSubtask {

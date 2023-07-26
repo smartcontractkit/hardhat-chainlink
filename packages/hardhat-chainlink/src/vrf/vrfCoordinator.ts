@@ -121,6 +121,33 @@ export const removeConsumer = async (
   return { transactionHash: tx.hash };
 };
 
+export const requestRandomWords = async (
+  hre: HardhatRuntimeEnvironment,
+  vrfCoordinatorAddress: string,
+  keyHash: BytesLike,
+  subscriptionId: BigNumberish,
+  requestConfirmations: BigNumberish,
+  callbackGasLimit: BigNumberish,
+  numWords: BigNumberish
+): Promise<{ transactionHash: string }> => {
+  const [signer] = await hre.ethers.getSigners();
+  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
+    vrfCoordinatorAddress,
+    signer
+  );
+
+  const tx: ContractTransaction = await vrfCoordinatorV2.requestRandomWords(
+    keyHash,
+    subscriptionId,
+    requestConfirmations,
+    callbackGasLimit,
+    numWords
+  );
+  await tx.wait(hre.config.chainlink.confirmations);
+
+  return { transactionHash: tx.hash };
+};
+
 export const getSubscriptionDetails = async (
   hre: HardhatRuntimeEnvironment,
   vrfCoordinatorAddress: string,
@@ -283,7 +310,7 @@ export const getCommitment = async (
   return vrfCoordinatorV2.getCommitment(requestId);
 };
 
-export const getCoordinatorConfig = async (
+export const getConfig = async (
   hre: HardhatRuntimeEnvironment,
   vrfCoordinatorAddress: string
 ): Promise<{
@@ -308,7 +335,7 @@ export const getCoordinatorConfig = async (
   };
 };
 
-export const getCoordinatorTypeAndVersion = async (
+export const getTypeAndVersion = async (
   hre: HardhatRuntimeEnvironment,
   vrfCoordinatorAddress: string
 ): Promise<string> => {

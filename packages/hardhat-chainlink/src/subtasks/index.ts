@@ -738,6 +738,41 @@ export const subtasks: Subtasks = {
         },
       ],
     },
+    [VRFSubtask.requestRandomWords]: {
+      action: vrfActions.requestRandomWords,
+      description: camelToFlat(VRFSubtask.requestRandomWords),
+      args: [
+        {
+          name: "vrfCoordinatorAddress",
+          description: "Address of VRF Coordinator",
+        },
+        {
+          name: "keyHash",
+          description:
+            "Key hash related to maxGasPrice of a VRF. Different keyHash's have different gas price.",
+        },
+        {
+          name: "subscriptionId",
+          description:
+            "VRF Subscription ID. Must be funded with the minimum subscription balance required for the selected keyHash.",
+        },
+        {
+          name: "requestConfirmations",
+          description:
+            "How many blocks you'd like the oracle to wait before responding to the request.",
+        },
+        {
+          name: "callbackGasLimit",
+          description:
+            "How much gas you'd like to receive in your fulfillRandomWords callback.",
+        },
+        {
+          name: "numWords",
+          description:
+            "The number of uint256 random values you'd like to receive in your fulfillRandomWords callback.",
+        },
+      ],
+    },
     [VRFSubtask.isPendingRequestExists]: {
       action: vrfActions.isPendingRequestExists,
       description: camelToFlat(VRFSubtask.isPendingRequestExists),
@@ -848,9 +883,9 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [VRFSubtask.getCoordinatorConfig]: {
-      action: vrfActions.getCoordinatorConfig,
-      description: camelToFlat(VRFSubtask.getCoordinatorConfig),
+    [VRFSubtask.getConfig]: {
+      action: vrfActions.getConfig,
+      description: camelToFlat(VRFSubtask.getConfig),
       args: [
         {
           name: "vrfCoordinatorAddress",
@@ -858,9 +893,9 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [VRFSubtask.getCoordinatorTypeAndVersion]: {
-      action: vrfActions.getCoordinatorTypeAndVersion,
-      description: camelToFlat(VRFSubtask.getCoordinatorTypeAndVersion),
+    [VRFSubtask.getTypeAndVersion]: {
+      action: vrfActions.getTypeAndVersion,
+      description: camelToFlat(VRFSubtask.getTypeAndVersion),
       args: [
         {
           name: "vrfCoordinatorAddress",

@@ -1,4 +1,5 @@
 import { BigNumber, BigNumberish } from "ethers";
+import { BytesLike } from "ethers/lib/utils";
 import { ActionType } from "hardhat/types";
 
 import * as vrf from "../../vrf";
@@ -71,6 +72,25 @@ export const getSubscriptionDetails: ActionType<{
     hre,
     taskArgs.vrfCoordinatorAddress,
     taskArgs.subscriptionId
+  );
+};
+
+export const requestRandomWords: ActionType<{
+  vrfCoordinatorAddress: string;
+  keyHash: BytesLike;
+  subscriptionId: BigNumberish;
+  requestConfirmations: BigNumberish;
+  callbackGasLimit: BigNumberish;
+  numWords: BigNumberish;
+}> = async (taskArgs, hre) => {
+  return vrf.requestRandomWords(
+    hre,
+    taskArgs.vrfCoordinatorAddress,
+    taskArgs.keyHash,
+    taskArgs.subscriptionId,
+    taskArgs.requestConfirmations,
+    taskArgs.callbackGasLimit,
+    taskArgs.numWords
   );
 };
 
@@ -150,14 +170,14 @@ export const getCommitment: ActionType<{
   );
 };
 
-export const getCoordinatorConfig: ActionType<{
+export const getConfig: ActionType<{
   vrfCoordinatorAddress: string;
 }> = async (taskArgs, hre) => {
-  return vrf.getCoordinatorConfig(hre, taskArgs.vrfCoordinatorAddress);
+  return vrf.getConfig(hre, taskArgs.vrfCoordinatorAddress);
 };
 
-export const getCoordinatorTypeAndVersion: ActionType<{
+export const getTypeAndVersion: ActionType<{
   vrfCoordinatorAddress: string;
 }> = async (taskArgs, hre) => {
-  return vrf.getCoordinatorTypeAndVersion(hre, taskArgs.vrfCoordinatorAddress);
+  return vrf.getTypeAndVersion(hre, taskArgs.vrfCoordinatorAddress);
 };

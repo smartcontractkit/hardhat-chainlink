@@ -28,7 +28,7 @@ describe("Test chainlink:l2Sequencer module [SKIP FOR GITHUB ACTIONS]", function
       expect(isSequencerUp).to.eq(false);
     });
 
-    it("Get L2 sequencer health data", async function () {
+    it("Gets L2 sequencer health data", async function () {
       if (isGithubActions) this.skip();
 
       const { isSequencerUp, timeSinceUp, isGracePeriodOver } =
@@ -56,7 +56,7 @@ describe("Test chainlink:l2Sequencer module [SKIP FOR GITHUB ACTIONS]", function
       expect(isSequencerUp).to.eq(false);
     });
 
-    it("Get L2 sequencer health data", async function () {
+    it("Gets L2 sequencer health data", async function () {
       if (isGithubActions) this.skip();
 
       const { isSequencerUp, timeSinceUp, isGracePeriodOver } =
@@ -91,7 +91,7 @@ describe("Test chainlink:l2Sequencer module [SKIP FOR GITHUB ACTIONS]", function
       expect(isSequencerUp).to.eq(false);
     });
 
-    it("Get L2 sequencer health data", async function () {
+    it("Gets L2 sequencer health data", async function () {
       if (isGithubActions) this.skip();
 
       const { isSequencerUp, timeSinceUp, isGracePeriodOver } =
