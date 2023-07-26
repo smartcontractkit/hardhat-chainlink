@@ -86,7 +86,7 @@ describe("Test chainlink:vrf module", function () {
       const { transactionHash } = await this.hre.chainlink.vrf.fundSubscription(
         this.vrf.address,
         this.linkToken.address,
-        50_000,
+        SUBSCRIPTION_BALANCE,
         subscriptionId
       );
 
@@ -109,7 +109,7 @@ describe("Test chainlink:vrf module", function () {
       const { transactionHash } =
         await this.hre.chainlink.vrf.cancelSubscription(
           this.vrf.address,
-          this.linkToken.address,
+          subscriptionId,
           signer.address
         );
 
@@ -367,62 +367,731 @@ describe("Test chainlink:vrf module", function () {
     });
   });
 
-  // describe("Run methods as hre subtasks", function () {
-  //   it("Check if L2 sequencer is up", async function () {
-  //     const isSequencerUp = await this.hre.run(
-  //       `${PACKAGE_NAME}:${Task.l2Sequencer}:${L2SequencerSubtask.isL2SequencerUp}`,
-  //       {
-  //         l2SequencerAddress: this.l2SequencerAddress,
-  //       }
-  //     );
-  //
-  //     expect(isSequencerUp).to.eq(false);
-  //   });
-  //
-  //   it("Get L2 sequencer health data", async function () {
-  //     const { isSequencerUp, timeSinceUp, isGracePeriodOver } =
-  //       await this.hre.run(
-  //         `${PACKAGE_NAME}:${Task.l2Sequencer}:${L2SequencerSubtask.getTimeSinceL2SequencerIsUp}`,
-  //         {
-  //           l2SequencerAddress: this.l2SequencerAddress,
-  //           gracePeriodTime: "3600",
-  //         }
-  //       );
-  //
-  //     expect(isSequencerUp).to.eq(false);
-  //     expect(timeSinceUp.toNumber()).to.gte(0);
-  //     expect(isGracePeriodOver).to.eq(false);
-  //   });
-  // });
-  //
-  // describe("Run methods as subtasks of a hre task", function () {
-  //   it("Check if L2 sequencer is up", async function () {
-  //     const isSequencerUp = await this.hre.run(
-  //       `${PACKAGE_NAME}:${Task.l2Sequencer}`,
-  //       {
-  //         subtask: L2SequencerSubtask.isL2SequencerUp,
-  //         args: JSON.stringify({
-  //           l2SequencerAddress: this.l2SequencerAddress,
-  //         }),
-  //       }
-  //     );
-  //
-  //     expect(isSequencerUp).to.eq(false);
-  //   });
-  //
-  //   it("Get L2 sequencer health data", async function () {
-  //     const { isSequencerUp, timeSinceUp, isGracePeriodOver } =
-  //       await this.hre.run(`${PACKAGE_NAME}:${Task.l2Sequencer}`, {
-  //         subtask: L2SequencerSubtask.getTimeSinceL2SequencerIsUp,
-  //         args: JSON.stringify({
-  //           l2SequencerAddress: this.l2SequencerAddress,
-  //           gracePeriodTime: "3600",
-  //         }),
-  //       });
-  //
-  //     expect(isSequencerUp).to.eq(false);
-  //     expect(timeSinceUp.toNumber()).to.gte(0);
-  //     expect(isGracePeriodOver).to.eq(false);
-  //   });
-  // });
+  describe("Run methods as hre subtasks", function () {
+    it("Creates subscription", async function () {
+      const { transactionHash, subscriptionId } = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}:${VRFSubtask.createSubscription}`,
+        {
+          vrfCoordinatorAddress: this.vrf.address,
+        }
+      );
+
+      expect(transactionHash).not.to.be.undefined;
+      expect(subscriptionId.toString()).to.eq("1");
+    });
+
+    it("Funds subscription", async function () {
+      const { subscriptionId } =
+        await this.hre.chainlink.vrf.createSubscription(this.vrf.address);
+
+      const { transactionHash } = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}:${VRFSubtask.fundSubscription}`,
+        {
+          vrfCoordinatorAddress: this.vrf.address,
+          linkTokenAddress: this.linkToken.address,
+          amountInJuels: SUBSCRIPTION_BALANCE.toString(),
+          subscriptionId: subscriptionId.toString(),
+        }
+      );
+
+      expect(transactionHash).not.to.be.undefined;
+    });
+
+    it("Cancels subscription", async function () {
+      const [signer] = await this.hre.ethers.getSigners();
+
+      const { subscriptionId } =
+        await this.hre.chainlink.vrf.createSubscription(this.vrf.address);
+
+      await this.hre.chainlink.vrf.fundSubscription(
+        this.vrf.address,
+        this.linkToken.address,
+        SUBSCRIPTION_BALANCE,
+        subscriptionId
+      );
+
+      const { transactionHash } = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}:${VRFSubtask.cancelSubscription}`,
+        {
+          vrfCoordinatorAddress: this.vrf.address,
+          subscriptionId: subscriptionId.toString(),
+          receivingAddress: signer.address,
+        }
+      );
+
+      expect(transactionHash).not.to.be.undefined;
+    });
+
+    it("Adds consumer", async function () {
+      const [signer] = await this.hre.ethers.getSigners();
+
+      const { subscriptionId } =
+        await this.hre.chainlink.vrf.createSubscription(this.vrf.address);
+
+      await this.hre.chainlink.vrf.fundSubscription(
+        this.vrf.address,
+        this.linkToken.address,
+        SUBSCRIPTION_BALANCE,
+        subscriptionId
+      );
+
+      const { transactionHash } = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}:${VRFSubtask.addConsumer}`,
+        {
+          vrfCoordinatorAddress: this.vrf.address,
+          consumerAddress: signer.address,
+          subscriptionId: subscriptionId.toString(),
+        }
+      );
+
+      expect(transactionHash).not.to.be.undefined;
+    });
+
+    it("Removes consumer", async function () {
+      const [signer] = await this.hre.ethers.getSigners();
+
+      const { subscriptionId } =
+        await this.hre.chainlink.vrf.createSubscription(this.vrf.address);
+
+      await this.hre.chainlink.vrf.fundSubscription(
+        this.vrf.address,
+        this.linkToken.address,
+        SUBSCRIPTION_BALANCE,
+        subscriptionId
+      );
+
+      await this.hre.chainlink.vrf.addConsumer(
+        this.vrf.address,
+        signer.address,
+        subscriptionId
+      );
+
+      const { transactionHash } = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}:${VRFSubtask.removeConsumer}`,
+        {
+          vrfCoordinatorAddress: this.vrf.address,
+          consumerAddress: signer.address,
+          subscriptionId: subscriptionId.toString(),
+        }
+      );
+
+      expect(transactionHash).not.to.be.undefined;
+    });
+
+    it("Requests random words", async function () {
+      const [signer] = await this.hre.ethers.getSigners();
+
+      const { subscriptionId } =
+        await this.hre.chainlink.vrf.createSubscription(this.vrf.address);
+
+      await this.hre.chainlink.vrf.fundSubscription(
+        this.vrf.address,
+        this.linkToken.address,
+        SUBSCRIPTION_BALANCE,
+        subscriptionId
+      );
+
+      await this.hre.chainlink.vrf.addConsumer(
+        this.vrf.address,
+        signer.address,
+        subscriptionId
+      );
+
+      const { transactionHash } = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}:${VRFSubtask.requestRandomWords}`,
+        {
+          vrfCoordinatorAddress: this.vrf.address,
+          keyHash: `0x${KEY_HASH.toString("hex")}`,
+          subscriptionId: subscriptionId.toString(),
+          requestConfirmations: MAX_REQUEST_CONFIRMATIONS.toString(),
+          callbackGasLimit: MAX_GAS_LIMIT.toString(),
+          numWords: MAX_NUM_WORDS.toString(),
+        }
+      );
+
+      expect(transactionHash).not.to.be.undefined;
+    });
+
+    it("Checks if pending request not exists", async function () {
+      const { subscriptionId } =
+        await this.hre.chainlink.vrf.createSubscription(this.vrf.address);
+
+      await this.hre.chainlink.vrf.fundSubscription(
+        this.vrf.address,
+        this.linkToken.address,
+        SUBSCRIPTION_BALANCE,
+        subscriptionId
+      );
+
+      const isPendingRequestExists = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}:${VRFSubtask.isPendingRequestExists}`,
+        {
+          vrfCoordinatorAddress: this.vrf.address,
+          subscriptionId: subscriptionId.toString(),
+        }
+      );
+
+      expect(isPendingRequestExists).to.eq(false);
+    });
+
+    it("Gets subscription details", async function () {
+      const [signer] = await this.hre.ethers.getSigners();
+
+      const { subscriptionId } =
+        await this.hre.chainlink.vrf.createSubscription(this.vrf.address);
+
+      await this.hre.chainlink.vrf.fundSubscription(
+        this.vrf.address,
+        this.linkToken.address,
+        SUBSCRIPTION_BALANCE,
+        subscriptionId
+      );
+
+      await this.hre.chainlink.vrf.addConsumer(
+        this.vrf.address,
+        signer.address,
+        subscriptionId
+      );
+
+      const { balance, reqCount, owner, consumers } = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}:${VRFSubtask.getSubscriptionDetails}`,
+        {
+          vrfCoordinatorAddress: this.vrf.address,
+          subscriptionId: subscriptionId.toString(),
+        }
+      );
+
+      expect(balance.toString()).to.eq(SUBSCRIPTION_BALANCE.toString());
+      expect(reqCount.toString()).to.eq("0".toString());
+      expect(owner).to.eq(signer.address);
+      expect(consumers.length).to.eq(1);
+      expect(consumers[0]).to.eq(signer.address);
+    });
+
+    it("Requests subscriptions owner transfer", async function () {
+      const [_, newOwner] = await this.hre.ethers.getSigners();
+
+      const { subscriptionId } =
+        await this.hre.chainlink.vrf.createSubscription(this.vrf.address);
+
+      await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}:${VRFSubtask.requestSubscriptionOwnerTransfer}`,
+        {
+          vrfCoordinatorAddress: this.vrf.address,
+          subscriptionId: subscriptionId.toString(),
+          newOwnerAddress: newOwner.address,
+        }
+      );
+
+      await this.vrf
+        .connect(newOwner)
+        .acceptSubscriptionOwnerTransfer(subscriptionId);
+
+      const { owner: subscriptionOwner } =
+        await this.hre.chainlink.vrf.getSubscriptionDetails(
+          this.vrf.address,
+          subscriptionId
+        );
+
+      expect(subscriptionOwner).to.eq(newOwner.address);
+    });
+
+    it("Accepts subscriptions owner transfer", async function () {
+      const [newOwner, owner] = await this.hre.ethers.getSigners();
+
+      const tx = await this.vrf.connect(owner).createSubscription();
+      const txReceipt = await tx.wait(this.hre.config.chainlink.confirmations);
+      const subscriptionId = BigNumber.from(txReceipt.events[0].topics[1]);
+
+      await this.vrf
+        .connect(owner)
+        .requestSubscriptionOwnerTransfer(
+          subscriptionId.toString(),
+          newOwner.address
+        );
+
+      await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}:${VRFSubtask.acceptSubscriptionOwnerTransfer}`,
+        {
+          vrfCoordinatorAddress: this.vrf.address,
+          subscriptionId: subscriptionId.toString(),
+        }
+      );
+
+      const { owner: subscriptionOwner } =
+        await this.hre.chainlink.vrf.getSubscriptionDetails(
+          this.vrf.address,
+          subscriptionId
+        );
+
+      expect(subscriptionOwner).to.eq(newOwner.address);
+    });
+
+    it("Gets config", async function () {
+      const {
+        minimumRequestConfirmations,
+        maxGasLimit,
+        stalenessSeconds,
+        gasAfterPaymentCalculation,
+      } = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}:${VRFSubtask.getConfig}`,
+        {
+          vrfCoordinatorAddress: this.vrf.address,
+        }
+      );
+
+      expect(minimumRequestConfirmations).to.eq(MINIMUM_REQUEST_CONFIRMATIONS);
+      expect(maxGasLimit).to.eq(MAX_GAS_LIMIT);
+      expect(stalenessSeconds).to.eq(STALENESS_SECONDS);
+      expect(gasAfterPaymentCalculation).to.eq(GAS_AFTER_PAYMENT_CALCULATION);
+    });
+
+    it("Gets min request confirmations", async function () {
+      const minRequestConfirmations = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}:${VRFSubtask.getMinRequestConfirmations}`,
+        {
+          vrfCoordinatorAddress: this.vrf.address,
+        }
+      );
+
+      expect(minRequestConfirmations).to.eq(MIN_REQUEST_CONFIRMATIONS);
+    });
+
+    it("Gets max request gas limit", async function () {
+      const maxRequestGasLimit = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}:${VRFSubtask.getMaxRequestGasLimit}`,
+        {
+          vrfCoordinatorAddress: this.vrf.address,
+        }
+      );
+
+      expect(maxRequestGasLimit).to.eq(MAX_REQUEST_GAS_LIMIT);
+    });
+
+    it("Gets max consumers", async function () {
+      const maxConsumers = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}:${VRFSubtask.getMaxConsumers}`,
+        {
+          vrfCoordinatorAddress: this.vrf.address,
+        }
+      );
+
+      expect(maxConsumers).to.eq(MAX_CONSUMERS);
+    });
+
+    it("Gets max number of words", async function () {
+      const maxNumberOfWords = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}:${VRFSubtask.getMaxNumberOfWords}`,
+        {
+          vrfCoordinatorAddress: this.vrf.address,
+        }
+      );
+
+      expect(maxNumberOfWords).to.eq(MAX_NUM_WORDS);
+    });
+
+    it("Gets max request confirmations", async function () {
+      const maxRequestConfirmations = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}:${VRFSubtask.getMaxRequestConfirmations}`,
+        {
+          vrfCoordinatorAddress: this.vrf.address,
+        }
+      );
+
+      expect(maxRequestConfirmations).to.eq(MAX_REQUEST_CONFIRMATIONS);
+    });
+
+    it("Gets type and version", async function () {
+      const typeAndVersion = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}:${VRFSubtask.getTypeAndVersion}`,
+        {
+          vrfCoordinatorAddress: this.vrf.address,
+        }
+      );
+
+      expect(typeAndVersion).to.eq(TYPE_AND_VERSION);
+    });
+  });
+
+  describe("Run methods as subtasks of a hre task", function () {
+    it("Creates subscription", async function () {
+      const { transactionHash, subscriptionId } = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}`,
+        {
+          subtask: VRFSubtask.createSubscription,
+          args: JSON.stringify({
+            vrfCoordinatorAddress: this.vrf.address,
+          }),
+        }
+      );
+
+      expect(transactionHash).not.to.be.undefined;
+      expect(subscriptionId.toString()).to.eq("1");
+    });
+
+    it("Funds subscription", async function () {
+      const { subscriptionId } =
+        await this.hre.chainlink.vrf.createSubscription(this.vrf.address);
+
+      const { transactionHash } = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}`,
+        {
+          subtask: VRFSubtask.fundSubscription,
+          args: JSON.stringify({
+            vrfCoordinatorAddress: this.vrf.address,
+            linkTokenAddress: this.linkToken.address,
+            amountInJuels: SUBSCRIPTION_BALANCE.toString(),
+            subscriptionId: subscriptionId.toString(),
+          }),
+        }
+      );
+
+      expect(transactionHash).not.to.be.undefined;
+    });
+
+    it("Cancels subscription", async function () {
+      const [signer] = await this.hre.ethers.getSigners();
+
+      const { subscriptionId } =
+        await this.hre.chainlink.vrf.createSubscription(this.vrf.address);
+
+      await this.hre.chainlink.vrf.fundSubscription(
+        this.vrf.address,
+        this.linkToken.address,
+        SUBSCRIPTION_BALANCE,
+        subscriptionId
+      );
+
+      const { transactionHash } = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}`,
+        {
+          subtask: VRFSubtask.cancelSubscription,
+          args: JSON.stringify({
+            vrfCoordinatorAddress: this.vrf.address,
+            subscriptionId: subscriptionId.toString(),
+            receivingAddress: signer.address,
+          }),
+        }
+      );
+
+      expect(transactionHash).not.to.be.undefined;
+    });
+
+    it("Adds consumer", async function () {
+      const [signer] = await this.hre.ethers.getSigners();
+
+      const { subscriptionId } =
+        await this.hre.chainlink.vrf.createSubscription(this.vrf.address);
+
+      await this.hre.chainlink.vrf.fundSubscription(
+        this.vrf.address,
+        this.linkToken.address,
+        SUBSCRIPTION_BALANCE,
+        subscriptionId
+      );
+
+      const { transactionHash } = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}`,
+        {
+          subtask: VRFSubtask.addConsumer,
+          args: JSON.stringify({
+            vrfCoordinatorAddress: this.vrf.address,
+            consumerAddress: signer.address,
+            subscriptionId: subscriptionId.toString(),
+          }),
+        }
+      );
+
+      expect(transactionHash).not.to.be.undefined;
+    });
+
+    it("Removes consumer", async function () {
+      const [signer] = await this.hre.ethers.getSigners();
+
+      const { subscriptionId } =
+        await this.hre.chainlink.vrf.createSubscription(this.vrf.address);
+
+      await this.hre.chainlink.vrf.fundSubscription(
+        this.vrf.address,
+        this.linkToken.address,
+        SUBSCRIPTION_BALANCE,
+        subscriptionId
+      );
+
+      await this.hre.chainlink.vrf.addConsumer(
+        this.vrf.address,
+        signer.address,
+        subscriptionId
+      );
+
+      const { transactionHash } = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}`,
+        {
+          subtask: VRFSubtask.removeConsumer,
+          args: JSON.stringify({
+            vrfCoordinatorAddress: this.vrf.address,
+            consumerAddress: signer.address,
+            subscriptionId: subscriptionId.toString(),
+          }),
+        }
+      );
+
+      expect(transactionHash).not.to.be.undefined;
+    });
+
+    it("Requests random words", async function () {
+      const [signer] = await this.hre.ethers.getSigners();
+
+      const { subscriptionId } =
+        await this.hre.chainlink.vrf.createSubscription(this.vrf.address);
+
+      await this.hre.chainlink.vrf.fundSubscription(
+        this.vrf.address,
+        this.linkToken.address,
+        SUBSCRIPTION_BALANCE,
+        subscriptionId
+      );
+
+      await this.hre.chainlink.vrf.addConsumer(
+        this.vrf.address,
+        signer.address,
+        subscriptionId
+      );
+
+      const { transactionHash } = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}`,
+        {
+          subtask: VRFSubtask.requestRandomWords,
+          args: JSON.stringify({
+            vrfCoordinatorAddress: this.vrf.address,
+            keyHash: `0x${KEY_HASH.toString("hex")}`,
+            subscriptionId: subscriptionId.toString(),
+            requestConfirmations: MAX_REQUEST_CONFIRMATIONS.toString(),
+            callbackGasLimit: MAX_GAS_LIMIT.toString(),
+            numWords: MAX_NUM_WORDS.toString(),
+          }),
+        }
+      );
+
+      expect(transactionHash).not.to.be.undefined;
+    });
+
+    it("Checks if pending request not exists", async function () {
+      const { subscriptionId } =
+        await this.hre.chainlink.vrf.createSubscription(this.vrf.address);
+
+      await this.hre.chainlink.vrf.fundSubscription(
+        this.vrf.address,
+        this.linkToken.address,
+        SUBSCRIPTION_BALANCE,
+        subscriptionId
+      );
+
+      const isPendingRequestExists = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}`,
+        {
+          subtask: VRFSubtask.isPendingRequestExists,
+          args: JSON.stringify({
+            vrfCoordinatorAddress: this.vrf.address,
+            subscriptionId: subscriptionId.toString(),
+          }),
+        }
+      );
+
+      expect(isPendingRequestExists).to.eq(false);
+    });
+
+    it("Gets subscription details", async function () {
+      const [signer] = await this.hre.ethers.getSigners();
+
+      const { subscriptionId } =
+        await this.hre.chainlink.vrf.createSubscription(this.vrf.address);
+
+      await this.hre.chainlink.vrf.fundSubscription(
+        this.vrf.address,
+        this.linkToken.address,
+        SUBSCRIPTION_BALANCE,
+        subscriptionId
+      );
+
+      await this.hre.chainlink.vrf.addConsumer(
+        this.vrf.address,
+        signer.address,
+        subscriptionId
+      );
+
+      const { balance, reqCount, owner, consumers } = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}`,
+        {
+          subtask: VRFSubtask.getSubscriptionDetails,
+          args: JSON.stringify({
+            vrfCoordinatorAddress: this.vrf.address,
+            subscriptionId: subscriptionId.toString(),
+          }),
+        }
+      );
+
+      expect(balance.toString()).to.eq(SUBSCRIPTION_BALANCE.toString());
+      expect(reqCount.toString()).to.eq("0".toString());
+      expect(owner).to.eq(signer.address);
+      expect(consumers.length).to.eq(1);
+      expect(consumers[0]).to.eq(signer.address);
+    });
+
+    it("Requests subscriptions owner transfer", async function () {
+      const [_, newOwner] = await this.hre.ethers.getSigners();
+
+      const { subscriptionId } =
+        await this.hre.chainlink.vrf.createSubscription(this.vrf.address);
+
+      await this.hre.run(`${PACKAGE_NAME}:${Task.vrf}`, {
+        subtask: VRFSubtask.requestSubscriptionOwnerTransfer,
+        args: JSON.stringify({
+          vrfCoordinatorAddress: this.vrf.address,
+          subscriptionId: subscriptionId.toString(),
+          newOwnerAddress: newOwner.address,
+        }),
+      });
+
+      await this.vrf
+        .connect(newOwner)
+        .acceptSubscriptionOwnerTransfer(subscriptionId);
+
+      const { owner: subscriptionOwner } =
+        await this.hre.chainlink.vrf.getSubscriptionDetails(
+          this.vrf.address,
+          subscriptionId
+        );
+
+      expect(subscriptionOwner).to.eq(newOwner.address);
+    });
+
+    it("Accepts subscriptions owner transfer", async function () {
+      const [newOwner, owner] = await this.hre.ethers.getSigners();
+
+      const tx = await this.vrf.connect(owner).createSubscription();
+      const txReceipt = await tx.wait(this.hre.config.chainlink.confirmations);
+      const subscriptionId = BigNumber.from(txReceipt.events[0].topics[1]);
+
+      await this.vrf
+        .connect(owner)
+        .requestSubscriptionOwnerTransfer(
+          subscriptionId.toString(),
+          newOwner.address
+        );
+
+      await this.hre.run(`${PACKAGE_NAME}:${Task.vrf}`, {
+        subtask: VRFSubtask.acceptSubscriptionOwnerTransfer,
+        args: JSON.stringify({
+          vrfCoordinatorAddress: this.vrf.address,
+          subscriptionId: subscriptionId.toString(),
+        }),
+      });
+
+      const { owner: subscriptionOwner } =
+        await this.hre.chainlink.vrf.getSubscriptionDetails(
+          this.vrf.address,
+          subscriptionId
+        );
+
+      expect(subscriptionOwner).to.eq(newOwner.address);
+    });
+
+    it("Gets config", async function () {
+      const {
+        minimumRequestConfirmations,
+        maxGasLimit,
+        stalenessSeconds,
+        gasAfterPaymentCalculation,
+      } = await this.hre.run(`${PACKAGE_NAME}:${Task.vrf}`, {
+        subtask: VRFSubtask.getConfig,
+        args: JSON.stringify({
+          vrfCoordinatorAddress: this.vrf.address,
+        }),
+      });
+
+      expect(minimumRequestConfirmations).to.eq(MINIMUM_REQUEST_CONFIRMATIONS);
+      expect(maxGasLimit).to.eq(MAX_GAS_LIMIT);
+      expect(stalenessSeconds).to.eq(STALENESS_SECONDS);
+      expect(gasAfterPaymentCalculation).to.eq(GAS_AFTER_PAYMENT_CALCULATION);
+    });
+
+    it("Gets min request confirmations", async function () {
+      const minRequestConfirmations = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}`,
+        {
+          subtask: VRFSubtask.getMinRequestConfirmations,
+          args: JSON.stringify({
+            vrfCoordinatorAddress: this.vrf.address,
+          }),
+        }
+      );
+
+      expect(minRequestConfirmations).to.eq(MIN_REQUEST_CONFIRMATIONS);
+    });
+
+    it("Gets max request gas limit", async function () {
+      const maxRequestGasLimit = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}`,
+        {
+          subtask: VRFSubtask.getMaxRequestGasLimit,
+          args: JSON.stringify({
+            vrfCoordinatorAddress: this.vrf.address,
+          }),
+        }
+      );
+
+      expect(maxRequestGasLimit).to.eq(MAX_REQUEST_GAS_LIMIT);
+    });
+
+    it("Gets max consumers", async function () {
+      const maxConsumers = await this.hre.run(`${PACKAGE_NAME}:${Task.vrf}`, {
+        subtask: VRFSubtask.getMaxConsumers,
+        args: JSON.stringify({
+          vrfCoordinatorAddress: this.vrf.address,
+        }),
+      });
+
+      expect(maxConsumers).to.eq(MAX_CONSUMERS);
+    });
+
+    it("Gets max number of words", async function () {
+      const maxNumberOfWords = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}`,
+        {
+          subtask: VRFSubtask.getMaxNumberOfWords,
+          args: JSON.stringify({
+            vrfCoordinatorAddress: this.vrf.address,
+          }),
+        }
+      );
+
+      expect(maxNumberOfWords).to.eq(MAX_NUM_WORDS);
+    });
+
+    it("Gets max request confirmations", async function () {
+      const maxRequestConfirmations = await this.hre.run(
+        `${PACKAGE_NAME}:${Task.vrf}`,
+        {
+          subtask: VRFSubtask.getMaxRequestConfirmations,
+          args: JSON.stringify({
+            vrfCoordinatorAddress: this.vrf.address,
+          }),
+        }
+      );
+
+      expect(maxRequestConfirmations).to.eq(MAX_REQUEST_CONFIRMATIONS);
+    });
+
+    it("Gets type and version", async function () {
+      const typeAndVersion = await this.hre.run(`${PACKAGE_NAME}:${Task.vrf}`, {
+        subtask: VRFSubtask.getTypeAndVersion,
+        args: JSON.stringify({
+          vrfCoordinatorAddress: this.vrf.address,
+        }),
+      });
+
+      expect(typeAndVersion).to.eq(TYPE_AND_VERSION);
+    });
+  });
 });

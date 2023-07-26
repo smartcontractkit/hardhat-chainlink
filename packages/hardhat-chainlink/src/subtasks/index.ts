@@ -279,7 +279,7 @@ export const subtasks: Subtasks = {
       ],
     },
     [FeedRegistrySubtask.proposedGetLatestRoundData]: {
-      action: feedRegistryActions.getLatestRoundData,
+      action: feedRegistryActions.proposedGetLatestRoundData,
       description: camelToFlat(FeedRegistrySubtask.proposedGetLatestRoundData),
       args: [
         {
@@ -297,7 +297,7 @@ export const subtasks: Subtasks = {
       ],
     },
     [FeedRegistrySubtask.proposedGetRoundData]: {
-      action: feedRegistryActions.getRoundData,
+      action: feedRegistryActions.proposedGetRoundData,
       description: camelToFlat(FeedRegistrySubtask.proposedGetRoundData),
       args: [
         {
@@ -569,10 +569,6 @@ export const subtasks: Subtasks = {
         {
           name: "feedRegistryQuoteTick",
           description: "Address or denomination of quote tick in a token pair",
-        },
-        {
-          name: "phaseId",
-          description: "Feed Registry Phase ID",
         },
       ],
     },
