@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  hardhat-chainlink:
+  test-hardhat-chainlink-plugin:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,10 +30,20 @@ jobs:
 
       - name: Setup environment
         working-directory: packages/hardhat-chainlink
-        run: yarn && yarn typechain && yarn build
+        run: yarn && yarn typechain && yarn build && yarn test:prepare
       
-      - name: Test Hardhat-Chainlink plugin
+      - name: Test chainlink:dataFeed module
         working-directory: packages/hardhat-chainlink
-        env:
-          NODE_OPTIONS: "--max_old_space_size=4096"
-        run: yarn test
+        run: yarn test:dataFeed
+      
+      - name: Test chainlink:dataFeedProxy module
+        working-directory: packages/hardhat-chainlink
+        run: yarn test:dataFeedProxy
+      
+      - name: Test chainlink:feedRegistry module
+        working-directory: packages/hardhat-chainlink
+        run: yarn test:feedRegistry
+      
+      - name: Test chainlink:vrf module
+        working-directory: packages/hardhat-chainlink
+        run: yarn test:vrfCoordinator
