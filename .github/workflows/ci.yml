@@ -48,4 +48,6 @@ jobs:
       
       - name: Test chainlink:vrf module
         working-directory: packages/hardhat-chainlink
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
         run: yarn test:vrfCoordinator
