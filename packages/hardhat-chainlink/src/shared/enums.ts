@@ -115,14 +115,13 @@ export enum AutomationSubtask {
 }
 
 export enum PluginRegistriesSubtask {
-  getDataFeedAddress = "getDataFeedAddress",
-  getFeedRegistryAddress = "getFeedRegistryAddress",
-  getVRFCoordinatorAddress = "getVRFCoordinatorAddress",
-  getLinkTokenAddress = "getLinkTokenAddress",
-  getKeeperRegistryAddress = "getKeeperRegistryAddress",
-  getKeeperRegistrarAddress = "getKeeperRegistrarAddress",
-  getL2SequencerAddress = "getL2SequencerAddress",
-  getFunctionOracleAddress = "getFunctionOracleAddress",
+  getDataFeed = "getDataFeed",
+  getFeedRegistry = "getFeedRegistry",
+  getVRFCoordinator = "getVRFCoordinator",
+  getLinkToken = "getLinkToken",
+  getKeeperRegistry = "getKeeperRegistry",
+  getL2Sequencer = "getL2Sequencer",
+  getFunctionOracle = "getFunctionOracle",
   getDenomination = "getDenomination",
 }
 

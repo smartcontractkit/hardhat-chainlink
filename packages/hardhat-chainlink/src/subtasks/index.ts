@@ -1276,52 +1276,39 @@ export const subtasks: Subtasks = {
   [Task.functions]: {},
   [Task.sandbox]: {},
   [Task.registries]: {
-    [PluginRegistriesSubtask.getDataFeedAddress]: {
-      action: registriesActions.getDataFeedAddress,
-      description: camelToFlat(PluginRegistriesSubtask.getDataFeedAddress),
+    [PluginRegistriesSubtask.getDataFeed]: {
+      action: registriesActions.getDataFeed,
+      description: camelToFlat(PluginRegistriesSubtask.getDataFeed),
       args: [],
     },
-    [PluginRegistriesSubtask.getFeedRegistryAddress]: {
-      action: registriesActions.getFeedRegistryAddress,
-      description: camelToFlat(PluginRegistriesSubtask.getFeedRegistryAddress),
+    [PluginRegistriesSubtask.getFeedRegistry]: {
+      action: registriesActions.getFeedRegistry,
+      description: camelToFlat(PluginRegistriesSubtask.getFeedRegistry),
       args: [],
     },
-    [PluginRegistriesSubtask.getVRFCoordinatorAddress]: {
-      action: registriesActions.getVRFCoordinatorAddress,
-      description: camelToFlat(
-        PluginRegistriesSubtask.getVRFCoordinatorAddress
-      ),
+    [PluginRegistriesSubtask.getVRFCoordinator]: {
+      action: registriesActions.getVRFCoordinator,
+      description: camelToFlat(PluginRegistriesSubtask.getVRFCoordinator),
       args: [],
     },
-    [PluginRegistriesSubtask.getLinkTokenAddress]: {
-      action: registriesActions.getLinkTokenAddress,
-      description: camelToFlat(PluginRegistriesSubtask.getLinkTokenAddress),
+    [PluginRegistriesSubtask.getLinkToken]: {
+      action: registriesActions.getLinkToken,
+      description: camelToFlat(PluginRegistriesSubtask.getLinkToken),
       args: [],
     },
-    [PluginRegistriesSubtask.getKeeperRegistryAddress]: {
-      action: registriesActions.getKeeperRegistryAddress,
-      description: camelToFlat(
-        PluginRegistriesSubtask.getKeeperRegistryAddress
-      ),
+    [PluginRegistriesSubtask.getKeeperRegistry]: {
+      action: registriesActions.getKeeperRegistry,
+      description: camelToFlat(PluginRegistriesSubtask.getKeeperRegistry),
       args: [],
     },
-    [PluginRegistriesSubtask.getKeeperRegistrarAddress]: {
-      action: registriesActions.getKeeperRegistrarAddress,
-      description: camelToFlat(
-        PluginRegistriesSubtask.getKeeperRegistrarAddress
-      ),
+    [PluginRegistriesSubtask.getL2Sequencer]: {
+      action: registriesActions.getL2Sequencer,
+      description: camelToFlat(PluginRegistriesSubtask.getL2Sequencer),
       args: [],
     },
-    [PluginRegistriesSubtask.getL2SequencerAddress]: {
-      action: registriesActions.getL2SequencerAddress,
-      description: camelToFlat(PluginRegistriesSubtask.getL2SequencerAddress),
-      args: [],
-    },
-    [PluginRegistriesSubtask.getFunctionOracleAddress]: {
-      action: registriesActions.getFunctionOracleAddress,
-      description: camelToFlat(
-        PluginRegistriesSubtask.getFunctionOracleAddress
-      ),
+    [PluginRegistriesSubtask.getFunctionOracle]: {
+      action: registriesActions.getFunctionOracle,
+      description: camelToFlat(PluginRegistriesSubtask.getFunctionOracle),
       args: [],
     },
     [PluginRegistriesSubtask.getDenomination]: {

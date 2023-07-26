@@ -60,7 +60,7 @@ export const inquireInput = async (parameter: string) => {
   });
 };
 
-const inquireDataFeed = async (
+export const inquireDataFeed = async (
   hre: HardhatRuntimeEnvironment,
   useHardhatNetwork: boolean = true
 ) => {
@@ -105,14 +105,6 @@ const inquireDataFeed = async (
     return undefined;
   }
 
-  const answer: boolean = await confirm({
-    message: "Do you want to select a Data Feed from the plugin registry?",
-  });
-
-  if (!answer) {
-    return undefined;
-  }
-
   const baseTick: string = await select({
     message: "Select a base tick",
     choices: Object.keys(dataFeedsRegistry[chainSlug]).reduce((agg, key) => {
@@ -147,29 +139,77 @@ export const inquireDataFeedAddress = async (
   hre: HardhatRuntimeEnvironment,
   useHardhatNetwork: boolean = true
 ) => {
+  let answer: boolean = await confirm({
+    message:
+      "Do you want to select Data Feed address from the plugin registry?",
+  });
+
+  if (!answer) {
+    return input({
+      message: "Provide a valid Data Feed address",
+    });
+  }
+
   const dataFeed = await inquireDataFeed(hre, useHardhatNetwork);
   if (!dataFeed) {
     return input({
       message: "Provide a valid Data Feed address",
     });
   }
-  return dataFeed.contractAddress;
+
+  const dataFeedAddress = dataFeed.contractAddress;
+
+  answer = await confirm({
+    message: `Data Feed found in the plugin registry: ${dataFeedAddress}. Do you want to proceed with it?`,
+  });
+
+  if (!answer) {
+    return input({
+      message: "Provide a valid Data Feed address",
+    });
+  }
+
+  return dataFeedAddress;
 };
 
 export const inquireDataFeedProxyAddress = async (
   hre: HardhatRuntimeEnvironment,
   useHardhatNetwork: boolean = true
 ) => {
+  let answer: boolean = await confirm({
+    message:
+      "Do you want to select Data Feed Proxy address from the plugin registry?",
+  });
+
+  if (!answer) {
+    return input({
+      message: "Provide a valid Data Feed Proxy address",
+    });
+  }
+
   const dataFeed = await inquireDataFeed(hre, useHardhatNetwork);
   if (!dataFeed) {
     return input({
       message: "Provide a valid Data Feed Proxy address",
     });
   }
-  return dataFeed.proxyAddress;
+
+  const dataFeedProxyAddress = dataFeed.proxyAddress;
+
+  answer = await confirm({
+    message: `Data Feed Proxy found in the plugin registry: ${dataFeedProxyAddress}. Do you want to proceed with it?`,
+  });
+
+  if (!answer) {
+    return input({
+      message: "Provide a valid Data Feed Proxy address",
+    });
+  }
+
+  return dataFeedProxyAddress;
 };
 
-export const inquireFeedRegistryAddress = async (
+export const inquireFeedRegistry = async (
   hre: HardhatRuntimeEnvironment,
   useHardhatNetwork: boolean = true
 ) => {
@@ -186,9 +226,7 @@ export const inquireFeedRegistryAddress = async (
       console.log(
         "Could not identify network, chainId is not specified in hardhat.config."
       );
-      return input({
-        message: "Provide a valid Feed Registry address",
-      });
+      return undefined;
     }
 
     chainSlug = networksRegistry[chainId].chainSlug;
@@ -213,12 +251,24 @@ export const inquireFeedRegistryAddress = async (
     console.log(
       `There is no Feed Registry in the plugin registry for the selected chain: ${hre.network.name}`
     );
+    return undefined;
+  }
+
+  return feedRegistriesRegistry[chainSlug];
+};
+
+export const inquireFeedRegistryAddress = async (
+  hre: HardhatRuntimeEnvironment,
+  useHardhatNetwork: boolean = true
+) => {
+  const feedRegistry = await inquireFeedRegistry(hre, useHardhatNetwork);
+  if (!feedRegistry) {
     return input({
       message: "Provide a valid Feed Registry address",
     });
   }
 
-  const feedRegistryAddress = feedRegistriesRegistry[chainSlug].contractAddress;
+  const feedRegistryAddress = feedRegistry.contractAddress;
 
   const answer: boolean = await confirm({
     message: `Feed Registry found in the plugin registry: ${feedRegistryAddress}. Do you want to proceed with it?`,
@@ -233,7 +283,7 @@ export const inquireFeedRegistryAddress = async (
   return feedRegistryAddress;
 };
 
-export const inquireVRFCoordinatorAddress = async (
+export const inquireVRFCoordinator = async (
   hre: HardhatRuntimeEnvironment,
   useHardhatNetwork: boolean = true
 ) => {
@@ -250,9 +300,7 @@ export const inquireVRFCoordinatorAddress = async (
       console.log(
         "Could not identify network, chainId is not specified in hardhat.config."
       );
-      return input({
-        message: "Provide a valid VRF coordinator address",
-      });
+      return undefined;
     }
 
     chainSlug = networksRegistry[chainId].chainSlug;
@@ -277,13 +325,24 @@ export const inquireVRFCoordinatorAddress = async (
     console.log(
       `There is no VRF coordinator in the plugin registry for the selected chain: ${hre.network.name}`
     );
+    return undefined;
+  }
+
+  return vrfCoordinatorsRegistry[chainSlug];
+};
+
+export const inquireVRFCoordinatorAddress = async (
+  hre: HardhatRuntimeEnvironment,
+  useHardhatNetwork: boolean = true
+) => {
+  const vrfCoordinator = await inquireVRFCoordinator(hre, useHardhatNetwork);
+  if (!vrfCoordinator) {
     return input({
       message: "Provide a valid VRF coordinator address",
     });
   }
 
-  const vrfCoordinatorAddress =
-    vrfCoordinatorsRegistry[chainSlug].contractAddress;
+  const vrfCoordinatorAddress = vrfCoordinator.contractAddress;
 
   const answer: boolean = await confirm({
     message: `VRF coordinator found in the plugin registry: ${vrfCoordinatorAddress}. Do you want to proceed with it?`,
@@ -298,7 +357,7 @@ export const inquireVRFCoordinatorAddress = async (
   return vrfCoordinatorAddress;
 };
 
-export const inquireLinkTokenAddress = async (
+export const inquireLinkToken = async (
   hre: HardhatRuntimeEnvironment,
   useHardhatNetwork: boolean = true
 ) => {
@@ -315,9 +374,7 @@ export const inquireLinkTokenAddress = async (
       console.log(
         "Could not identify network, chainId is not specified in hardhat.config."
       );
-      return input({
-        message: "Provide a valid Link Token address",
-      });
+      return undefined;
     }
 
     chainSlug = networksRegistry[chainId].chainSlug;
@@ -342,12 +399,24 @@ export const inquireLinkTokenAddress = async (
     console.log(
       `There is no Link Token in the plugin registry for the selected chain: ${hre.network.name}`
     );
+    return undefined;
+  }
+
+  return linkTokensRegistry[chainSlug];
+};
+
+export const inquireLinkTokenAddress = async (
+  hre: HardhatRuntimeEnvironment,
+  useHardhatNetwork: boolean = true
+) => {
+  const linkToken = await inquireLinkToken(hre, useHardhatNetwork);
+  if (!linkToken) {
     return input({
       message: "Provide a valid Link Token address",
     });
   }
 
-  const linkTokenAddress = linkTokensRegistry[chainSlug].contractAddress;
+  const linkTokenAddress = linkToken.contractAddress;
 
   const answer: boolean = await confirm({
     message: `Link Token found in the plugin registry: ${linkTokenAddress}. Do you want to proceed with it?`,
@@ -362,7 +431,7 @@ export const inquireLinkTokenAddress = async (
   return linkTokenAddress;
 };
 
-export const inquireKeeperRegistryAddress = async (
+export const inquireKeeperRegistry = async (
   hre: HardhatRuntimeEnvironment,
   useHardhatNetwork: boolean = true
 ) => {
@@ -379,9 +448,7 @@ export const inquireKeeperRegistryAddress = async (
       console.log(
         "Could not identify network, chainId is not specified in hardhat.config."
       );
-      return input({
-        message: "Provide a valid Keeper Registry address",
-      });
+      return undefined;
     }
 
     chainSlug = networksRegistry[chainId].chainSlug;
@@ -406,13 +473,24 @@ export const inquireKeeperRegistryAddress = async (
     console.log(
       `There is no Keeper Registry in the plugin registry for the selected chain: ${hre.network.name}`
     );
+    return undefined;
+  }
+
+  return keeperRegistriesRegistry[chainSlug];
+};
+
+export const inquireKeeperRegistryAddress = async (
+  hre: HardhatRuntimeEnvironment,
+  useHardhatNetwork: boolean = true
+) => {
+  const keeperRegistry = await inquireKeeperRegistry(hre, useHardhatNetwork);
+  if (!keeperRegistry) {
     return input({
       message: "Provide a valid Keeper Registry address",
     });
   }
 
-  const keeperRegistryAddress =
-    keeperRegistriesRegistry[chainSlug].contractAddress;
+  const keeperRegistryAddress = keeperRegistry.contractAddress;
 
   const answer: boolean = await confirm({
     message: `Keeper Registry found in the plugin registry: ${keeperRegistryAddress}. Do you want to proceed with it?`,
@@ -431,53 +509,14 @@ export const inquireKeeperRegistrarAddress = async (
   hre: HardhatRuntimeEnvironment,
   useHardhatNetwork: boolean = true
 ) => {
-  const networksRegistry: NetworksRegistry =
-    registries.networksRegistry as NetworksRegistry;
-
-  const keeperRegistriesRegistry: KeeperRegistriesRegistry =
-    registries.keeperRegistriesRegistry as KeeperRegistriesRegistry;
-
-  let chainSlug = "";
-  if (useHardhatNetwork) {
-    const chainId = hre.network.config.chainId;
-    if (!chainId) {
-      console.log(
-        "Could not identify network, chainId is not specified in hardhat.config."
-      );
-      return input({
-        message: "Provide a valid Keeper Registrar address",
-      });
-    }
-
-    chainSlug = networksRegistry[chainId].chainSlug;
-  } else {
-    chainSlug = await select({
-      message: "Select a network",
-      choices: Object.values(Object.keys(keeperRegistriesRegistry)).reduce(
-        (agg, networkName) => {
-          agg.push({
-            name: networksRegistry[networkName].name,
-            value: kebabToCamelCase(networksRegistry[networkName].chainSlug),
-            description: networksRegistry[networkName].name,
-          });
-          return agg;
-        },
-        [] as Choice[]
-      ),
-    });
-  }
-
-  if (!keeperRegistriesRegistry[chainSlug]) {
-    console.log(
-      `There is no Keeper Registrar in the plugin registry for the selected chain: ${hre.network.name}`
-    );
+  const keeperRegistrar = await inquireKeeperRegistry(hre, useHardhatNetwork);
+  if (!keeperRegistrar) {
     return input({
       message: "Provide a valid Keeper Registrar address",
     });
   }
 
-  const keeperRegistrarAddress =
-    keeperRegistriesRegistry[chainSlug].registrarAddress;
+  const keeperRegistrarAddress = keeperRegistrar.registrarAddress;
 
   const answer: boolean = await confirm({
     message: `Keeper Registrar found in the plugin registry: ${keeperRegistrarAddress}. Do you want to proceed with it?`,
@@ -492,7 +531,7 @@ export const inquireKeeperRegistrarAddress = async (
   return keeperRegistrarAddress;
 };
 
-export const inquireL2SequencerAddress = async (
+export const inquireL2Sequencer = async (
   hre: HardhatRuntimeEnvironment,
   useHardhatNetwork: boolean = true
 ) => {
@@ -509,9 +548,7 @@ export const inquireL2SequencerAddress = async (
       console.log(
         "Could not identify network, chainId is not specified in hardhat.config."
       );
-      return input({
-        message: "Provide a valid L2 Sequencer address",
-      });
+      return undefined;
     }
 
     chainSlug = networksRegistry[chainId].chainSlug;
@@ -536,12 +573,24 @@ export const inquireL2SequencerAddress = async (
     console.log(
       `There is no L2 Sequencer in the plugin registry for the selected chain: ${hre.network.name}`
     );
+    return undefined;
+  }
+
+  return l2SequencersRegistry[chainSlug];
+};
+
+export const inquireL2SequencerAddress = async (
+  hre: HardhatRuntimeEnvironment,
+  useHardhatNetwork: boolean = true
+) => {
+  const l2Sequencer = await inquireL2Sequencer(hre, useHardhatNetwork);
+  if (!l2Sequencer) {
     return input({
       message: "Provide a valid L2 Sequencer address",
     });
   }
 
-  const l2SequencerAddress = l2SequencersRegistry[chainSlug].contractAddress;
+  const l2SequencerAddress = l2Sequencer.contractAddress;
 
   const answer: boolean = await confirm({
     message: `L2 Sequencer found in the plugin registry: ${l2SequencerAddress}. Do you want to proceed with it?`,
@@ -556,7 +605,7 @@ export const inquireL2SequencerAddress = async (
   return l2SequencerAddress;
 };
 
-export const inquireFunctionOracleAddress = async (
+export const inquireFunctionOracle = async (
   hre: HardhatRuntimeEnvironment,
   useHardhatNetwork: boolean = true
 ) => {
@@ -573,9 +622,7 @@ export const inquireFunctionOracleAddress = async (
       console.log(
         "Could not identify network, chainId is not specified in hardhat.config."
       );
-      return input({
-        message: "Provide a valid Function Oracle address",
-      });
+      return undefined;
     }
 
     chainSlug = networksRegistry[chainId].chainSlug;
@@ -600,13 +647,24 @@ export const inquireFunctionOracleAddress = async (
     console.log(
       `There is no Function Oracle in the plugin registry for the selected chain: ${hre.network.name}`
     );
+    return undefined;
+  }
+
+  return functionOraclesRegistry[chainSlug];
+};
+
+export const inquireFunctionOracleAddress = async (
+  hre: HardhatRuntimeEnvironment,
+  useHardhatNetwork: boolean = true
+) => {
+  const functionOracle = await inquireFunctionOracle(hre, useHardhatNetwork);
+  if (!functionOracle) {
     return input({
       message: "Provide a valid Function Oracle address",
     });
   }
 
-  const functionOracleAddress =
-    functionOraclesRegistry[chainSlug].contractAddress;
+  const functionOracleAddress = functionOracle.contractAddress;
 
   const answer: boolean = await confirm({
     message: `Function Oracle found in the plugin registry: ${functionOracleAddress}. Do you want to proceed with it?`,
