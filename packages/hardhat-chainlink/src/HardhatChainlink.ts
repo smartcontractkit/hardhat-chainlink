@@ -2,7 +2,8 @@ import "@nomiclabs/hardhat-ethers";
 import { BigNumber, BigNumberish, BytesLike } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import * as automation from "./automation";
+import * as automationRegistrar from "./automation/keepersRegistrar";
+import * as automationRegistry from "./automation/keepersRegistry";
 import * as dataFeed from "./feeds/dataFeed";
 import * as dataFeedProxy from "./feeds/dataFeedProxy";
 import * as ensFeedsResolver from "./feeds/ensFeedsResolver";
@@ -29,7 +30,8 @@ export class HardhatChainlink {
   public ens: ENS;
   public l2Sequenser: L2Sequencer;
   public vrf: VRF;
-  public automation: Automation;
+  public automationRegistrar: AutomationRegistrar;
+  public automationRegistry: AutomationRegistry;
   public functionOracle: FunctionOracle;
   public utils: Utils;
   private hre: HardhatRuntimeEnvironment;
@@ -52,7 +54,8 @@ export class HardhatChainlink {
     this.ens = new ENS(this.hre);
     this.l2Sequenser = new L2Sequencer(this.hre);
     this.vrf = new VRF(this.hre);
-    this.automation = new Automation(this.hre);
+    this.automationRegistrar = new AutomationRegistrar(this.hre);
+    this.automationRegistry = new AutomationRegistry(this.hre);
     this.functionOracle = new FunctionOracle(this.hre);
     this.utils = new Utils(this.hre);
   }
@@ -726,14 +729,13 @@ class VRF {
   }
 }
 
-class Automation {
+class AutomationRegistrar {
   private hre: HardhatRuntimeEnvironment;
 
   constructor(hre: HardhatRuntimeEnvironment) {
     this.hre = hre;
   }
 
-  // KEEPER REGISTRAR
   public async registerUpkeep(
     linkTokenAddress: string,
     keepersRegistrarAddress: string,
@@ -744,10 +746,11 @@ class Automation {
     gasLimit: number,
     adminAddress: string,
     checkData: BytesLike,
+    ocrConfig: BytesLike,
     source: number,
     sender: string
   ): Promise<{ transactionHash: string }> {
-    return automation.registerUpkeep(
+    return automationRegistrar.registerUpkeep(
       this.hre,
       linkTokenAddress,
       keepersRegistrarAddress,
@@ -758,242 +761,268 @@ class Automation {
       gasLimit,
       adminAddress,
       checkData,
+      ocrConfig,
       source,
       sender
     );
   }
 
-  public async getPendingRegistrationRequest(
+  public async getPendingRequest(
     keepersRegistrarAddress: string,
     requestHash: BytesLike
   ): Promise<{
     adminAddress: string;
     balance: BigNumber;
   }> {
-    return automation.getPendingRegistrationRequest(
+    return automationRegistrar.getPendingRequest(
       this.hre,
       keepersRegistrarAddress,
       requestHash
     );
   }
 
-  public async cancelPendingRegistrationRequest(
+  public async cancelRequest(
     keepersRegistrarAddress: string,
     requestHash: BytesLike
   ): Promise<{ transactionHash: string }> {
-    return automation.cancelPendingRegistrationRequest(
+    return automationRegistrar.cancelRequest(
       this.hre,
       keepersRegistrarAddress,
       requestHash
     );
   }
 
-  public async getKeeperRegistrarConfig(
-    keepersRegistrarAddress: string
-  ): Promise<{
+  public async getRegistrationConfig(keepersRegistrarAddress: string): Promise<{
     autoApproveConfigType: number;
     autoApproveMaxAllowed: number;
     approvedCount: number;
     keeperRegistry: string;
     minLINKJuels: BigNumber;
   }> {
-    return automation.getKeeperRegistrarConfig(
+    return automationRegistrar.getRegistrationConfig(
       this.hre,
       keepersRegistrarAddress
     );
   }
 
-  public async getKeepersRegistrarTypeAndVersion(
+  public async getTypeAndVersion(
     keepersRegistrarAddress: string
   ): Promise<string> {
-    return automation.getKeepersRegistrarTypeAndVersion(
+    return automationRegistrar.getTypeAndVersion(
       this.hre,
       keepersRegistrarAddress
     );
   }
+}
 
-  // KEEPER REGISTRY
+class AutomationRegistry {
+  private hre: HardhatRuntimeEnvironment;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
+  }
+
   public async fundUpkeep(
-    keepersRegistryAddress: string,
+    keeperRegistryAddress: string,
     upkeepId: BigNumberish,
     amountInJuels: BigNumberish
   ): Promise<{ transactionHash: string }> {
-    return automation.fundUpkeep(
+    return automationRegistry.fundUpkeep(
       this.hre,
-      keepersRegistryAddress,
+      keeperRegistryAddress,
       upkeepId,
       amountInJuels
     );
   }
 
   public async checkUpkeep(
-    keepersRegistryAddress: string,
+    keeperRegistryAddress: string,
     upkeepId: BigNumberish,
     fromAddress: string
-  ): Promise<{
-    performData: BytesLike;
-    maxLinkPayment: BigNumber;
-    gasLimit: BigNumber;
-    adjustedGasWei: BigNumber;
-    linkEth: BigNumber;
-  }> {
-    return automation.checkUpkeep(
+  ): Promise<
+    | {
+        performData: BytesLike;
+        maxLinkPayment: BigNumber;
+        gasLimit: BigNumber;
+        adjustedGasWei: BigNumber;
+        linkEth: BigNumber;
+      }
+    | {
+        upkeepNeeded: boolean;
+        performData: BytesLike;
+        upkeepFailureReason: string;
+        gasUsed: BigNumber;
+        fastGasWei: BigNumber;
+        linkNative: BigNumber;
+      }
+  > {
+    return automationRegistry.checkUpkeep(
       this.hre,
-      keepersRegistryAddress,
+      keeperRegistryAddress,
       upkeepId,
       fromAddress
     );
   }
 
   public async cancelUpkeep(
-    keepersRegistryAddress: string,
+    keeperRegistryAddress: string,
     upkeepId: BigNumberish
   ): Promise<{ transactionHash: string }> {
-    return automation.cancelUpkeep(this.hre, keepersRegistryAddress, upkeepId);
+    return automationRegistry.cancelUpkeep(
+      this.hre,
+      keeperRegistryAddress,
+      upkeepId
+    );
   }
 
-  public async withdrawFundsFromCanceledUpkeep(
-    keepersRegistryAddress: string,
+  public async withdrawFunds(
+    keeperRegistryAddress: string,
     upkeepId: BigNumberish,
     receivingAddress: string
   ): Promise<{ transactionHash: string }> {
-    return automation.withdrawFunds(
+    return automationRegistry.withdrawFunds(
       this.hre,
-      keepersRegistryAddress,
+      keeperRegistryAddress,
       upkeepId,
       receivingAddress
     );
   }
 
   public async getActiveUpkeepIDs(
-    keepersRegistryAddress: string,
+    keeperRegistryAddress: string,
     startIndex: BigNumberish,
     maxCount: BigNumberish
   ): Promise<BigNumber[]> {
-    return automation.getActiveUpkeepIDs(
+    return automationRegistry.getActiveUpkeepIDs(
       this.hre,
-      keepersRegistryAddress,
+      keeperRegistryAddress,
       startIndex,
       maxCount
     );
   }
 
   public async getUpkeep(
-    keepersRegistryAddress: string,
+    keeperRegistryAddress: string,
     upkeepId: BigNumberish
   ): Promise<{
     target: string;
     executeGas: number;
     checkData: BytesLike;
     balance: BigNumber;
-    lastAutomationNode: string;
+    lastAutomationNode: string | undefined;
     admin: string;
     maxValidBlocknumber: BigNumber;
     amountSpent: BigNumber;
   }> {
-    return automation.getUpkeep(this.hre, keepersRegistryAddress, upkeepId);
+    return automationRegistry.getUpkeep(
+      this.hre,
+      keeperRegistryAddress,
+      upkeepId
+    );
   }
 
   public async migrateUpkeeps(
-    keepersRegistryAddress: string,
+    keeperRegistryAddress: string,
     upkeepIds: BigNumberish[],
     destination: string
   ): Promise<{ transactionHash: string }> {
-    return automation.migrateUpkeeps(
+    return automationRegistry.migrateUpkeeps(
       this.hre,
-      keepersRegistryAddress,
+      keeperRegistryAddress,
       upkeepIds,
       destination
     );
   }
 
   public async receiveUpkeeps(
-    keepersRegistryAddress: string,
+    keeperRegistryAddress: string,
     encodedUpkeeps: BytesLike
   ): Promise<{ transactionHash: string }> {
-    return automation.receiveUpkeeps(
+    return automationRegistry.receiveUpkeeps(
       this.hre,
-      keepersRegistryAddress,
+      keeperRegistryAddress,
       encodedUpkeeps
     );
   }
 
-  public async withdrawKeeperPayment(
-    keepersRegistryAddress: string,
+  public async withdrawPayment(
+    keeperRegistryAddress: string,
     fromAddress: string,
     toAddress: string
   ): Promise<{ transactionHash: string }> {
-    return automation.withdrawKeeperPayment(
+    return automationRegistry.withdrawPayment(
       this.hre,
-      keepersRegistryAddress,
+      keeperRegistryAddress,
       fromAddress,
       toAddress
     );
   }
 
-  public async transferKeeperPayeeship(
-    keepersRegistryAddress: string,
+  public async transferPayeeship(
+    keeperRegistryAddress: string,
     keeper: string,
     proposed: string
   ): Promise<{ transactionHash: string }> {
-    return automation.transferKeeperPayeeship(
+    return automationRegistry.transferPayeeship(
       this.hre,
-      keepersRegistryAddress,
+      keeperRegistryAddress,
       keeper,
       proposed
     );
   }
 
-  public async acceptKeeperPayeeship(
-    keepersRegistryAddress: string,
+  public async acceptPayeeship(
+    keeperRegistryAddress: string,
     keeper: string
   ): Promise<{ transactionHash: string }> {
-    return automation.acceptKeeperPayeeship(
+    return automationRegistry.acceptPayeeship(
       this.hre,
-      keepersRegistryAddress,
+      keeperRegistryAddress,
       keeper
     );
   }
 
   public async getKeeperInfo(
-    keepersRegistryAddress: string,
+    keeperRegistryAddress: string,
     query: string
   ): Promise<{ payee: string; active: boolean; balance: BigNumber }> {
-    return automation.getKeeperInfo(this.hre, keepersRegistryAddress, query);
+    return automationRegistry.getKeeperInfo(
+      this.hre,
+      keeperRegistryAddress,
+      query
+    );
   }
 
   public async getMaxPaymentForGas(
-    keepersRegistryAddress: string,
+    keeperRegistryAddress: string,
     gasLimit: BigNumberish
   ): Promise<BigNumber> {
-    return automation.getMaxPaymentForGas(
+    return automationRegistry.getMaxPaymentForGas(
       this.hre,
-      keepersRegistryAddress,
+      keeperRegistryAddress,
       gasLimit
     );
   }
 
   public async getMinBalanceForUpkeep(
-    keepersRegistryAddress: string,
+    keeperRegistryAddress: string,
     upkeepId: BigNumberish
   ): Promise<BigNumber> {
-    return automation.getMinBalanceForUpkeep(
+    return automationRegistry.getMinBalanceForUpkeep(
       this.hre,
-      keepersRegistryAddress,
+      keeperRegistryAddress,
       upkeepId
     );
   }
 
-  public async getKeepersRegistryState(
-    keepersRegistryAddress: string
-  ): Promise<{
+  public async getState(keeperRegistryAddress: string): Promise<{
     nonce: number;
     ownerLinkBalance: BigNumber;
     expectedLinkBalance: BigNumber;
     numUpkeeps: BigNumber;
     paymentPremiumPPB: number;
     flatFeeMicroLink: number;
-    blockCountPerTurn: number;
+    blockCountPerTurn: number | undefined;
     checkGasLimit: number;
     stalenessSeconds: number;
     gasCeilingMultiplier: number;
@@ -1003,32 +1032,30 @@ class Automation {
     fallbackLinkPrice: BigNumber;
     transcoder: string;
     registrar: string;
-    automationNodes: string[];
+    automationNodes: string[] | undefined;
   }> {
-    return automation.getKeeperRegistryState(this.hre, keepersRegistryAddress);
+    return automationRegistry.getState(this.hre, keeperRegistryAddress);
   }
 
-  public async isKeepersRegistryPaused(
-    keepersRegistryAddress: string
-  ): Promise<boolean> {
-    return automation.isKeeperRegistryPaused(this.hre, keepersRegistryAddress);
+  public async isPaused(keeperRegistryAddress: string): Promise<boolean> {
+    return automationRegistry.isPaused(this.hre, keeperRegistryAddress);
   }
 
-  public async getKeepersRegistryTypeAndVersion(
-    keepersRegistryAddress: string
+  public async getTypeAndVersion(
+    keeperRegistryAddress: string
   ): Promise<string> {
-    return automation.getKeeperRegistryTypeAndVersion(
+    return automationRegistry.getTypeAndVersion(
       this.hre,
-      keepersRegistryAddress
+      keeperRegistryAddress
     );
   }
 
-  public async getKeepersRegistryUpkeepTranscoderVersion(
-    keepersRegistryAddress: string
+  public async getUpkeepTranscoderVersion(
+    keeperRegistryAddress: string
   ): Promise<number> {
-    return automation.getKeeperRegistryUpkeepTranscoderVersion(
+    return automationRegistry.getUpkeepTranscoderVersion(
       this.hre,
-      keepersRegistryAddress
+      keeperRegistryAddress
     );
   }
 }

@@ -4,7 +4,8 @@ export enum Task {
   feedRegistry = "feedRegistry",
   l2Sequencer = "l2Sequencer",
   ens = "ens",
-  automation = "automation",
+  automationRegistry = "automationRegistry",
+  automationRegistrar = "automationRegistrar",
   vrf = "vrf",
   sandbox = "sandbox",
   functions = "functions",
@@ -88,30 +89,33 @@ export enum VRFSubtask {
   getTypeAndVersion = "getTypeAndVersion",
 }
 
-export enum AutomationSubtask {
-  registerUpkeep = "registerUpkeep",
-  getPendingRegistrationRequest = "getPendingRegistrationRequest",
-  cancelPendingRegistrationRequest = "cancelPendingRegistrationRequest",
-  getKeeperRegistrarConfig = "getKeeperRegistrarConfig",
-  getKeepersRegistrarTypeAndVersion = "getKeepersRegistrarTypeAndVersion",
+export enum AutomationRegistrySubtask {
   fundUpkeep = "fundUpkeep",
   checkUpkeep = "checkUpkeep",
   migrateUpkeeps = "migrateUpkeeps",
   receiveUpkeeps = "receiveUpkeeps",
   cancelUpkeep = "cancelUpkeep",
   withdrawFunds = "withdrawFunds",
-  transferKeeperPayeeship = "transferKeeperPayeeship",
-  acceptKeeperPayeeship = "acceptKeeperPayeeship",
-  withdrawKeeperPayment = "withdrawKeeperPayment",
+  transferPayeeship = "transferPayeeship",
+  acceptPayeeship = "acceptPayeeship",
+  withdrawPayment = "withdrawPayment",
   getActiveUpkeepIDs = "getActiveUpkeepIDs",
   getUpkeep = "getUpkeep",
   getKeeperInfo = "getKeeperInfo",
   getMaxPaymentForGas = "getMaxPaymentForGas",
   getMinBalanceForUpkeep = "getMinBalanceForUpkeep",
-  getKeeperRegistryState = "getKeeperRegistryState  ",
-  isKeeperRegistryPaused = "isKeeperRegistryPaused",
-  getKeeperRegistryTypeAndVersion = "getKeeperRegistryTypeAndVersion",
-  getKeeperRegistryUpkeepTranscoderVersion = "getKeeperRegistryUpkeepTranscoderVersion",
+  getState = "getKeeperRegistryState  ",
+  isPaused = "isPaused",
+  getTypeAndVersion = "getTypeAndVersion",
+  getUpkeepTranscoderVersion = "getUpkeepTranscoderVersion",
+}
+
+export enum AutomationRegistrarSubtask {
+  registerUpkeep = "registerUpkeep",
+  getPendingRequest = "getPendingRequest",
+  cancelRequest = "cancelRequest",
+  getRegistrationConfig = "getRegistrationConfig",
+  getTypeAndVersion = "getTypeAndVersion",
 }
 
 export enum PluginRegistriesSubtask {
@@ -142,4 +146,15 @@ export const enum InquirableParameter {
   functionOracleAddress = "functionOracleAddress",
   feedRegistryBaseTick = "feedRegistryBaseTick",
   feedRegistryQuoteTick = "feedRegistryQuoteTick",
+}
+
+export const enum KeeperRegistryVersion {
+  registry1_2 = "KeeperRegistry 1.2.0",
+  registry1_3 = "KeeperRegistry 1.3.0",
+  registry2_0 = "KeeperRegistry 2.0.0",
+}
+
+export const enum KeeperRegistrarVersion {
+  registrar1_1 = "KeeperRegistrar 1.1.0",
+  registrar2_0 = "KeeperRegistrar 2.0.0",
 }

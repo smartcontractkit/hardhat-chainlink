@@ -1,208 +1,199 @@
 import { BigNumberish, BytesLike } from "ethers";
 import { ActionType } from "hardhat/types";
 
-import * as automation from "../../automation";
+import * as automation from "../../automation/keepersRegistry";
 
 export const fundUpkeep: ActionType<{
-  keepersRegistryAddress: string;
+  keeperRegistryAddress: string;
   upkeepId: BigNumberish;
   amountInJuels: BigNumberish;
 }> = async (taskArgs, hre) => {
   return automation.fundUpkeep(
     hre,
-    taskArgs.keepersRegistryAddress,
+    taskArgs.keeperRegistryAddress,
     taskArgs.upkeepId,
     taskArgs.amountInJuels
   );
 };
 
 export const checkUpkeep: ActionType<{
-  keepersRegistryAddress: string;
+  keeperRegistryAddress: string;
   upkeepId: BigNumberish;
   fromAddress: string;
 }> = async (taskArgs, hre) => {
   return automation.checkUpkeep(
     hre,
-    taskArgs.keepersRegistryAddress,
+    taskArgs.keeperRegistryAddress,
     taskArgs.upkeepId,
     taskArgs.fromAddress
   );
 };
 
 export const cancelUpkeep: ActionType<{
-  keepersRegistryAddress: string;
+  keeperRegistryAddress: string;
   upkeepId: BigNumberish;
 }> = async (taskArgs, hre) => {
   return automation.cancelUpkeep(
     hre,
-    taskArgs.keepersRegistryAddress,
+    taskArgs.keeperRegistryAddress,
     taskArgs.upkeepId
   );
 };
 
 export const withdrawFunds: ActionType<{
-  keepersRegistryAddress: string;
+  keeperRegistryAddress: string;
   upkeepId: BigNumberish;
   receivingAddress: string;
 }> = async (taskArgs, hre) => {
   return automation.withdrawFunds(
     hre,
-    taskArgs.keepersRegistryAddress,
+    taskArgs.keeperRegistryAddress,
     taskArgs.upkeepId,
     taskArgs.receivingAddress
   );
 };
 
 export const getActiveUpkeepIDs: ActionType<{
-  keepersRegistryAddress: string;
+  keeperRegistryAddress: string;
   startIndex: BigNumberish;
   maxCount: BigNumberish;
 }> = async (taskArgs, hre) => {
   return automation.getActiveUpkeepIDs(
     hre,
-    taskArgs.keepersRegistryAddress,
+    taskArgs.keeperRegistryAddress,
     taskArgs.startIndex,
     taskArgs.maxCount
   );
 };
 
 export const getUpkeep: ActionType<{
-  keepersRegistryAddress: string;
+  keeperRegistryAddress: string;
   upkeepId: BigNumberish;
 }> = async (taskArgs, hre) => {
   return automation.getUpkeep(
     hre,
-    taskArgs.keepersRegistryAddress,
+    taskArgs.keeperRegistryAddress,
     taskArgs.upkeepId
   );
 };
 
 export const migrateUpkeeps: ActionType<{
-  keepersRegistryAddress: string;
+  keeperRegistryAddress: string;
   upkeepIds: BigNumberish[];
   destination: string;
 }> = async (taskArgs, hre) => {
   return automation.migrateUpkeeps(
     hre,
-    taskArgs.keepersRegistryAddress,
+    taskArgs.keeperRegistryAddress,
     taskArgs.upkeepIds,
     taskArgs.destination
   );
 };
 
 export const receiveUpkeeps: ActionType<{
-  keepersRegistryAddress: string;
+  keeperRegistryAddress: string;
   encodedUpkeeps: BytesLike;
 }> = async (taskArgs, hre) => {
   return automation.receiveUpkeeps(
     hre,
-    taskArgs.keepersRegistryAddress,
+    taskArgs.keeperRegistryAddress,
     taskArgs.encodedUpkeeps
   );
 };
 
-export const withdrawKeeperPayment: ActionType<{
-  keepersRegistryAddress: string;
+export const withdrawPayment: ActionType<{
+  keeperRegistryAddress: string;
   fromAddress: string;
   toAddress: string;
 }> = async (taskArgs, hre) => {
-  return automation.withdrawKeeperPayment(
+  return automation.withdrawPayment(
     hre,
-    taskArgs.keepersRegistryAddress,
+    taskArgs.keeperRegistryAddress,
     taskArgs.fromAddress,
     taskArgs.toAddress
   );
 };
 
-export const transferKeeperPayeeship: ActionType<{
-  keepersRegistryAddress: string;
+export const transferPayeeship: ActionType<{
+  keeperRegistryAddress: string;
   keeper: string;
   proposed: string;
 }> = async (taskArgs, hre) => {
-  return automation.transferKeeperPayeeship(
+  return automation.transferPayeeship(
     hre,
-    taskArgs.keepersRegistryAddress,
+    taskArgs.keeperRegistryAddress,
     taskArgs.keeper,
     taskArgs.proposed
   );
 };
 
-export const acceptKeeperPayeeship: ActionType<{
-  keepersRegistryAddress: string;
+export const acceptPayeeship: ActionType<{
+  keeperRegistryAddress: string;
   keeper: string;
 }> = async (taskArgs, hre) => {
-  return automation.acceptKeeperPayeeship(
+  return automation.acceptPayeeship(
     hre,
-    taskArgs.keepersRegistryAddress,
+    taskArgs.keeperRegistryAddress,
     taskArgs.keeper
   );
 };
 
 export const getKeeperInfo: ActionType<{
-  keepersRegistryAddress: string;
+  keeperRegistryAddress: string;
   query: string;
 }> = async (taskArgs, hre) => {
   return automation.getKeeperInfo(
     hre,
-    taskArgs.keepersRegistryAddress,
+    taskArgs.keeperRegistryAddress,
     taskArgs.query
   );
 };
 
 export const getMaxPaymentForGas: ActionType<{
-  keepersRegistryAddress: string;
+  keeperRegistryAddress: string;
   gasLimit: BigNumberish;
 }> = async (taskArgs, hre) => {
   return automation.getMaxPaymentForGas(
     hre,
-    taskArgs.keepersRegistryAddress,
+    taskArgs.keeperRegistryAddress,
     taskArgs.gasLimit
   );
 };
 
 export const getMinBalanceForUpkeep: ActionType<{
-  keepersRegistryAddress: string;
+  keeperRegistryAddress: string;
   upkeepId: BigNumberish;
 }> = async (taskArgs, hre) => {
   return automation.getMinBalanceForUpkeep(
     hre,
-    taskArgs.keepersRegistryAddress,
+    taskArgs.keeperRegistryAddress,
     taskArgs.upkeepId
   );
 };
 
-export const getKeeperRegistryState: ActionType<{
-  keepersRegistryAddress: string;
+export const getState: ActionType<{
+  keeperRegistryAddress: string;
 }> = async (taskArgs, hre) => {
-  return automation.getKeeperRegistryState(
-    hre,
-    taskArgs.keepersRegistryAddress
-  );
+  return automation.getState(hre, taskArgs.keeperRegistryAddress);
 };
 
-export const isKeeperRegistryPaused: ActionType<{
-  keepersRegistryAddress: string;
+export const isPaused: ActionType<{
+  keeperRegistryAddress: string;
 }> = async (taskArgs, hre) => {
-  return automation.isKeeperRegistryPaused(
-    hre,
-    taskArgs.keepersRegistryAddress
-  );
+  return automation.isPaused(hre, taskArgs.keeperRegistryAddress);
 };
 
-export const getKeeperRegistryTypeAndVersion: ActionType<{
-  keepersRegistryAddress: string;
+export const getTypeAndVersion: ActionType<{
+  keeperRegistryAddress: string;
 }> = async (taskArgs, hre) => {
-  return automation.getKeeperRegistryTypeAndVersion(
-    hre,
-    taskArgs.keepersRegistryAddress
-  );
+  return automation.getTypeAndVersion(hre, taskArgs.keeperRegistryAddress);
 };
 
-export const getKeeperRegistryUpkeepTranscoderVersion: ActionType<{
-  keepersRegistryAddress: string;
+export const getUpkeepTranscoderVersion: ActionType<{
+  keeperRegistryAddress: string;
 }> = async (taskArgs, hre) => {
-  return automation.getKeeperRegistryUpkeepTranscoderVersion(
+  return automation.getUpkeepTranscoderVersion(
     hre,
-    taskArgs.keepersRegistryAddress
+    taskArgs.keeperRegistryAddress
   );
 };

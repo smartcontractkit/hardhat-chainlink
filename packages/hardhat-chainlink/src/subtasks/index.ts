@@ -1,6 +1,7 @@
 import { camelToFlat } from "../helpers/utils";
 import {
-  AutomationSubtask,
+  AutomationRegistrarSubtask,
+  AutomationRegistrySubtask,
   DataFeedProxySubtask,
   DataFeedSubtask,
   ENSFeedsResolverSubtask,
@@ -12,7 +13,8 @@ import {
   VRFSubtask,
 } from "../shared/enums";
 import { Subtasks } from "../shared/types";
-import * as automationActions from "../tasks/automation";
+import * as automationRegistrarActions from "../tasks/automation/keeperRegistrar";
+import * as automationRegistryActions from "../tasks/automation/keeperRegistry";
 import * as dataFeedActions from "../tasks/feeds/dataFeed";
 import * as dataFeedProxyActions from "../tasks/feeds/dataFeedProxy";
 import * as ensFeedsResolverActions from "../tasks/feeds/ensFeedsResolver";
@@ -900,10 +902,10 @@ export const subtasks: Subtasks = {
       ],
     },
   },
-  [Task.automation]: {
-    [AutomationSubtask.registerUpkeep]: {
-      action: automationActions.registerUpkeep,
-      description: camelToFlat(AutomationSubtask.registerUpkeep),
+  [Task.automationRegistrar]: {
+    [AutomationRegistrarSubtask.registerUpkeep]: {
+      action: automationRegistrarActions.registerUpkeep,
+      description: camelToFlat(AutomationRegistrarSubtask.registerUpkeep),
       args: [
         {
           name: "linkTokenAddress",
@@ -943,8 +945,12 @@ export const subtasks: Subtasks = {
           description: "Data passed to the contract when checking for upkeep",
         },
         {
+          name: "ocrConfig",
+          description: "OffchainConfig for upkeep in bytes [v2_0 ONLY]",
+        },
+        {
           name: "source",
-          description: "ID of the application sending this request",
+          description: "ID of the application sending this request [v1_1 ONLY]",
         },
         {
           name: "sender",
@@ -952,9 +958,9 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [AutomationSubtask.getPendingRegistrationRequest]: {
-      action: automationActions.getPendingRegistrationRequest,
-      description: camelToFlat(AutomationSubtask.getPendingRegistrationRequest),
+    [AutomationRegistrarSubtask.getPendingRequest]: {
+      action: automationRegistrarActions.getPendingRequest,
+      description: camelToFlat(AutomationRegistrarSubtask.getPendingRequest),
       args: [
         {
           name: "keepersRegistrarAddress",
@@ -966,11 +972,9 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [AutomationSubtask.cancelPendingRegistrationRequest]: {
-      action: automationActions.cancelPendingRegistrationRequest,
-      description: camelToFlat(
-        AutomationSubtask.cancelPendingRegistrationRequest
-      ),
+    [AutomationRegistrarSubtask.cancelRequest]: {
+      action: automationRegistrarActions.cancelRequest,
+      description: camelToFlat(AutomationRegistrarSubtask.cancelRequest),
       args: [
         {
           name: "keepersRegistrarAddress",
@@ -982,20 +986,10 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [AutomationSubtask.getKeeperRegistrarConfig]: {
-      action: automationActions.getKeeperRegistrarConfig,
-      description: camelToFlat(AutomationSubtask.getKeeperRegistrarConfig),
-      args: [
-        {
-          name: "keepersRegistrarAddress",
-          description: "Address of Keeper Registrar",
-        },
-      ],
-    },
-    [AutomationSubtask.getKeepersRegistrarTypeAndVersion]: {
-      action: automationActions.getKeepersRegistrarTypeAndVersion,
+    [AutomationRegistrarSubtask.getRegistrationConfig]: {
+      action: automationRegistrarActions.getRegistrationConfig,
       description: camelToFlat(
-        AutomationSubtask.getKeepersRegistrarTypeAndVersion
+        AutomationRegistrarSubtask.getRegistrationConfig
       ),
       args: [
         {
@@ -1004,12 +998,24 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [AutomationSubtask.fundUpkeep]: {
-      action: automationActions.fundUpkeep,
-      description: camelToFlat(AutomationSubtask.fundUpkeep),
+    [AutomationRegistrarSubtask.getTypeAndVersion]: {
+      action: automationRegistrarActions.getTypeAndVersion,
+      description: camelToFlat(AutomationRegistrarSubtask.getTypeAndVersion),
       args: [
         {
-          name: "keepersRegistryAddress",
+          name: "keepersRegistrarAddress",
+          description: "Address of Keeper Registrar",
+        },
+      ],
+    },
+  },
+  [Task.automationRegistry]: {
+    [AutomationRegistrySubtask.fundUpkeep]: {
+      action: automationRegistryActions.fundUpkeep,
+      description: camelToFlat(AutomationRegistrySubtask.fundUpkeep),
+      args: [
+        {
+          name: "keeperRegistryAddress",
           description: "Address of Keeper Registry",
         },
         {
@@ -1022,12 +1028,12 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [AutomationSubtask.checkUpkeep]: {
-      action: automationActions.checkUpkeep,
-      description: camelToFlat(AutomationSubtask.checkUpkeep),
+    [AutomationRegistrySubtask.checkUpkeep]: {
+      action: automationRegistryActions.checkUpkeep,
+      description: camelToFlat(AutomationRegistrySubtask.checkUpkeep),
       args: [
         {
-          name: "keepersRegistryAddress",
+          name: "keeperRegistryAddress",
           description: "Address of Keeper Registry",
         },
         {
@@ -1040,12 +1046,12 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [AutomationSubtask.cancelUpkeep]: {
-      action: automationActions.cancelUpkeep,
-      description: camelToFlat(AutomationSubtask.cancelUpkeep),
+    [AutomationRegistrySubtask.cancelUpkeep]: {
+      action: automationRegistryActions.cancelUpkeep,
+      description: camelToFlat(AutomationRegistrySubtask.cancelUpkeep),
       args: [
         {
-          name: "keepersRegistryAddress",
+          name: "keeperRegistryAddress",
           description: "Address of Keeper Registry",
         },
         {
@@ -1054,12 +1060,12 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [AutomationSubtask.withdrawFunds]: {
-      action: automationActions.withdrawFunds,
-      description: camelToFlat(AutomationSubtask.withdrawFunds),
+    [AutomationRegistrySubtask.withdrawFunds]: {
+      action: automationRegistryActions.withdrawFunds,
+      description: camelToFlat(AutomationRegistrySubtask.withdrawFunds),
       args: [
         {
-          name: "keepersRegistryAddress",
+          name: "keeperRegistryAddress",
           description: "Address of Keeper Registry",
         },
         {
@@ -1072,12 +1078,12 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [AutomationSubtask.getActiveUpkeepIDs]: {
-      action: automationActions.getActiveUpkeepIDs,
-      description: camelToFlat(AutomationSubtask.getActiveUpkeepIDs),
+    [AutomationRegistrySubtask.getActiveUpkeepIDs]: {
+      action: automationRegistryActions.getActiveUpkeepIDs,
+      description: camelToFlat(AutomationRegistrySubtask.getActiveUpkeepIDs),
       args: [
         {
-          name: "keepersRegistryAddress",
+          name: "keeperRegistryAddress",
           description: "Address of Keeper Registry",
         },
         {
@@ -1090,12 +1096,12 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [AutomationSubtask.getUpkeep]: {
-      action: automationActions.getUpkeep,
-      description: camelToFlat(AutomationSubtask.getUpkeep),
+    [AutomationRegistrySubtask.getUpkeep]: {
+      action: automationRegistryActions.getUpkeep,
+      description: camelToFlat(AutomationRegistrySubtask.getUpkeep),
       args: [
         {
-          name: "keepersRegistryAddress",
+          name: "keeperRegistryAddress",
           description: "Address of Keeper Registry",
         },
         {
@@ -1104,12 +1110,12 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [AutomationSubtask.migrateUpkeeps]: {
-      action: automationActions.migrateUpkeeps,
-      description: camelToFlat(AutomationSubtask.migrateUpkeeps),
+    [AutomationRegistrySubtask.migrateUpkeeps]: {
+      action: automationRegistryActions.migrateUpkeeps,
+      description: camelToFlat(AutomationRegistrySubtask.migrateUpkeeps),
       args: [
         {
-          name: "keepersRegistryAddress",
+          name: "keeperRegistryAddress",
           description: "Address of Keeper Registry",
         },
         {
@@ -1122,12 +1128,12 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [AutomationSubtask.receiveUpkeeps]: {
-      action: automationActions.receiveUpkeeps,
-      description: camelToFlat(AutomationSubtask.receiveUpkeeps),
+    [AutomationRegistrySubtask.receiveUpkeeps]: {
+      action: automationRegistryActions.receiveUpkeeps,
+      description: camelToFlat(AutomationRegistrySubtask.receiveUpkeeps),
       args: [
         {
-          name: "keepersRegistryAddress",
+          name: "keeperRegistryAddress",
           description: "Address of Keeper Registry",
         },
         {
@@ -1136,12 +1142,12 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [AutomationSubtask.withdrawKeeperPayment]: {
-      action: automationActions.withdrawKeeperPayment,
-      description: camelToFlat(AutomationSubtask.withdrawKeeperPayment),
+    [AutomationRegistrySubtask.withdrawPayment]: {
+      action: automationRegistryActions.withdrawPayment,
+      description: camelToFlat(AutomationRegistrySubtask.withdrawPayment),
       args: [
         {
-          name: "keepersRegistryAddress",
+          name: "keeperRegistryAddress",
           description: "Address of Keeper Registry",
         },
         {
@@ -1154,12 +1160,12 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [AutomationSubtask.transferKeeperPayeeship]: {
-      action: automationActions.transferKeeperPayeeship,
-      description: camelToFlat(AutomationSubtask.transferKeeperPayeeship),
+    [AutomationRegistrySubtask.transferPayeeship]: {
+      action: automationRegistryActions.transferPayeeship,
+      description: camelToFlat(AutomationRegistrySubtask.transferPayeeship),
       args: [
         {
-          name: "keepersRegistryAddress",
+          name: "keeperRegistryAddress",
           description: "Address of Keeper Registry",
         },
         {
@@ -1172,12 +1178,12 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [AutomationSubtask.acceptKeeperPayeeship]: {
-      action: automationActions.acceptKeeperPayeeship,
-      description: camelToFlat(AutomationSubtask.acceptKeeperPayeeship),
+    [AutomationRegistrySubtask.acceptPayeeship]: {
+      action: automationRegistryActions.acceptPayeeship,
+      description: camelToFlat(AutomationRegistrySubtask.acceptPayeeship),
       args: [
         {
-          name: "keepersRegistryAddress",
+          name: "keeperRegistryAddress",
           description: "Address of Keeper Registry",
         },
         {
@@ -1186,12 +1192,12 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [AutomationSubtask.getKeeperInfo]: {
-      action: automationActions.getKeeperInfo,
-      description: camelToFlat(AutomationSubtask.getKeeperInfo),
+    [AutomationRegistrySubtask.getKeeperInfo]: {
+      action: automationRegistryActions.getKeeperInfo,
+      description: camelToFlat(AutomationRegistrySubtask.getKeeperInfo),
       args: [
         {
-          name: "keepersRegistryAddress",
+          name: "keeperRegistryAddress",
           description: "Address of Keeper Registry",
         },
         {
@@ -1200,12 +1206,12 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [AutomationSubtask.getMaxPaymentForGas]: {
-      action: automationActions.getMaxPaymentForGas,
-      description: camelToFlat(AutomationSubtask.getMaxPaymentForGas),
+    [AutomationRegistrySubtask.getMaxPaymentForGas]: {
+      action: automationRegistryActions.getMaxPaymentForGas,
+      description: camelToFlat(AutomationRegistrySubtask.getMaxPaymentForGas),
       args: [
         {
-          name: "keepersRegistryAddress",
+          name: "keeperRegistryAddress",
           description: "Address of Keeper Registry",
         },
         {
@@ -1214,12 +1220,14 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [AutomationSubtask.getMinBalanceForUpkeep]: {
-      action: automationActions.getMinBalanceForUpkeep,
-      description: camelToFlat(AutomationSubtask.getMinBalanceForUpkeep),
+    [AutomationRegistrySubtask.getMinBalanceForUpkeep]: {
+      action: automationRegistryActions.getMinBalanceForUpkeep,
+      description: camelToFlat(
+        AutomationRegistrySubtask.getMinBalanceForUpkeep
+      ),
       args: [
         {
-          name: "keepersRegistryAddress",
+          name: "keeperRegistryAddress",
           description: "Address of Keeper Registry",
         },
         {
@@ -1228,46 +1236,44 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [AutomationSubtask.getKeeperRegistryState]: {
-      action: automationActions.getKeeperRegistryState,
-      description: camelToFlat(AutomationSubtask.getKeeperRegistryState),
+    [AutomationRegistrySubtask.getState]: {
+      action: automationRegistryActions.getState,
+      description: camelToFlat(AutomationRegistrySubtask.getState),
       args: [
         {
-          name: "keepersRegistryAddress",
+          name: "keeperRegistryAddress",
           description: "Address of Keeper Registry",
         },
       ],
     },
-    [AutomationSubtask.isKeeperRegistryPaused]: {
-      action: automationActions.isKeeperRegistryPaused,
-      description: camelToFlat(AutomationSubtask.isKeeperRegistryPaused),
+    [AutomationRegistrySubtask.isPaused]: {
+      action: automationRegistryActions.isPaused,
+      description: camelToFlat(AutomationRegistrySubtask.isPaused),
       args: [
         {
-          name: "keepersRegistryAddress",
+          name: "keeperRegistryAddress",
           description: "Address of Keeper Registry",
         },
       ],
     },
-    [AutomationSubtask.getKeeperRegistryTypeAndVersion]: {
-      action: automationActions.getKeeperRegistryTypeAndVersion,
+    [AutomationRegistrySubtask.getTypeAndVersion]: {
+      action: automationRegistryActions.getTypeAndVersion,
+      description: camelToFlat(AutomationRegistrySubtask.getTypeAndVersion),
+      args: [
+        {
+          name: "keeperRegistryAddress",
+          description: "Address of Keeper Registry",
+        },
+      ],
+    },
+    [AutomationRegistrySubtask.getUpkeepTranscoderVersion]: {
+      action: automationRegistryActions.getUpkeepTranscoderVersion,
       description: camelToFlat(
-        AutomationSubtask.getKeeperRegistryTypeAndVersion
+        AutomationRegistrySubtask.getUpkeepTranscoderVersion
       ),
       args: [
         {
-          name: "keepersRegistryAddress",
-          description: "Address of Keeper Registry",
-        },
-      ],
-    },
-    [AutomationSubtask.getKeeperRegistryUpkeepTranscoderVersion]: {
-      action: automationActions.getKeeperRegistryUpkeepTranscoderVersion,
-      description: camelToFlat(
-        AutomationSubtask.getKeeperRegistryUpkeepTranscoderVersion
-      ),
-      args: [
-        {
-          name: "keepersRegistryAddress",
+          name: "keeperRegistryAddress",
           description: "Address of Keeper Registry",
         },
       ],

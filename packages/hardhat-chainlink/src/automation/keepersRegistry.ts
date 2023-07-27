@@ -1,7 +1,36 @@
 import { BigNumber, BigNumberish, BytesLike } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import { KeeperRegistry1_3__factory } from "../../types";
+import {
+  KeeperRegistry1_2__factory,
+  KeeperRegistry1_3__factory,
+  KeeperRegistry2_0__factory,
+  TypeAndVersionInterface__factory,
+} from "../../types";
+import { KeeperRegistryVersion } from "../shared/enums";
+
+const connectKeeperRegistry = async (
+  hre: HardhatRuntimeEnvironment,
+  keepersRegistryAddress: string
+) => {
+  const [signer] = await hre.ethers.getSigners();
+  const typeAndVersionInterface =
+    await TypeAndVersionInterface__factory.connect(
+      keepersRegistryAddress,
+      signer
+    );
+  const typeAndVersion = await typeAndVersionInterface.typeAndVersion();
+  switch (typeAndVersion) {
+    case KeeperRegistryVersion.registry1_2:
+      return KeeperRegistry1_2__factory.connect(keepersRegistryAddress, signer);
+    case KeeperRegistryVersion.registry1_3:
+      return KeeperRegistry1_3__factory.connect(keepersRegistryAddress, signer);
+    case KeeperRegistryVersion.registry2_0:
+      return KeeperRegistry2_0__factory.connect(keepersRegistryAddress, signer);
+    default:
+      throw new Error("Error Unsupported Keeper Registry version");
+  }
+};
 
 export const fundUpkeep = async (
   hre: HardhatRuntimeEnvironment,
@@ -9,10 +38,9 @@ export const fundUpkeep = async (
   upkeepId: BigNumberish,
   amountInJuels: BigNumberish
 ): Promise<{ transactionHash: string }> => {
-  const [signer] = await hre.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(
-    keepersRegistryAddress,
-    signer
+  const keepersRegistry = await connectKeeperRegistry(
+    hre,
+    keepersRegistryAddress
   );
 
   const tx = await keepersRegistry.addFunds(upkeepId, amountInJuels);
@@ -26,31 +54,13 @@ export const checkUpkeep = async (
   keepersRegistryAddress: string,
   upkeepId: BigNumberish,
   fromAddress: string
-): Promise<{
-  performData: BytesLike;
-  maxLinkPayment: BigNumber;
-  gasLimit: BigNumber;
-  adjustedGasWei: BigNumber;
-  linkEth: BigNumber;
-}> => {
-  const [signer] = await hre.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(
-    keepersRegistryAddress,
-    signer
+): Promise<any> => {
+  const keepersRegistry = await connectKeeperRegistry(
+    hre,
+    keepersRegistryAddress
   );
 
-  const simulatedResponse = await keepersRegistry.callStatic.checkUpkeep(
-    upkeepId,
-    fromAddress
-  );
-
-  return {
-    performData: simulatedResponse.performData,
-    maxLinkPayment: simulatedResponse.maxLinkPayment,
-    gasLimit: simulatedResponse.gasLimit,
-    adjustedGasWei: simulatedResponse.adjustedGasWei,
-    linkEth: simulatedResponse.linkEth,
-  };
+  return keepersRegistry.callStatic.checkUpkeep(upkeepId, fromAddress);
 };
 
 export const cancelUpkeep = async (
@@ -58,10 +68,9 @@ export const cancelUpkeep = async (
   keepersRegistryAddress: string,
   upkeepId: BigNumberish
 ): Promise<{ transactionHash: string }> => {
-  const [signer] = await hre.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(
-    keepersRegistryAddress,
-    signer
+  const keepersRegistry = await connectKeeperRegistry(
+    hre,
+    keepersRegistryAddress
   );
 
   const tx = await keepersRegistry.cancelUpkeep(upkeepId);
@@ -76,10 +85,9 @@ export const withdrawFunds = async (
   upkeepId: BigNumberish,
   receivingAddress: string
 ): Promise<{ transactionHash: string }> => {
-  const [signer] = await hre.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(
-    keepersRegistryAddress,
-    signer
+  const keepersRegistry = await connectKeeperRegistry(
+    hre,
+    keepersRegistryAddress
   );
 
   const tx = await keepersRegistry.withdrawFunds(upkeepId, receivingAddress);
@@ -94,10 +102,9 @@ export const getActiveUpkeepIDs = async (
   startIndex: BigNumberish,
   maxCount: BigNumberish
 ): Promise<BigNumber[]> => {
-  const [signer] = await hre.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(
-    keepersRegistryAddress,
-    signer
+  const keepersRegistry = await connectKeeperRegistry(
+    hre,
+    keepersRegistryAddress
   );
 
   return keepersRegistry.getActiveUpkeepIDs(startIndex, maxCount);
@@ -112,15 +119,14 @@ export const getUpkeep = async (
   executeGas: number;
   checkData: BytesLike;
   balance: BigNumber;
-  lastAutomationNode: string;
+  lastAutomationNode: string | undefined;
   admin: string;
   maxValidBlocknumber: BigNumber;
   amountSpent: BigNumber;
 }> => {
-  const [signer] = await hre.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(
-    keepersRegistryAddress,
-    signer
+  const keepersRegistry = await connectKeeperRegistry(
+    hre,
+    keepersRegistryAddress
   );
 
   const upkeep = await keepersRegistry.getUpkeep(upkeepId);
@@ -130,7 +136,7 @@ export const getUpkeep = async (
     executeGas: upkeep.executeGas,
     checkData: upkeep.checkData,
     balance: upkeep.balance,
-    lastAutomationNode: upkeep.lastKeeper,
+    lastAutomationNode: "lastKeeper" in upkeep ? upkeep.lastKeeper : undefined,
     admin: upkeep.admin,
     maxValidBlocknumber: upkeep.maxValidBlocknumber,
     amountSpent: upkeep.amountSpent,
@@ -143,10 +149,9 @@ export const migrateUpkeeps = async (
   upkeepIds: BigNumberish[],
   destination: string
 ): Promise<{ transactionHash: string }> => {
-  const [signer] = await hre.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(
-    keepersRegistryAddress,
-    signer
+  const keepersRegistry = await connectKeeperRegistry(
+    hre,
+    keepersRegistryAddress
   );
 
   const tx = await keepersRegistry.migrateUpkeeps(upkeepIds, destination);
@@ -160,10 +165,9 @@ export const receiveUpkeeps = async (
   keepersRegistryAddress: string,
   encodedUpkeeps: BytesLike
 ): Promise<{ transactionHash: string }> => {
-  const [signer] = await hre.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(
-    keepersRegistryAddress,
-    signer
+  const keepersRegistry = await connectKeeperRegistry(
+    hre,
+    keepersRegistryAddress
   );
 
   const tx = await keepersRegistry.receiveUpkeeps(encodedUpkeeps);
@@ -172,16 +176,15 @@ export const receiveUpkeeps = async (
   return { transactionHash: tx.hash };
 };
 
-export const withdrawKeeperPayment = async (
+export const withdrawPayment = async (
   hre: HardhatRuntimeEnvironment,
   keepersRegistryAddress: string,
   fromAddress: string,
   toAddress: string
 ): Promise<{ transactionHash: string }> => {
-  const [signer] = await hre.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(
-    keepersRegistryAddress,
-    signer
+  const keepersRegistry = await connectKeeperRegistry(
+    hre,
+    keepersRegistryAddress
   );
 
   const tx = await keepersRegistry.withdrawPayment(fromAddress, toAddress);
@@ -190,16 +193,15 @@ export const withdrawKeeperPayment = async (
   return { transactionHash: tx.hash };
 };
 
-export const transferKeeperPayeeship = async (
+export const transferPayeeship = async (
   hre: HardhatRuntimeEnvironment,
   keepersRegistryAddress: string,
   keeper: string,
   proposed: string
 ): Promise<{ transactionHash: string }> => {
-  const [signer] = await hre.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(
-    keepersRegistryAddress,
-    signer
+  const keepersRegistry = await connectKeeperRegistry(
+    hre,
+    keepersRegistryAddress
   );
 
   const tx = await keepersRegistry.transferPayeeship(keeper, proposed);
@@ -208,15 +210,14 @@ export const transferKeeperPayeeship = async (
   return { transactionHash: tx.hash };
 };
 
-export const acceptKeeperPayeeship = async (
+export const acceptPayeeship = async (
   hre: HardhatRuntimeEnvironment,
   keepersRegistryAddress: string,
   keeper: string
 ): Promise<{ transactionHash: string }> => {
-  const [signer] = await hre.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(
-    keepersRegistryAddress,
-    signer
+  const keepersRegistry = await connectKeeperRegistry(
+    hre,
+    keepersRegistryAddress
   );
 
   const tx = await keepersRegistry.acceptPayeeship(keeper);
@@ -230,11 +231,14 @@ export const getKeeperInfo = async (
   keepersRegistryAddress: string,
   query: string
 ): Promise<{ payee: string; active: boolean; balance: BigNumber }> => {
-  const [signer] = await hre.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(
-    keepersRegistryAddress,
-    signer
+  const keepersRegistry = await connectKeeperRegistry(
+    hre,
+    keepersRegistryAddress
   );
+
+  if (!("getKeeperInfo" in keepersRegistry)) {
+    throw new Error("Error Method is unsupported for Keeper Registry version");
+  }
 
   const keeper = await keepersRegistry.getKeeperInfo(query);
 
@@ -250,10 +254,9 @@ export const getMaxPaymentForGas = async (
   keepersRegistryAddress: string,
   gasLimit: BigNumberish
 ): Promise<BigNumber> => {
-  const [signer] = await hre.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(
-    keepersRegistryAddress,
-    signer
+  const keepersRegistry = await connectKeeperRegistry(
+    hre,
+    keepersRegistryAddress
   );
 
   return keepersRegistry.getMaxPaymentForGas(gasLimit);
@@ -264,16 +267,15 @@ export const getMinBalanceForUpkeep = async (
   keepersRegistryAddress: string,
   upkeepId: BigNumberish
 ): Promise<BigNumber> => {
-  const [signer] = await hre.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(
-    keepersRegistryAddress,
-    signer
+  const keepersRegistry = await connectKeeperRegistry(
+    hre,
+    keepersRegistryAddress
   );
 
   return keepersRegistry.getMinBalanceForUpkeep(upkeepId);
 };
 
-export const getKeeperRegistryState = async (
+export const getState = async (
   hre: HardhatRuntimeEnvironment,
   keepersRegistryAddress: string
 ): Promise<{
@@ -283,7 +285,7 @@ export const getKeeperRegistryState = async (
   numUpkeeps: BigNumber;
   paymentPremiumPPB: number;
   flatFeeMicroLink: number;
-  blockCountPerTurn: number;
+  blockCountPerTurn: number | undefined;
   checkGasLimit: number;
   stalenessSeconds: number;
   gasCeilingMultiplier: number;
@@ -293,12 +295,11 @@ export const getKeeperRegistryState = async (
   fallbackLinkPrice: BigNumber;
   transcoder: string;
   registrar: string;
-  automationNodes: string[];
+  automationNodes: string[] | undefined;
 }> => {
-  const [signer] = await hre.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(
-    keepersRegistryAddress,
-    signer
+  const keepersRegistry = await connectKeeperRegistry(
+    hre,
+    keepersRegistryAddress
   );
 
   const store = await keepersRegistry.getState();
@@ -310,7 +311,10 @@ export const getKeeperRegistryState = async (
     numUpkeeps: store.state.numUpkeeps,
     paymentPremiumPPB: store.config.paymentPremiumPPB,
     flatFeeMicroLink: store.config.flatFeeMicroLink,
-    blockCountPerTurn: store.config.blockCountPerTurn,
+    blockCountPerTurn:
+      "blockCountPerTurn" in store.config
+        ? store.config.blockCountPerTurn
+        : undefined,
     checkGasLimit: store.config.checkGasLimit,
     stalenessSeconds: store.config.stalenessSeconds,
     gasCeilingMultiplier: store.config.gasCeilingMultiplier,
@@ -320,44 +324,46 @@ export const getKeeperRegistryState = async (
     fallbackLinkPrice: store.config.fallbackLinkPrice,
     transcoder: store.config.transcoder,
     registrar: store.config.registrar,
-    automationNodes: store.keepers,
+    automationNodes: "keepers" in store ? store.keepers : undefined,
   };
 };
 
-export const isKeeperRegistryPaused = async (
+export const isPaused = async (
   hre: HardhatRuntimeEnvironment,
   keepersRegistryAddress: string
 ): Promise<boolean> => {
-  const [signer] = await hre.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(
-    keepersRegistryAddress,
-    signer
+  const keepersRegistry = await connectKeeperRegistry(
+    hre,
+    keepersRegistryAddress
   );
+
+  if (!("paused" in keepersRegistry)) {
+    throw new Error("Error Method is unsupported for Keeper Registry version");
+  }
 
   return keepersRegistry.paused();
 };
 
-export const getKeeperRegistryTypeAndVersion = async (
+export const getTypeAndVersion = async (
   hre: HardhatRuntimeEnvironment,
   keepersRegistryAddress: string
 ): Promise<string> => {
   const [signer] = await hre.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(
-    keepersRegistryAddress,
-    signer
-  );
-
-  return keepersRegistry.typeAndVersion();
+  const typeAndVersionInterface =
+    await TypeAndVersionInterface__factory.connect(
+      keepersRegistryAddress,
+      signer
+    );
+  return typeAndVersionInterface.typeAndVersion();
 };
 
-export const getKeeperRegistryUpkeepTranscoderVersion = async (
+export const getUpkeepTranscoderVersion = async (
   hre: HardhatRuntimeEnvironment,
   keepersRegistryAddress: string
 ): Promise<number> => {
-  const [signer] = await hre.ethers.getSigners();
-  const keepersRegistry = KeeperRegistry1_3__factory.connect(
-    keepersRegistryAddress,
-    signer
+  const keepersRegistry = await connectKeeperRegistry(
+    hre,
+    keepersRegistryAddress
   );
 
   return keepersRegistry.upkeepTranscoderVersion();

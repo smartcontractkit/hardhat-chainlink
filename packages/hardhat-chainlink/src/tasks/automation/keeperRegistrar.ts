@@ -1,7 +1,7 @@
 import { BigNumberish, BytesLike } from "ethers";
 import { ActionType } from "hardhat/types";
 
-import * as automation from "../../automation";
+import * as automationRegistrar from "../../automation/keepersRegistrar";
 
 export const registerUpkeep: ActionType<{
   linkTokenAddress: string;
@@ -13,10 +13,11 @@ export const registerUpkeep: ActionType<{
   gasLimit: number;
   adminAddress: string;
   checkData: BytesLike;
+  ocrConfig: BytesLike;
   source: number;
   sender: string;
 }> = async (taskArgs, hre) => {
-  return automation.registerUpkeep(
+  return automationRegistrar.registerUpkeep(
     hre,
     taskArgs.linkTokenAddress,
     taskArgs.keepersRegistrarAddress,
@@ -27,46 +28,47 @@ export const registerUpkeep: ActionType<{
     taskArgs.gasLimit,
     taskArgs.adminAddress,
     taskArgs.checkData,
+    taskArgs.ocrConfig,
     taskArgs.source,
     taskArgs.sender
   );
 };
 
-export const getPendingRegistrationRequest: ActionType<{
+export const getPendingRequest: ActionType<{
   keepersRegistrarAddress: string;
   requestHash: BytesLike;
 }> = async (taskArgs, hre) => {
-  return automation.getPendingRegistrationRequest(
+  return automationRegistrar.getPendingRequest(
     hre,
     taskArgs.keepersRegistrarAddress,
     taskArgs.requestHash
   );
 };
 
-export const cancelPendingRegistrationRequest: ActionType<{
+export const cancelRequest: ActionType<{
   keepersRegistrarAddress: string;
   requestHash: BytesLike;
 }> = async (taskArgs, hre) => {
-  return automation.cancelPendingRegistrationRequest(
+  return automationRegistrar.cancelRequest(
     hre,
     taskArgs.keepersRegistrarAddress,
     taskArgs.requestHash
   );
 };
 
-export const getKeeperRegistrarConfig: ActionType<{
+export const getRegistrationConfig: ActionType<{
   keepersRegistrarAddress: string;
 }> = async (taskArgs, hre) => {
-  return automation.getKeeperRegistrarConfig(
+  return automationRegistrar.getRegistrationConfig(
     hre,
     taskArgs.keepersRegistrarAddress
   );
 };
 
-export const getKeepersRegistrarTypeAndVersion: ActionType<{
+export const getTypeAndVersion: ActionType<{
   keepersRegistrarAddress: string;
 }> = async (taskArgs, hre) => {
-  return automation.getKeepersRegistrarTypeAndVersion(
+  return automationRegistrar.getTypeAndVersion(
     hre,
     taskArgs.keepersRegistrarAddress
   );

@@ -131,19 +131,37 @@ task(
   printSubtasks(Task.vrf);
 });
 
-// AUTOMATION
-task(`${PACKAGE_NAME}:${Task.automation}`, "Automation Module")
+// AUTOMATION REGISTRAR
+task(
+  `${PACKAGE_NAME}:${Task.automationRegistrar}`,
+  "Automation Registrar Module"
+)
   .addOptionalPositionalParam("subtask", "Subtask")
   .addOptionalParam("args", "Subtask args")
   .setAction(async (taskArgs, hre) => {
-    return resolveTask(hre, Task.automation, taskArgs);
+    return resolveTask(hre, Task.automationRegistrar, taskArgs);
   });
 
 task(
-  `${PACKAGE_NAME}:${Task.automation}:subtasks`,
-  "Automation Module: Subtasks List"
+  `${PACKAGE_NAME}:${Task.automationRegistrar}:subtasks`,
+  "Automation Registrar Module: Subtasks List"
 ).setAction(async () => {
-  printSubtasks(Task.automation);
+  printSubtasks(Task.automationRegistrar);
+});
+
+// AUTOMATION REGISTRY
+task(`${PACKAGE_NAME}:${Task.automationRegistry}`, "Automation Registry Module")
+  .addOptionalPositionalParam("subtask", "Subtask")
+  .addOptionalParam("args", "Subtask args")
+  .setAction(async (taskArgs, hre) => {
+    return resolveTask(hre, Task.automationRegistry, taskArgs);
+  });
+
+task(
+  `${PACKAGE_NAME}:${Task.automationRegistry}:subtasks`,
+  "Automation Registry Module: Subtasks List"
+).setAction(async () => {
+  printSubtasks(Task.automationRegistry);
 });
 
 // REGISTRIES
