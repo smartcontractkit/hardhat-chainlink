@@ -11,7 +11,7 @@ describe("Test chainlink:l2Sequencer module [SKIP FOR GITHUB ACTIONS]", function
   // Actually, all the sequencers are down
   useEnvironment("hardhat-chainlink-arbitrum-goerli");
 
-  beforeEach(async function () {
+  before(async function () {
     this.l2SequencerAddress =
       this.hre.chainlink.registries.l2Sequencers.arbitrumGoerli.contractAddress;
   });

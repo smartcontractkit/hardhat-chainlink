@@ -12,8 +12,6 @@ chai.use(chaiAsPromised);
 const { expect } = chai;
 
 describe("Test chainlink:vrf module", function () {
-  useEnvironment("hardhat-chainlink");
-
   const TYPE_AND_VERSION = "VRFCoordinatorV2 1.0.0";
   const MAX_CONSUMERS = 100;
   const MAX_REQUEST_CONFIRMATIONS = 200;
@@ -32,45 +30,51 @@ describe("Test chainlink:vrf module", function () {
   const DECIMALS = 18;
   const INITIAL_ANSWER = 1_000;
 
-  beforeEach(async function () {
-    const ethers = this.hre.ethers;
-    this.linkToken = await (
-      await ethers.getContractFactory("LinkToken")
-    ).deploy();
-    this.blockhashStore = await (
-      await ethers.getContractFactory("BlockhashStore")
-    ).deploy();
-    this.dataFeed = await (
-      await ethers.getContractFactory("MockV3Aggregator")
-    ).deploy(DECIMALS, INITIAL_ANSWER);
-    this.vrf = await (
-      await ethers.getContractFactory("VRFCoordinatorV2")
-    ).deploy(
-      this.linkToken.address,
-      this.dataFeed.address,
-      this.blockhashStore.address
-    );
-    await this.vrf.setConfig(
-      MINIMUM_REQUEST_CONFIRMATIONS,
-      MAX_GAS_LIMIT,
-      STALENESS_SECONDS,
-      GAS_AFTER_PAYMENT_CALCULATION,
-      FALLBACK_WEI_PER_UNIT_LINK,
-      {
-        fulfillmentFlatFeeLinkPPMTier1: FULFILLMENT_FLAT_FEE_LINK_PPM_TIER,
-        fulfillmentFlatFeeLinkPPMTier2: FULFILLMENT_FLAT_FEE_LINK_PPM_TIER,
-        fulfillmentFlatFeeLinkPPMTier3: FULFILLMENT_FLAT_FEE_LINK_PPM_TIER,
-        fulfillmentFlatFeeLinkPPMTier4: FULFILLMENT_FLAT_FEE_LINK_PPM_TIER,
-        fulfillmentFlatFeeLinkPPMTier5: FULFILLMENT_FLAT_FEE_LINK_PPM_TIER,
-        reqsForTier2: REQS_FOR_TIER,
-        reqsForTier3: REQS_FOR_TIER,
-        reqsForTier4: REQS_FOR_TIER,
-        reqsForTier5: REQS_FOR_TIER,
-      }
-    );
-  });
+  function beforeShared() {
+    return async function (this: Mocha.Context) {
+      const ethers = this.hre.ethers;
+      this.linkToken = await (
+        await ethers.getContractFactory("LinkToken")
+      ).deploy();
+      this.blockhashStore = await (
+        await ethers.getContractFactory("BlockhashStore")
+      ).deploy();
+      this.dataFeed = await (
+        await ethers.getContractFactory("MockV3Aggregator")
+      ).deploy(DECIMALS, INITIAL_ANSWER);
+      this.vrf = await (
+        await ethers.getContractFactory("VRFCoordinatorV2")
+      ).deploy(
+        this.linkToken.address,
+        this.dataFeed.address,
+        this.blockhashStore.address
+      );
+      await this.vrf.setConfig(
+        MINIMUM_REQUEST_CONFIRMATIONS,
+        MAX_GAS_LIMIT,
+        STALENESS_SECONDS,
+        GAS_AFTER_PAYMENT_CALCULATION,
+        FALLBACK_WEI_PER_UNIT_LINK,
+        {
+          fulfillmentFlatFeeLinkPPMTier1: FULFILLMENT_FLAT_FEE_LINK_PPM_TIER,
+          fulfillmentFlatFeeLinkPPMTier2: FULFILLMENT_FLAT_FEE_LINK_PPM_TIER,
+          fulfillmentFlatFeeLinkPPMTier3: FULFILLMENT_FLAT_FEE_LINK_PPM_TIER,
+          fulfillmentFlatFeeLinkPPMTier4: FULFILLMENT_FLAT_FEE_LINK_PPM_TIER,
+          fulfillmentFlatFeeLinkPPMTier5: FULFILLMENT_FLAT_FEE_LINK_PPM_TIER,
+          reqsForTier2: REQS_FOR_TIER,
+          reqsForTier3: REQS_FOR_TIER,
+          reqsForTier4: REQS_FOR_TIER,
+          reqsForTier5: REQS_FOR_TIER,
+        }
+      );
+    };
+  }
 
   describe("Run methods as hre methods", function () {
+    useEnvironment("hardhat-chainlink");
+
+    before(beforeShared());
+
     it("Creates subscription", async function () {
       const { subscriptionId, transactionHash } =
         await this.hre.chainlink.vrf.createSubscription(this.vrf.address);
@@ -368,6 +372,10 @@ describe("Test chainlink:vrf module", function () {
   });
 
   describe("Run methods as hre subtasks", function () {
+    useEnvironment("hardhat-chainlink");
+
+    before(beforeShared());
+
     it("Creates subscription", async function () {
       const { transactionHash, subscriptionId } = await this.hre.run(
         `${PACKAGE_NAME}:${Task.vrf}:${VRFSubtask.createSubscription}`,
@@ -714,6 +722,10 @@ describe("Test chainlink:vrf module", function () {
   });
 
   describe("Run methods as subtasks of a hre task", function () {
+    useEnvironment("hardhat-chainlink");
+
+    before(beforeShared());
+
     it("Creates subscription", async function () {
       const { transactionHash, subscriptionId } = await this.hre.run(
         `${PACKAGE_NAME}:${Task.vrf}`,

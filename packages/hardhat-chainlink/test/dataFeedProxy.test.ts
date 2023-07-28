@@ -6,8 +6,6 @@ import { DataFeedProxySubtask, Task, UtilsSubtask } from "../src/shared/enums";
 import { useEnvironment } from "./helpers";
 
 describe("Test chainlink:dataFeedProxy module", function () {
-  useEnvironment("hardhat-chainlink");
-
   const DECIMALS = 18;
   const INITIAL_ROUND = 1;
   const LATEST_ROUND = 2;
@@ -17,18 +15,24 @@ describe("Test chainlink:dataFeedProxy module", function () {
   const DESCRIPTION = "v0.8/tests/MockV3Aggregator.sol";
   const VERSION = 0;
 
-  beforeEach(async function () {
-    const ethers = this.hre.ethers;
-    this.dataFeed = await (
-      await ethers.getContractFactory("MockV3Aggregator")
-    ).deploy(DECIMALS, INITIAL_ANSWER);
-    await this.dataFeed.updateAnswer(LATEST_ANSWER);
-    this.dataFeedProxy = await (
-      await ethers.getContractFactory("AggregatorProxy")
-    ).deploy(this.dataFeed.address);
-  });
+  function beforeShared() {
+    return async function (this: Mocha.Context) {
+      const ethers = this.hre.ethers;
+      this.dataFeed = await (
+        await ethers.getContractFactory("MockV3Aggregator")
+      ).deploy(DECIMALS, INITIAL_ANSWER);
+      await this.dataFeed.updateAnswer(LATEST_ANSWER);
+      this.dataFeedProxy = await (
+        await ethers.getContractFactory("AggregatorProxy")
+      ).deploy(this.dataFeed.address);
+    };
+  }
 
   describe("Run methods as hre methods", function () {
+    useEnvironment("hardhat-chainlink");
+
+    before(beforeShared());
+
     it("Gets latest round data", async function () {
       const roundData =
         await this.hre.chainlink.dataFeedProxy.getLatestRoundData(
@@ -138,6 +142,10 @@ describe("Test chainlink:dataFeedProxy module", function () {
   });
 
   describe("Run methods as hre subtasks", function () {
+    useEnvironment("hardhat-chainlink");
+
+    before(beforeShared());
+
     it("Gets latest round data", async function () {
       const roundData = await this.hre.run(
         `${PACKAGE_NAME}:${Task.dataFeedProxy}:${DataFeedProxySubtask.getLatestRoundData}`,
@@ -287,6 +295,10 @@ describe("Test chainlink:dataFeedProxy module", function () {
   });
 
   describe("Run methods as subtasks of a hre task", function () {
+    useEnvironment("hardhat-chainlink");
+
+    before(beforeShared());
+
     it("Gets latest round data", async function () {
       const roundData = await this.hre.run(
         `${PACKAGE_NAME}:${Task.dataFeedProxy}`,

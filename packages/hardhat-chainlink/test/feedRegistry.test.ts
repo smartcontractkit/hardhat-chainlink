@@ -17,42 +17,51 @@ describe("Test chainlink:feedRegistry module", function () {
   const DESCRIPTION = "v0.8/tests/MockV3Aggregator.sol";
   const VERSION = 0;
 
-  beforeEach(async function () {
-    const ethers = this.hre.ethers;
+  before(async function () {
     this.ETH = this.hre.chainlink.registries.denominations.ETH;
     this.USD = this.hre.chainlink.registries.denominations.USD;
-
-    this.dataFeedETHUSD = await (
-      await ethers.getContractFactory("MockV3Aggregator")
-    ).deploy(DECIMALS, INITIAL_ANSWER);
-    await this.dataFeedETHUSD.updateAnswer(LATEST_ANSWER);
-
-    this.dataFeedETHUSDProposed = await (
-      await ethers.getContractFactory("MockV3Aggregator")
-    ).deploy(DECIMALS, INITIAL_ANSWER);
-    await this.dataFeedETHUSDProposed.updateAnswer(LATEST_ANSWER);
-
-    this.feedRegistry = await (
-      await ethers.getContractFactory("FeedRegistry")
-    ).deploy();
-    await this.feedRegistry.proposeFeed(
-      this.ETH,
-      this.USD,
-      this.dataFeedETHUSD.address
-    );
-    await this.feedRegistry.confirmFeed(
-      this.ETH,
-      this.USD,
-      this.dataFeedETHUSD.address
-    );
-    await this.feedRegistry.proposeFeed(
-      this.ETH,
-      this.USD,
-      this.dataFeedETHUSDProposed.address
-    );
   });
 
+  function beforeShared() {
+    return async function (this: Mocha.Context) {
+      const ethers = this.hre.ethers;
+
+      this.dataFeedETHUSD = await (
+        await ethers.getContractFactory("MockV3Aggregator")
+      ).deploy(DECIMALS, INITIAL_ANSWER);
+      await this.dataFeedETHUSD.updateAnswer(LATEST_ANSWER);
+
+      this.dataFeedETHUSDProposed = await (
+        await ethers.getContractFactory("MockV3Aggregator")
+      ).deploy(DECIMALS, INITIAL_ANSWER);
+      await this.dataFeedETHUSDProposed.updateAnswer(LATEST_ANSWER);
+
+      this.feedRegistry = await (
+        await ethers.getContractFactory("FeedRegistry")
+      ).deploy();
+      await this.feedRegistry.proposeFeed(
+        this.ETH,
+        this.USD,
+        this.dataFeedETHUSD.address
+      );
+      await this.feedRegistry.confirmFeed(
+        this.ETH,
+        this.USD,
+        this.dataFeedETHUSD.address
+      );
+      await this.feedRegistry.proposeFeed(
+        this.ETH,
+        this.USD,
+        this.dataFeedETHUSDProposed.address
+      );
+    };
+  }
+
   describe("Run methods as hre methods", function () {
+    useEnvironment("hardhat-chainlink");
+
+    before(beforeShared());
+
     it("Gets latest round data", async function () {
       const roundData =
         await this.hre.chainlink.feedRegistry.getLatestRoundData(
@@ -294,6 +303,10 @@ describe("Test chainlink:feedRegistry module", function () {
   });
 
   describe("Run methods as hre subtasks", function () {
+    useEnvironment("hardhat-chainlink");
+
+    before(beforeShared());
+
     it("Gets latest round data", async function () {
       const roundData = await this.hre.run(
         `${PACKAGE_NAME}:${Task.feedRegistry}:${FeedRegistrySubtask.getLatestRoundData}`,
@@ -582,6 +595,10 @@ describe("Test chainlink:feedRegistry module", function () {
   });
 
   describe("Run methods as subtasks of a hre task", function () {
+    useEnvironment("hardhat-chainlink");
+
+    before(beforeShared());
+
     it("Gets latest round data", async function () {
       const roundData = await this.hre.run(
         `${PACKAGE_NAME}:${Task.feedRegistry}`,

@@ -10,7 +10,7 @@ const isGithubActions = !!process.env.GITHUB_ACTIONS;
 describe("Test chainlink:ens module [SKIP FOR GITHUB ACTIONS]", function () {
   useEnvironment("hardhat-chainlink-ethereum");
 
-  beforeEach(async function () {
+  before(async function () {
     this.baseTick = "ETH";
     this.quoteTick = "USD";
     this.dataFeed = this.hre.chainlink.registries.dataFeeds.ethereum.ETH.USD;
