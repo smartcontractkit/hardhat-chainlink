@@ -24,9 +24,10 @@ import { camelToFlat, kebabToCamelCase } from "./utils";
 
 export const inquire = async (
   hre: HardhatRuntimeEnvironment,
-  parameter: string
+  parameterName: string,
+  defaultValue: any
 ) => {
-  switch (parameter) {
+  switch (parameterName) {
     case InquirableParameter.dataFeedAddress:
       return inquireDataFeedAddress(hre);
     case InquirableParameter.dataFeedProxyAddress:
@@ -50,13 +51,17 @@ export const inquire = async (
     case InquirableParameter.feedRegistryQuoteTick:
       return inquireFeedRegistryQuoteTick();
     default:
-      return inquireInput(camelToFlat(parameter));
+      return inquireInput(camelToFlat(parameterName), defaultValue);
   }
 };
 
-export const inquireInput = async (parameter: string) => {
+export const inquireInput = async (
+  parameterName: string,
+  defaultValue: any
+) => {
   return input({
-    message: `Provide a ${parameter}`,
+    message: `Provide a ${parameterName}`,
+    default: defaultValue,
   });
 };
 

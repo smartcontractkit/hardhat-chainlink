@@ -26,7 +26,11 @@ export const resolveTask = async (
   const subtaskArgs: Record<string, string> = JSON.parse(taskArgs.args || "{}");
   for (const subtaskArg of subtaskProperties.args) {
     if (subtaskArgs[subtaskArg.name] === undefined) {
-      subtaskArgs[subtaskArg.name] = await inquire(hre, subtaskArg.name);
+      subtaskArgs[subtaskArg.name] = await inquire(
+        hre,
+        subtaskArg.name,
+        subtaskArg.defaultValue
+      );
     }
   }
 

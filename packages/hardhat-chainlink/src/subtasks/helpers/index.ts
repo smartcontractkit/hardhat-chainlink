@@ -15,11 +15,15 @@ export const registerSubtasks = () => {
         `${PACKAGE_NAME}:${taskName}:${subtaskName}`
       );
       subtaskProperties.args.forEach((subtaskArg) => {
-        subtaskDefinition.addParam(
-          subtaskArg.name,
-          subtaskArg.description,
-          subtaskArg.defaultValue
-        );
+        if (subtaskArg.defaultValue) {
+          subtaskDefinition.addOptionalParam(
+            subtaskArg.name,
+            subtaskArg.description,
+            subtaskArg.defaultValue
+          );
+        } else {
+          subtaskDefinition.addParam(subtaskArg.name, subtaskArg.description);
+        }
       });
       subtaskDefinition.setAction(subtaskProperties.action);
     }
