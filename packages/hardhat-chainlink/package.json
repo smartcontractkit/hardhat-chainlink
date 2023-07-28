@@ -22,7 +22,9 @@
     "test:feedRegistry": "mocha --exit 'test/feedRegistry.test.ts'",
     "test:l2FeedUptimeSequencer": "mocha --exit 'test/l2FeedUptimeSequencer.test.ts'",
     "test:vrfCoordinator": "mocha --exit 'test/vrfCoordinator.test.ts'",
-    "test": "yarn test:prepare && yarn test:dataFeed && yarn test:dataFeedProxy && yarn test:ensFeedsResolver && yarn test:feedRegistry && yarn test:l2FeedUptimeSequencer && yarn test:vrfCoordinator'",
+    "test:automationRegistrar": "mocha --exit 'test/automationRegistrar.test.ts'",
+    "test:automationRegistry": "mocha --exit 'test/automationRegistry.test.ts'",
+    "test": "yarn test:prepare && yarn test:dataFeed && yarn test:dataFeedProxy && yarn test:ensFeedsResolver && yarn test:feedRegistry && yarn test:l2FeedUptimeSequencer && yarn test:vrfCoordinator && yarn test:automationRegistrar && yarn test:automationRegistry",
     "build": "tsc --build",
     "watch": "tsc --build -w",
     "typechain": "hardhat typechain"
