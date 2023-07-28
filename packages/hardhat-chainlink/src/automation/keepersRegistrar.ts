@@ -4,9 +4,10 @@ import {
   BigNumber,
   BigNumberish,
   BytesLike,
+  ContractReceipt,
   ContractTransaction,
 } from "ethers";
-import { defaultAbiCoder, Interface } from "ethers/lib/utils";
+import { defaultAbiCoder, hexConcat, Interface } from "ethers/lib/utils";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import {
@@ -19,21 +20,21 @@ import { KeeperRegistrarVersion } from "../shared/enums";
 
 const connectKeeperRegistrar = async (
   hre: HardhatRuntimeEnvironment,
-  keepersRegistrarAddress: string
+  keeperRegistrarAddress: string
 ) => {
   const [signer] = await hre.ethers.getSigners();
   const typeAndVersionInterface =
     await TypeAndVersionInterface__factory.connect(
-      keepersRegistrarAddress,
+      keeperRegistrarAddress,
       signer
     );
   const typeAndVersion = await typeAndVersionInterface.typeAndVersion();
   switch (typeAndVersion) {
     case KeeperRegistrarVersion.registrar1_1:
-      return KeeperRegistrar__factory.connect(keepersRegistrarAddress, signer);
+      return KeeperRegistrar__factory.connect(keeperRegistrarAddress, signer);
     case KeeperRegistrarVersion.registrar2_0:
       return KeeperRegistrar2_0__factory.connect(
-        keepersRegistrarAddress,
+        keeperRegistrarAddress,
         signer
       );
     default:
@@ -43,16 +44,16 @@ const connectKeeperRegistrar = async (
 
 async function _registerUpkeep(
   hre: HardhatRuntimeEnvironment,
+  keeperRegistrarAddress: string,
   linkTokenAddress: string,
-  keepersRegistrarAddress: string,
   amountInJuels: BigNumberish,
   upkeepName: string,
   encryptedEmail: BytesLike,
   upkeepContract: string,
-  gasLimit: number,
+  gasLimit: BigNumberish,
   adminAddress: string,
   checkData: BytesLike,
-  source: number,
+  source: BigNumberish,
   sender: string
 ) {
   const [signer] = await hre.ethers.getSigners();
@@ -69,53 +70,68 @@ async function _registerUpkeep(
   const functionSelector: BytesLike = KeeperRegistrarInterface.getSighash(
     solidityRegisterFunctionSignature
   );
-  const tx: ContractTransaction = await linkToken.transferAndCall(
-    keepersRegistrarAddress,
-    amountInJuels,
-    defaultAbiCoder.encode(
-      [
-        "bytes4",
-        "string",
-        "bytes",
-        "address",
-        "uint32",
-        "address",
-        "bytes",
-        "uint96",
-        "uint8",
-        "address",
-      ],
-      [
-        functionSelector,
-        upkeepName,
-        encryptedEmail,
-        upkeepContract,
-        gasLimit,
-        adminAddress,
-        checkData,
-        amountInJuels,
-        source,
-        sender,
-      ]
-    )
-  );
-  await tx.wait(hre.config.chainlink.confirmations);
 
-  return { transactionHash: tx.hash };
+  const tx: ContractTransaction = await linkToken.transferAndCall(
+    keeperRegistrarAddress,
+    amountInJuels,
+    hexConcat([
+      functionSelector,
+      defaultAbiCoder.encode(
+        [
+          "string",
+          "bytes",
+          "address",
+          "uint32",
+          "address",
+          "bytes",
+          "uint96",
+          "uint8",
+          "address",
+        ],
+        [
+          upkeepName,
+          encryptedEmail,
+          upkeepContract,
+          gasLimit,
+          adminAddress,
+          checkData,
+          amountInJuels,
+          source,
+          sender,
+        ]
+      ),
+    ])
+  );
+  const txReceipt: ContractReceipt = await tx.wait(
+    hre.config.chainlink.confirmations
+  );
+  if (!txReceipt.events) {
+    throw new Error("Error Registering Upkeep");
+  }
+
+  const requestHash = txReceipt.events[2].topics[1];
+  // Check if upkeep was automatically registered
+  const upkeepId = (() => {
+    if (txReceipt.events[3] && txReceipt.events[3].topics[1]) {
+      return BigNumber.from(txReceipt.events[3].topics[1]);
+    }
+    return BigNumber.from(0);
+  })();
+  return { transactionHash: tx.hash, requestHash, upkeepId };
 }
 
 async function _registerUpkeep2_0(
   hre: HardhatRuntimeEnvironment,
+  keeperRegistrarAddress: string,
   linkTokenAddress: string,
-  keepersRegistrarAddress: string,
   amountInJuels: BigNumberish,
   upkeepName: string,
   encryptedEmail: BytesLike,
   upkeepContract: string,
-  gasLimit: number,
+  gasLimit: BigNumberish,
   adminAddress: string,
   checkData: BytesLike,
-  ocrConfig: BigNumberish,
+  ocrConfig: BytesLike,
   sender: string
 ) {
   const [signer] = await hre.ethers.getSigners();
@@ -132,61 +148,80 @@ async function _registerUpkeep2_0(
   const functionSelector: BytesLike = KeeperRegistrarInterface.getSighash(
     solidityRegisterFunctionSignature
   );
-  const tx: ContractTransaction = await linkToken.transferAndCall(
-    keepersRegistrarAddress,
-    amountInJuels,
-    defaultAbiCoder.encode(
-      [
-        "bytes4",
-        "string",
-        "bytes",
-        "address",
-        "uint32",
-        "address",
-        "bytes",
-        "bytes",
-        "uint8",
-        "address",
-      ],
-      [
-        functionSelector,
-        upkeepName,
-        encryptedEmail,
-        upkeepContract,
-        gasLimit,
-        adminAddress,
-        checkData,
-        ocrConfig,
-        amountInJuels,
-        sender,
-      ]
-    )
-  );
-  await tx.wait(hre.config.chainlink.confirmations);
 
-  return { transactionHash: tx.hash };
+  const tx: ContractTransaction = await linkToken.transferAndCall(
+    keeperRegistrarAddress,
+    amountInJuels,
+    hexConcat([
+      functionSelector,
+      defaultAbiCoder.encode(
+        [
+          "string",
+          "bytes",
+          "address",
+          "uint32",
+          "address",
+          "bytes",
+          "bytes",
+          "uint96",
+          "address",
+        ],
+        [
+          upkeepName,
+          encryptedEmail,
+          upkeepContract,
+          gasLimit,
+          adminAddress,
+          checkData,
+          ocrConfig,
+          amountInJuels,
+          sender,
+        ]
+      ),
+    ])
+  );
+  const txReceipt: ContractReceipt = await tx.wait(
+    hre.config.chainlink.confirmations
+  );
+  if (!txReceipt.events) {
+    throw new Error("Error Registering Upkeep");
+  }
+
+  const requestHash = txReceipt.events[2].topics[1];
+  // Check if upkeep was automatically registered
+  const upkeepId = (() => {
+    if (txReceipt.events[3] && txReceipt.events[3].topics[1]) {
+      return BigNumber.from(txReceipt.events[3].topics[1]);
+    }
+    return BigNumber.from(0);
+  })();
+  return { transactionHash: tx.hash, requestHash, upkeepId };
 }
 
 export const registerUpkeep = async (
   hre: HardhatRuntimeEnvironment,
+  keeperRegistrarAddress: string,
   linkTokenAddress: string,
-  keepersRegistrarAddress: string,
   amountInJuels: BigNumberish,
   upkeepName: string,
-  encryptedEmail: BytesLike = "",
+  encryptedEmail: BytesLike = "0x",
   upkeepContract: string,
-  gasLimit: number = 200000,
+  gasLimit: BigNumberish = 500_000,
   adminAddress: string,
-  checkData: BytesLike = "",
-  ocrConfig: BytesLike = "",
-  source: number = 0,
+  checkData: BytesLike = "0x",
+  ocrConfig: BytesLike = "0x",
+  source: BigNumberish = 0,
   sender: string
-): Promise<{ transactionHash: string }> => {
+): Promise<{
+  transactionHash: string;
+  requestHash: string;
+  upkeepId: BigNumber;
+}> => {
   const [signer] = await hre.ethers.getSigners();
 
   const typeAndVersionInterface =
     await TypeAndVersionInterface__factory.connect(
-      keepersRegistrarAddress,
+      keeperRegistrarAddress,
       signer
     );
   const typeAndVersion = await typeAndVersionInterface.typeAndVersion();
@@ -194,8 +229,8 @@ export const registerUpkeep = async (
     case KeeperRegistrarVersion.registrar1_1:
       return _registerUpkeep(
         hre,
+        keeperRegistrarAddress,
         linkTokenAddress,
-        keepersRegistrarAddress,
         amountInJuels,
         upkeepName,
         encryptedEmail,
@@ -209,8 +244,8 @@ export const registerUpkeep = async (
     case KeeperRegistrarVersion.registrar2_0:
       return _registerUpkeep2_0(
         hre,
+        keeperRegistrarAddress,
         linkTokenAddress,
-        keepersRegistrarAddress,
         amountInJuels,
         upkeepName,
         encryptedEmail,
@@ -218,7 +253,7 @@ export const registerUpkeep = async (
         gasLimit,
         adminAddress,
         checkData,
-        source,
+        ocrConfig,
         sender
       );
     default:
@@ -228,7 +263,7 @@ export const registerUpkeep = async (
 
 export const getPendingRequest = async (
   hre: HardhatRuntimeEnvironment,
-  keepersRegistrarAddress: string,
+  keeperRegistrarAddress: string,
   requestHash: BytesLike
 ): Promise<{
   adminAddress: string;
@@ -236,7 +271,7 @@ export const getPendingRequest = async (
 }> => {
   const keepersRegistrar = await connectKeeperRegistrar(
     hre,
-    keepersRegistrarAddress
+    keeperRegistrarAddress
   );
 
   const pendingRequest = await keepersRegistrar.getPendingRequest(requestHash);
@@ -246,12 +281,12 @@ export const getPendingRequest = async (
 
 export const cancelRequest = async (
   hre: HardhatRuntimeEnvironment,
-  keepersRegistrarAddress: string,
+  keeperRegistrarAddress: string,
   requestHash: BytesLike
 ): Promise<{ transactionHash: string }> => {
   const keepersRegistrar = await connectKeeperRegistrar(
     hre,
-    keepersRegistrarAddress
+    keeperRegistrarAddress
   );
 
   const tx: ContractTransaction = await keepersRegistrar.cancel(requestHash);
@@ -262,7 +297,7 @@ export const cancelRequest = async (
 
 export const getRegistrationConfig = async (
   hre: HardhatRuntimeEnvironment,
-  keepersRegistrarAddress: string
+  keeperRegistrarAddress: string
 ): Promise<{
   autoApproveConfigType: number;
   autoApproveMaxAllowed: number;
@@ -272,7 +307,7 @@ export const getRegistrationConfig = async (
 }> => {
   const keepersRegistrar = await connectKeeperRegistrar(
     hre,
-    keepersRegistrarAddress
+    keeperRegistrarAddress
   );
 
   const config = await keepersRegistrar.getRegistrationConfig();
@@ -288,12 +323,12 @@ export const getRegistrationConfig = async (
 
 export const getTypeAndVersion = async (
   hre: HardhatRuntimeEnvironment,
-  keepersRegistrarAddress: string
+  keeperRegistrarAddress: string
 ): Promise<string> => {
   const [signer] = await hre.ethers.getSigners();
   const typeAndVersionInterface =
     await TypeAndVersionInterface__factory.connect(
-      keepersRegistrarAddress,
+      keeperRegistrarAddress,
       signer
     );
   return typeAndVersionInterface.typeAndVersion();
