@@ -1,139 +1,759 @@
 # Hardhat Chainlink Plugin Documentation
+This document provides detailed information about each service module and its related methods available in the Hardhat Chainlink plugin.
 
-Welcome to the Hardhat Chainlink Plugin Documentation page.
 
-New to Hardhat? Check the [Official Hardhat Documentation](https://hardhat.org/docs).
+<!-- TOC -->
+* [Hardhat Chainlink Plugin Documentation](#hardhat-chainlink-plugin-documentation)
+  * [Data Feed Services](#data-feed-services)
+    * [Service alias: `dataFeed`](#service-alias-datafeed)
+    * [Service alias: `dataFeedProxy`](#service-alias-datafeedproxy)
+    * [Service alias: `feedRegistry`](#service-alias-feedregistry)
+    * [Service alias: `l2Sequencer`](#service-alias-l2sequencer)
+    * [Service alias: `ens`](#service-alias-ens)
+  * [VRF Service](#vrf-service)
+    * [Service alias: `vrf`](#service-alias-vrf)
+  * [Automation Services](#automation-services)
+    * [Service alias: `automationRegistrar`](#service-alias-automationregistrar)
+    * [Service alias: `automationRegistry`](#service-alias-automationregistry)
+  * [Utilities](#utilities)
+    * [Service alias: `utils`](#service-alias-utils)
+<!-- TOC -->
 
-New to Chainlink? Check the [Official Chainlink Documentation](https://docs.chain.link/).
+## Data Feed Services
 
-## Installation
+Chainlink [Data Feeds](https://docs.chain.link/data-feeds) are decentralized oracles that provide reliable off-chain data to smart contracts on the blockchain.
+Using this service, developers can access the latest round answer and other relevant information from the Data Feeds,
+enabling them to fetch real-world data in their web3 projects.
 
-```console
-npm install @chainlink/hardhat-chainlink
+### Service alias: `dataFeed`
 
-# or
+This section provides methods and functionalities designed to interact with the OffchainAggregator smart contract, 
+which serves as the core component of Chainlink Data Feeds.
 
-yarn add @chainlink/hardhat-chainlink
-```
+### Methods
 
-Import the plugin in your `hardhat.config.js`:
+#### Get Latest RoundAnswer
 
-```js
-require("@chainlink/hardhat-chainlink");
-```
-
-Or, if you are using TypeScript, in your `hardhat.config.ts`:
-
-```ts
-import "@chainlink/hardhat-chainlink";
-```
-
-## Environment extensions and Hardhat tasks
-
-This plugin extends the Hardhat Runtime Environment by adding a `chainlink` field
-whose type is `ExampleHardhatRuntimeEnvironmentField`. To use it, import in your tests/scripts/tasks the `chainlink` field from `hardhat`:
-
-```typescript
-import { chainlink } from "hardhat";
-
-// or
-
-const { chainlink } = require("hardhat");
-```
-
-This plugin comes with predefined Hardhat tasks for interacting with the local Chainlink Node. To see the available tasks, run the following command:
-
-```console
-npx hardhat
-```
-
-# Available Tasks
-List of available methods 
-## Data Feeds
-Related to smart contracts implementing Offchain Aggregator interface.
-
-Hardhat environment: `dataFeed`  
-Hardhat tasks: `dataFeeds`
-
-#### getLatestRoundAnswer
-
-- **Action:** dataFeed.getLatestRoundAnswer
-- **Command:** `get-latest-round-answer`
+- **Method:** getLatestRoundAnswer
 - **Description:** Get the latest round answer for a data feed
 - **Arguments:**
   - `dataFeedAddress`: Address of Data Feed
 
-### getRoundAnswer
+#### Get Round Answer
 
-- **Action:** feedsActions.getRoundAnswer
-- **Command:** `get-round-answer`
+- **Method:** getRoundAnswer
 - **Description:** Get the round answer for a data feed
 - **Arguments:**
   - `dataFeedAddress`: Address of Data Feed
   - `roundId`: Round ID of Data Feed
 
-### getLatestRoundData
+#### Get Latest Round Data
 
-- **Action:** feedsActions.getLatestRoundData
-- **Command:** `get-latest-round-data`
+- **Method:** getLatestRoundData
 - **Description:** Get the latest round data for a data feed
 - **Arguments:**
   - `dataFeedAddress`: Address of Data Feed
 
-### getRoundData
+#### Get Round Data
 
-- **Action:** feedsActions.getRoundData
-- **Command:** `get-round-data`
+- **Method:** getRoundData
 - **Description:** Get the round data for a data feed
 - **Arguments:**
   - `dataFeedAddress`: Address of Data Feed
   - `roundId`: Round ID of Data Feed
 
-### getDecimals
+#### Get LatestRoundId
 
-- **Action:** feedsActions.getDecimals
-- **Command:** `get-decimals`
+- **Method:** getLatestRoundId
+- **Description:** Get the latest round ID
+- **Arguments:**
+  - `dataFeedAddress`: Address of Data Feed
+  - `roundId`: Round ID of Data Feed
+
+#### Get Decimals
+
+- **Method:** getDecimals
 - **Description:** Get the decimals for a data feed
 - **Arguments:**
   - `dataFeedAddress`: Address of Data Feed
 
-### getDescription
+#### Get Description
 
-- **Action:** feedsActions.getDescription
-- **Command:** `get-description`
+- **Method:** getDescription
 - **Description:** Get the description for a data feed
 - **Arguments:**
   - `dataFeedAddress`: Address of Data Feed
 
-### getAggregatorVersion
+#### Get Version
 
-- **Action:** feedsActions.getAggregatorVersion
-- **Command:** `get-aggregator-version`
-- **Description:** Get the aggregator version for a data feed
+- **Method:** getAggregatorVersion
+- **Description:** Get the version for a data feed
 - **Arguments:**
   - `dataFeedAddress`: Address of Data Feed
 
-### getAggregatorAddress
 
-- **Action:** feedsActions.getAggregatorAddress
-- **Command:** `get-aggregator-address`
-- **Description:** Get the aggregator address for a data feed
+### Service alias: `dataFeedProxy`
+
+This section provides methods and functionalities designed to interact with the EACAggregatorProxy smart contract, 
+which acts as a proxy for Chainlink Data Feeds.
+
+### Methods
+
+#### Get Latest Round Answer
+
+- **Method:** getLatestRoundAnswer
+- **Description:** Get the latest round answer for a current data feed via proxy
 - **Arguments:**
-  - `dataFeedAddress`: Address of Data Feed
+  - `dataFeedProxyAddress`: Address of Data Feed Proxy
 
-### getAggregatorRoundId
+#### Get Round Answer
 
-- **Action:** feedsActions.getAggregatorRoundId
-- **Command:** `get-aggregator-round-id`
-- **Description:** Get the aggregator round ID for a data feed
+- **Method:** getRoundAnswer
+- **Description:** Get round answer for a current data feed via proxy
 - **Arguments:**
-  - `dataFeedAddress`: Address of Data Feed
+  - `dataFeedProxyAddress`: Address of Data Feed Proxy
+  - `roundId`: Round ID of Data Feed Proxy
 
-### getPhaseId
+#### Get Latest Round Data
 
-- **Action:** feedsActions.getPhaseId
-- **Command:** `get-phase-id`
-- **Description:** Get Data Feed phase ID
+- **Method:** getLatestRoundData
+- **Description:** Get the latest round data for a current data feed via proxy
 - **Arguments:**
-  - `dataFeedAddress`: Address of Data Feed
+  - `dataFeedProxyAddress`: Address of Data Feed Proxy
 
+#### Get Round Data
+
+- **Method:** getRoundData
+- **Description:** Get round data for a current data feed via proxy
+- **Arguments:**
+  - `dataFeedProxyAddress`: Address of Data Feed
+  - `roundId`: Round ID of Data Feed Proxy
+
+#### Get Latest RoundId
+
+- **Method:** getLatestRoundId
+- **Description:** Get the latest round ID of a proxy
+- **Arguments:**
+  - `dataFeedProxyAddress`: Address of Data Feed Proxy
+  - `roundId`: Round ID of Data Feed Proxy
+
+#### Get Decimals
+
+- **Method:** getDecimals
+- **Description:** Get decimals for a data feed
+- **Arguments:**
+  - `dataFeedProxyAddress`: Address of Data Feed Proxy
+
+#### Get Description
+
+- **Method:** getDescription
+- **Description:** Get description for a current data feed via proxy
+- **Arguments:**
+  - `dataFeedProxyAddress`: Address of Data Feed Proxy
+
+#### Get Version
+
+- **Method:** getVersion
+- **Description:** Get version for a current data feed via proxy
+- **Arguments:**
+  - `dataFeedProxyAddress`: Address of Data Feed Proxy
+
+#### Get Aggregator
+
+- **Method:** getAggregator
+- **Description:** Get current data feed address via proxy
+- **Arguments:**
+  - `dataFeedProxyAddress`: Address of Data Feed Proxy
+
+#### Get PhaseId
+
+- **Method:** getPhaseId
+- **Description:** Get current phase ID of a proxy
+- **Arguments:**
+  - `dataFeedProxyAddress`: Address of Data Feed Proxy
+
+#### Get Phase Aggregators
+
+- **Method:** getPhaseAggregators
+- **Description:** Get data feed address related to a phase ID of a proxy
+- **Arguments:**
+  - `dataFeedProxyAddress`: Address of Data Feed Proxy
+  - `phaseId`: Phase ID of Data Feed Proxy
+
+
+### Service alias: `feedRegistry`
+
+This section provides methods and functionalities designed to interact with the [Feed Registry](https://docs.chain.link/data-feeds/feed-registry) smart contracts,
+which acts is an on-chain mapping of assets to Data Feeds.
+
+> **Note**
+>  Chainlink Feed Registry is exclusively available on the Ethereum mainnet.
+
+### Methods
+
+#### Get Latest Round Data
+
+- **Method:** `getLatestRoundData`
+- **Description:** Get the latest round data for a specific data feed from the Feed Registry
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+
+#### Get Round Data
+
+- **Method:** `getRoundData`
+- **Description:** Get the round data for a specific data feed from the Feed Registry based on the provided round ID
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+  - `roundId`: Feed Registry Round ID
+
+#### Get Proposed Latest Round Data
+
+- **Method:** `proposedGetLatestRoundData`
+- **Description:** Get the latest round data (proposed) for a specific data feed from the Feed Registry
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+
+#### Get Proposed Round Data
+
+- **Method:** `proposedGetRoundData`
+- **Description:** Get the round data (proposed) for a specific data feed from the Feed Registry based on the provided round ID
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+  - `roundId`: Data Feed Round ID
+
+#### Get Round Feed
+
+- **Method:** `getRoundFeed`
+- **Description:** Get the data feed address for a specific data feed from the Feed Registry based on the provided round ID
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+  - `roundId`: Feed Registry Round ID
+
+#### Get Feed
+
+- **Method:** `getFeed`
+- **Description:** Get current data feed address for a specific token pair from the Feed Registry
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+
+#### Get Proposed Feed
+
+- **Method:** `getProposedFeed`
+- **Description:** Get the proposed data feed address for a specific token pair from the Feed Registry
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+
+#### Is Feed Enabled
+
+- **Method:** `isFeedEnabled`
+- **Description:** Check if a specific data feed is enabled in the Feed Registry
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `aggregatorAddress`: Address of a Data Feed Offchain Aggregator
+
+#### Get Previous Round ID
+
+- **Method:** `getPreviousRoundId`
+- **Description:** Get previous round ID for a specific data feed from the Feed Registry based on the provided round ID
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+  - `roundId`: Feed Registry Round ID
+
+#### Get Next Round ID
+
+- **Method:** `getNextRoundId`
+- **Description:** Get next round ID for a specific data feed from the Feed Registry based on the provided round ID
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+  - `roundId`: Feed Registry Round ID
+
+#### Get Decimals
+
+- **Method:** `getDecimals`
+- **Description:** Get the decimals of a specific data feed from the Feed Registry
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+
+#### Get Description
+
+- **Method:** `getDescription`
+- **Description:** Get the description of a specific data feed from the Feed Registry
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+
+#### Get Version
+
+- **Method:** `getVersion`
+- **Description:** Get the version of a specific data feed from the Feed Registry
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+
+#### Get Phase
+
+- **Method:** `getPhase`
+- **Description:** Get phase data for a specific data feed from the Feed Registry based on the provided phase ID
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+  - `phaseId`: Feed Registry Phase ID
+
+#### Get Phase Feed
+
+- **Method:** `getPhaseFeed`
+- **Description:** Get data feed address for a specific token pair from the Feed Registry based on the provided phase ID
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+  - `phaseId`: Feed Registry Phase ID
+
+#### Get Phase Range
+
+- **Method:** `getPhaseRange`
+- **Description:** Get the phase range data for a specific data feed from the Feed Registry based on the provided phase ID
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+  - `phaseId`: Feed Registry Phase ID
+
+#### Get Current Phase ID
+
+- **Method:** `getCurrentPhaseId`
+- **Description:** Get current phase ID for a specific data feed from the Feed Registry
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+
+
+### Service alias: `l2Sequencer`
+
+This section provides methods and functionalities designed to interact with the L2 Sequencer Uptime Feeds, 
+which acts as data feeds that track the availability status of the sequencer in Layer 2 (L2) networks, specifically in optimistic rollup protocols.
+
+> **Note**
+> L2 Sequencer Uptime Feeds are available only on specific networks, 
+> including Arbitrum mainnet, Arbitrum Goerli testnet, Optimism mainnet, 
+> Optimism Goerli testnet, and Metis mainnet (Andromeda)
+
+### Methods
+
+#### Is L2 Sequencer Up
+
+- **Method:** `isL2SequencerUp`
+- **Description:** Checks the availability status of the Layer 2 (L2) Sequencer using the provided address of the Layer 2 Sequencer Uptime Status Feed
+- **Arguments:**
+  - `l2SequencerAddress`: Address of the Layer 2 Sequencer Uptime Status Feed
+
+#### Get Time Since L2 Sequencer Is Up
+
+- **Method:** `getTimeSinceL2SequencerIsUp`
+- **Description:** Retrieves the time elapsed since the Layer 2 (L2) Sequencer has been up and operational, based on the provided address of the Layer 2 Sequencer Uptime Status Feed
+- **Arguments:**
+  - `l2SequencerAddress`: Address of the Layer 2 Sequencer Uptime Status Feed
+  - `gracePeriodTime`: Grace period duration in which the Sequencer is allowed to not return results
+
+### Service alias: `ens`
+
+This section provides methods and functionalities designed to interact with the [Chainlink ENS Resolver](https://docs.chain.link/data-feeds/ens).
+
+> **Note**
+>  Chainlink ENS is exclusively available on the Ethereum mainnet.
+
+### Methods
+
+#### Resolve Aggregator Address
+
+- **Method:** `resolveAggregatorAddress`
+- **Description:** Resolve Data Feed address for a token pair using the Chainlink ENS Resolver
+- **Arguments:**
+  - `baseTick`: Base tick of the token pair
+  - `quoteTick`: Quote tick of the token pair
+
+#### Resolve Aggregator Address With Subdomains
+
+- **Method:** `resolveAggregatorAddressWithSubdomains`
+- **Description:** Resolve Data Feed address for a token pair using the Chainlink ENS Resolver with subdomains
+- **Arguments:**
+  - `baseTick`: Base tick of the token pair.
+  - `quoteTick`: Quote tick of the token pair.
+
+## VRF Service
+
+Chainlink [VRF](https://docs.chain.link/vrf/v2/introduction) (Verifiable Random Function) service is a critical component
+provided by Chainlink that enables smart contracts on the blockchain to securely and transparently access cryptographically secure and unpredictable randomness.
+
+### Service alias: `vrf`
+
+This section provides methods and functionalities designed to interact with the VRFCoordinator smart contract,
+which serves as the intermediary between smart contracts on the blockchain and the VRF service.
+
+### Methods
+
+#### Create Subscription
+
+- **Method:** createSubscription
+- **Description:** Create a new subscription to the VRF service
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+
+#### Fund Subscription
+
+- **Method:** fundSubscription
+- **Description:** Fund a subscription to the VRF service with LINK tokens
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+  - `linkTokenAddress`: Address of the LINK token contract
+  - `amountInJuels`: Amount of LINK tokens to be sent (in Juels)
+  - `subscriptionId`: VRF Subscription ID
+
+#### Cancel Subscription
+
+- **Method:** cancelSubscription
+- **Description:** Cancel a subscription to the VRF service and receive the remaining balance
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+  - `subscriptionId`: VRF Subscription ID
+  - `receivingAddress`: Address to receive the balance of the subscription
+
+#### Add Consumer
+
+- **Method:** addConsumer
+- **Description:** Add a new consumer to an existing VRF subscription
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+  - `consumerAddress`: Address of the consumer
+  - `subscriptionId`: VRF Subscription ID
+
+#### Remove Consumer
+
+- **Method:** removeConsumer
+- **Description:** Remove a consumer from an existing VRF subscription
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+  - `consumerAddress`: Address of the consumer
+  - `subscriptionId`: VRF Subscription ID
+
+#### Get Subscription Details
+
+- **Method:** getSubscriptionDetails
+- **Description:** Get details of an existing VRF subscription
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+  - `subscriptionId`: VRF Subscription ID
+
+#### Request Random Words
+
+- **Method:** requestRandomWords
+- **Description:** Request random words from the VRF service
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+  - `keyHash`: Key hash related to maxGasPrice of a VRF. Different keyHashes have different gas prices
+  - `subscriptionId`: VRF Subscription ID. Must be funded with the minimum subscription balance required for the selected keyHash
+  - `requestConfirmations`: How many blocks you'd like the oracle to wait before responding to the request
+  - `callbackGasLimit`: How much gas you allow for fulfillRandomWords callback
+  - `numWords`: The number of random values you'd like to receive in fulfillRandomWords callback
+
+#### Check Pending Request
+
+- **Method:** isPendingRequestExists
+- **Description:** Check if there is a pending request for an existing VRF subscription
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+  - `subscriptionId`: VRF Subscription ID
+
+#### Request Subscription Owner Transfer
+
+- **Method:** requestSubscriptionOwnerTransfer
+- **Description:** Request to transfer ownership of a VRF subscription to a new owner
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+  - `subscriptionId`: VRF Subscription ID
+  - `newOwnerAddress`: Address of the new subscription owner
+
+#### Accept Subscription Owner Transfer
+
+- **Method:** acceptSubscriptionOwnerTransfer
+- **Description:** Accept the transfer of ownership of a VRF subscription
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+  - `subscriptionId`: VRF Subscription ID
+
+#### Get Maximum Consumers
+
+- **Method:** getMaxConsumers
+- **Description:** Get the maximum number of consumers that can be added to a VRF subscription
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+
+#### Get Maximum Number of Words
+
+- **Method:** getMaxNumberOfWords
+- **Description:** Get the maximum number of random words that can be requested from the VRF service
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+
+#### Get Maximum Request Confirmations
+
+- **Method:** getMaxRequestConfirmations
+- **Description:** Get the maximum number of block confirmations allowed for a VRF request
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+
+#### Get Minimum Request Confirmations
+
+- **Method:** getMinRequestConfirmations
+- **Description:** Get the minimum number of block confirmations required for a VRF request
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+
+#### Get Maximum Request Gas Limit
+
+- **Method:** getMaxRequestGasLimit
+- **Description:** Get the maximum gas limit for a VRF request
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+
+#### Get Commitment
+
+- **Method:** getCommitment
+- **Description:** Get the commitment data for a VRF request
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+  - `requestId`: Request ID
+
+#### Get Configuration
+
+- **Method:** getConfig
+- **Description:** Get the configuration details of VRF Coordinator
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+
+#### Get Type and Version
+
+- **Method:** getTypeAndVersion
+- **Description:** Get the type and version details of VRF Coordinator
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+
+
+
+## Automation Services
+
+Chainlink [Automation](https://docs.chain.link/vrf/v2/introduction) service that enables conditional execution 
+of your smart contracts functions through a hyper-reliable and decentralized automation platform.
+
+### Service alias: `automationRegistrar`
+
+This section provides methods and functionalities designed to interact with the KeeperRegistrar smart contract,
+which accepts requests for upkeep registrations.
+
+### Methods
+
+#### Register Upkeep
+
+- **Method:** registerUpkeep
+- **Description:** Register an upkeep task for Chainlink Keepers to perform on a specified contract
+- **Arguments:**
+  - `keeperRegistrarAddress`: Address of Keeper Registrar
+  - `linkTokenAddress`: Address of Link Token
+  - `amountInJuels`: Amount of LINK in juels to fund the upkeep
+  - `upkeepName`: Upkeep name to be registered
+  - `encryptedEmail`: Encrypted email address of upkeep contact
+  - `upkeepContract`: Upkeep contract address to perform task on
+  - `gasLimit`: Limit of gas to provide the target contract when performing upkeep
+  - `adminAddress`: Address to cancel upkeep and withdraw remaining funds
+  - `checkData`: Data passed to the contract when checking upkeep
+  - `ocrConfig`: OffchainConfig for upkeep in bytes [Keeper Registrar v2_0 ONLY], default value: "0x"
+  - `source`: ID of the application sending this request [Keeper Registrar v1_1 ONLY], default value: "0"
+  - `sender`: Address of the sender making the request
+
+#### Get Pending Request
+
+- **Method:** getPendingRequest
+- **Description:** Get information about a pending registration request for an upkeep task
+- **Arguments:**
+  - `keeperRegistrarAddress`: Address of Keeper Registrar
+  - `requestHash`: Hash of the registration request
+
+#### Cancel Request
+
+- **Method:** cancelRequest
+- **Description:** Cancel a pending registration request for an upkeep task
+- **Arguments:**
+  - `keeperRegistrarAddress`: Address of Keeper Registrar
+  - `requestHash`: Hash of the registration request
+
+#### Get Registration Config
+
+- **Method:** getRegistrationConfig
+- **Description:** Get the registration configuration for upkeep tasks from the Keeper Registrar
+- **Arguments:**
+  - `keeperRegistrarAddress`: Address of Keeper Registrar
+
+#### Get Type And Version
+
+- **Method:** getTypeAndVersion
+- **Description:** Get the type and version for the Keeper Registrar
+- **Arguments:**
+  - `keeperRegistrarAddress`: Address of Keeper Registrar
+
+### Service alias: `automationRegistry`
+
+This section provides methods and functionalities designed to interact with the KeeperRegistry smart contract,
+which serves to add tasks for Chainlink Keepers to perform on client contracts.
+
+### Methods
+
+#### Get State
+
+- **Method:** getState
+- **Description:** Get the current state of Keeper Registry
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
+
+#### Get Active Upkeep IDs
+
+- **Method:** getActiveUpkeepIDs
+- **Description:** Get a list of active upkeep IDs from Keeper Registry
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
+  - `startIndex`: Starting index of Upkeeps to get
+  - `maxCount`: Quantity of Upkeeps to get
+
+#### Get Max Payment For Gas
+
+- **Method:** getMaxPaymentForGas
+- **Description:** Get maximum payment for the gas limit, calculated using the Keeper Registry parameters
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
+  - `gasLimit`: Gas limit
+
+#### Is Paused
+
+- **Method:** isPaused
+- **Description:** Check if the Keeper Registry is currently paused
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
+
+#### Get Upkeep
+
+- **Method:** getUpkeep
+- **Description:** Get information about a specific upkeep from the Keeper Registry
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
+  - `upkeepId`: Upkeep ID
+
+#### Get Min Balance For Upkeep
+
+- **Method:** getMinBalanceForUpkeep
+- **Description:** Get the minimum required balance for upkeep from the Keeper Registry
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
+  - `upkeepId`: Upkeep ID
+
+#### Fund Upkeep
+
+- **Method:** fundUpkeep
+- **Description:** Fund an upkeep task with a specified amount of LINK in Juels
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
+  - `upkeepId`: Upkeep ID
+  - `amountInJuels`: Amount of LINK in Juels to fund upkeep
+
+#### Cancel Upkeep
+
+- **Method:** cancelUpkeep
+- **Description:** Cancel an upkeep task in Keeper Registry
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
+  - `upkeepId`: Upkeep ID
+
+#### Withdraw Funds
+
+- **Method:** withdrawFunds
+- **Description:** Withdraw funds from an upkeep task in Keeper Registry
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
+  - `upkeepId`: Upkeep ID
+  - `receivingAddress`: Address to withdraw funds
+
+#### Migrate Upkeeps
+
+- **Method:** migrateUpkeeps
+- **Description:** Migrate multiple upkeep tasks to another Keeper Registry
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
+  - `upkeepIds`: Upkeep IDs to migrate
+  - `destination`: Address of destination Keeper Registry
+
+#### Get Keeper Info
+
+- **Method:** getKeeperInfo
+- **Description:** Get information about a specific keeper from Keeper Registry
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
+  - `keeperAddress`: Keeper address
+
+#### Get Type And Version
+
+- **Method:** getTypeAndVersion
+- **Description:** Get the type and version for Keeper Registry
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
+
+#### Get Upkeep Transcoder Version
+
+- **Method:** getUpkeepTranscoderVersion
+- **Description:** Get the upkeep transcoder version from Keeper Registry
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
+
+## Utilities
+
+The plugin utility methods.
+
+### Service alias: `utils`
+
+### Methods
+
+#### Get Data Feed Proxy/Registry Round ID
+
+- **Method:** getRoundId
+- **Description:** Obtain the Data Feed Proxy/Registry round ID using the provided phase ID and aggregator round ID
+- **Arguments:**
+  - `phaseId`: Data Feed Proxy/Registry phase ID
+  - `aggregatorRoundId`: Data Feed round ID
+
+#### Parse Data Feed Proxy/Registry Round ID
+
+- **Method:** parseRoundId
+- **Description:** Parse the given Data Feed Proxy/Registry round ID to extract relevant information
+- **Arguments:**
+  - `roundId`: Data Feed Proxy/Registry round ID

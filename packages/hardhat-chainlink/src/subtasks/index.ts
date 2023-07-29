@@ -1200,7 +1200,6 @@ export const subtasks: Subtasks = {
     },
   },
   [Task.functions]: {},
-  [Task.sandbox]: {},
   [Task.registries]: {
     [PluginRegistriesSubtask.getDataFeed]: {
       action: registriesActions.getDataFeed,

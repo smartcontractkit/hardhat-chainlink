@@ -7,7 +7,6 @@ export enum Task {
   automationRegistry = "automationRegistry",
   automationRegistrar = "automationRegistrar",
   vrf = "vrf",
-  sandbox = "sandbox",
   functions = "functions",
   registries = "registries",
   utils = "utils",
