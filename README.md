@@ -1,4 +1,4 @@
-<p style="text-align: center;">
+<p align="center">
   <a href="https://chain.link" target="_blank">
     <img src="https://raw.githubusercontent.com/smartcontractkit/hardhat-starter-kit/main/box-img-lg.png" width="225" alt="Chainlink Hardhat logo">
   </a>

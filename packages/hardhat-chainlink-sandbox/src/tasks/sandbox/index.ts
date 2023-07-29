@@ -4,7 +4,7 @@ import { ActionType } from "hardhat/types";
 import { join } from "path";
 import { v4 as uuidv4 } from "uuid";
 
-import LinkTokenArtifact from "../../../artifacts/@chainlink/contracts/src/v0.4/LinkToken.sol/LinkToken.json";
+import { LinkToken__factory } from "../../../../../types/factories/v0.4/LinkToken__factory";
 import OracleArtifact from "../../../artifacts/@chainlink/contracts/src/v0.4/Oracle.sol/Oracle.json";
 import { login } from "../../sandbox/helpers/login";
 
@@ -31,6 +31,9 @@ export const deployOracle: ActionType<{
   console.table({ "Oracle Address": oracle.address });
 };
 export const deployLinkToken: ActionType<void> = async (taskArguments, hre) => {
+  const [signer] = await hre.ethers.getSigners();
+  LinkToken__factory.connect(signer).deployTransaction()
+  
   const LinkToken = await hre.ethers.getContractFactoryFromArtifact(
     LinkTokenArtifact
   );

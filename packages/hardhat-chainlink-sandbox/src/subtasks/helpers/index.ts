@@ -12,7 +12,7 @@ export const registerSubtasks = () => {
     for (const subtaskName of Object.keys(taskSubtasks)) {
       const subtaskProperties = taskSubtasks[subtaskName];
       const subtaskDefinition = subtask(
-        `${PACKAGE_NAME}:${taskName}:${subtaskProperties.command}`
+        `${PACKAGE_NAME}:${taskName}:${subtaskName}`
       );
       subtaskProperties.args.forEach((subtaskArg) => {
         subtaskDefinition.addParam(

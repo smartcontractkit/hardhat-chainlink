@@ -1,6 +1,5 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import { inquire, inquireSubtaskProperties } from "../../helpers/inquirers";
 import { printResult } from "../../helpers/utils";
 import { PACKAGE_NAME } from "../../shared/constants";
 import { Task } from "../../shared/enums";
@@ -11,11 +10,11 @@ export const resolveTask = async (
   taskName: Task,
   taskArgs: any
 ) => {
-  const subtaskProperties = await (async () => {
+  const [subtaskName, subtaskProperties] = await (async () => {
     if (taskArgs.subtask) {
-      return subtasks[taskName][taskArgs.subtask];
+      return [taskArgs.subtask, subtasks[taskName][taskArgs.subtask]];
     }
-    return inquireSubtaskProperties(taskName);
+    return [undefined, undefined];
   })();
 
   if (!subtaskProperties) {
@@ -24,15 +23,11 @@ export const resolveTask = async (
   }
 
   const subtaskArgs: Record<string, string> = JSON.parse(taskArgs.args || "{}");
-  for (const subtaskArg of subtaskProperties.args) {
-    if (subtaskArgs[subtaskArg.name] === undefined) {
-      subtaskArgs[subtaskArg.name] = await inquire(hre, subtaskArg.name);
-    }
-  }
 
   const result = await hre.run(
-    `${PACKAGE_NAME}:${taskName}:${subtaskProperties.command}`,
+    `${PACKAGE_NAME}:${taskName}:${subtaskName}`,
     subtaskArgs
   );
   printResult(result);
+  return result;
 };

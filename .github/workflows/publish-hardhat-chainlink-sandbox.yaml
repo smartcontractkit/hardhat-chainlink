@@ -1,9 +1,9 @@
-name: Publish Hardhat-Chainlink plugin to NPM
+name: Publish Hardhat-Chainlink Sandbox plugin to NPM
 
 on:
   push:
     tags:
-      - '@chainlink/hardhat-chainlink@*'
+      - '@chainlink/hardhat-chainlink-sandbox@*'
 
 jobs:
   publish:
@@ -19,7 +19,7 @@ jobs:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
           always-auth: true
-          
+
       - name: Setup npm authentication
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
 
@@ -27,11 +27,11 @@ jobs:
         run: npm install -g yarn
 
       - name: Setup environment
-        working-directory: packages/hardhat-chainlink
+        working-directory: packages/hardhat-chainlink-sandbox
         run: yarn && yarn typechain && yarn build
 
       - name: Publish Package to NPM
-        working-directory: packages/hardhat-chainlink
+        working-directory: packages/hardhat-chainlink-sandbox
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |

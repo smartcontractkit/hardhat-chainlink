@@ -20,7 +20,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '16.x'
@@ -30,7 +30,11 @@ jobs:
 
       - name: Setup environment
         working-directory: packages/hardhat-chainlink
-        run: yarn && yarn typechain && yarn build && yarn test:prepare
+        run: yarn && yarn typechain && yarn build
+
+      - name: Prepare test environment
+        working-directory: packages/hardhat-chainlink
+        run: yarn test:prepare
       
       - name: Test chainlink:dataFeed module
         working-directory: packages/hardhat-chainlink

@@ -1,5 +1,5 @@
 {
-  "name": "@chainlink/hardhat-chainlink",
+  "name": "@chainlink/hardhat-chainlink-sandbox",
   "version": "0.0.3",
   "description": "Integrates Chainlink into Hardhat projects",
   "repository": "https://github.com/smartcontractkit/hardhat-chainlink.git",
@@ -16,19 +16,20 @@
   "scripts": {
     "lint:fix": "prettier --write 'src/**/*.{js,ts}' 'test/**/*.{js,ts}' && tslint --fix --config tslint.json --project tsconfig.json",
     "lint": "tslint --config tslint.json --project tsconfig.json",
-    "test": "mocha --exit --recursive 'test/**/*.test.ts'",
-    "copy": "mkdir -p dist/src/tasks && cp src/sandbox/setup/Dockerfile dist && cp src/sandbox/setup/docker-compose.yaml dist && cp src/sandbox/setup/env.template dist/src/tasks/.env && cp -r artifacts dist && cp -r cache dist && cp -r src/contracts/src dist",
-    "build": "npx hardhat compile && tsc --project tsconfig.json --skipLibCheck && yarn run copy",
+    "test:prepare": "cd ./test/fixture-projects/hardhat-chainlink-plugin && hardhat compile",
+    "test": "yarn test:prepare && mocha --exit --recursive 'test/**/*.test.ts'",
+    "copy": "mkdir -p dist/src/tasks && cp src/setup/Dockerfile dist && cp src/setup/docker-compose.yaml dist && cp src/setup/env.template dist/src/tasks/.env && cp -r artifacts dist && cp -r cache dist",
+    "build": "tsc --project tsconfig.json && yarn run copy",
     "watch": "tsc -w --project tsconfig.json",
     "prepublishOnly": "yarn run build",
-    "generateTypes": "typechain --target ethers-v5 --out-dir './types-abis' 'src/contracts/abis/*.json' && typechain --target ethers-v5 --out-dir './types' './node_modules/@chainlink/contracts/abi/v0.8/*.json'"
+    "generateTypes": "typechain --target ethers-v5 --out-dir './types' './node_modules/@chainlink/contracts/abi/*/*.json'"
   },
   "files": [
     "dist/",
     "src/",
     "LICENSE",
     "README.md",
-    "DOCUMENTATION.md"
+    "packages/hardhat-chainlink-toolkit/DOCUMENTATION.md"
   ],
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "1.0.6",
@@ -46,6 +47,7 @@
     "hardhat": "^2.16.0",
     "hardhat-gas-reporter": "^1.0.9",
     "mocha": "^10.2.0",
+    "mocha-suppress-logs": "^0.3.1",
     "prettier": "^2.8.8",
     "solidity-coverage": "^0.8.3",
     "ts-node": "^10.9.1",
@@ -57,11 +59,11 @@
   },
   "dependencies": {
     "@chainlink/contracts": "0.6.1",
-    "@inquirer/confirm": "^2.0.4",
-    "@inquirer/core": "^2.3.0",
-    "@inquirer/input": "^1.2.3",
-    "@inquirer/select": "^1.2.3",
-    "@inquirer/type": "^1.1.0",
+    "@inquirer/confirm": "^2.0.6",
+    "@inquirer/core": "^2.3.1",
+    "@inquirer/input": "^1.2.5",
+    "@inquirer/select": "^1.2.5",
+    "@inquirer/type": "^1.1.1",
     "@nomiclabs/hardhat-ethers": "^2.2.3",
     "axios": "^1.4.0",
     "chalk": "4.1.2",
