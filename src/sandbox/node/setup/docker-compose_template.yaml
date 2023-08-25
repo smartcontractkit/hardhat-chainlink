@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+  chainlink_db:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER={{PG_USER}}
+      - POSTGRES_PASSWORD={{PG_PASSWORD}}
+      - POSTGRES_DB={{PG_DB}}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -q -U {{PG_USER}}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  chainlink_node:
+    platform: linux/x86_64
+    image: smartcontract/chainlink:2.3.0
+    depends_on:
+      - chainlink_db
+    ports:
+      - "6688:6688"
+    volumes:
+      - ./clroot:/clroot
+      - ./clroot/jobs/:/clroot/jobs
+    command: local -c /clroot/config.toml  node -a /clroot/api-credentials
+    restart: on-failure
+    environment:
+      - CL_DATABASE_URL=postgresql://{{PG_USER}}:{{PG_PASSWORD}}@chainlink_db:5432/{{PG_DB}}?sslmode=disable
+      - CL_PASSWORD_KEYSTORE={{CL_PASSWORD_KEYSTORE}}

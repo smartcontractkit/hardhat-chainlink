@@ -1,0 +1,82 @@
+{
+  "name": "@chainlink/hardhat-chainlink",
+  "version": "0.0.3",
+  "description": "Hardhat plugin that adds interaction with Chainlink services to Hardhat projects",
+  "repository": "https://github.com/smartcontractkit/hardhat-chainlink.git",
+  "license": "MIT",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "keywords": [
+    "smart-contracts",
+    "hardhat",
+    "hardhat-plugin",
+    "chainlink"
+  ],
+  "scripts": {
+    "lint:fix": "tslint --fix --config tslint.json  --project tsconfig.json",
+    "lint": "tslint --config tslint.json --project tsconfig.json",
+    "test:prepare": "cd test/fixture-projects/hardhat-chainlink && hardhat compile",
+    "test:dataFeed": "mocha --exit 'test/dataFeed.test.ts'",
+    "test:dataFeedProxy": "mocha --exit 'test/dataFeedProxy.test.ts'",
+    "test:ensFeedsResolver": "mocha --exit 'test/ensFeedsResolver.test.ts'",
+    "test:feedRegistry": "mocha --exit 'test/feedRegistry.test.ts'",
+    "test:l2FeedUptimeSequencer": "mocha --exit 'test/l2FeedUptimeSequencer.test.ts'",
+    "test:vrfCoordinator": "mocha --exit 'test/vrfCoordinator.test.ts'",
+    "test:automationRegistrar": "mocha --exit 'test/automationRegistrar.test.ts'",
+    "test:automationRegistry": "mocha --exit 'test/automationRegistry.test.ts'",
+    "test": "yarn test:prepare && yarn test:dataFeed && yarn test:dataFeedProxy && yarn test:ensFeedsResolver && yarn test:feedRegistry && yarn test:l2FeedUptimeSequencer && yarn test:vrfCoordinator && yarn test:automationRegistrar && yarn test:automationRegistry",
+    "copyArtifacts": "copyfiles -a -f ./node_modules/@chainlink/contracts/abi/**/* chainlink-artifacts",
+    "removeArtifacts": "rm -rf chainlink-artifacts",
+    "compile": "hardhat compile",
+    "prebuild": "npm run copyArtifacts && npm run compile && npm run removeArtifacts",
+    "build": "tsc --build",
+    "watch": "tsc --build -w",
+    "postbuild": "copyfiles -a src/sandbox/node/setup/* src/sandbox/node/setup/clroot/* src/sandbox/node/setup/clroot/jobs/* ./dist"
+  },
+  "files": [
+    "dist/",
+    "LICENSE",
+    "README.md",
+    "DOCUMENTATION.md"
+  ],
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "1.0.6",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.8",
+    "@nomicfoundation/hardhat-toolbox": "2.0.2",
+    "@nomiclabs/hardhat-etherscan": "^3.1.7",
+    "@typechain/ethers-v5": "^10.1.1",
+    "@typechain/hardhat": "^6.1.6",
+    "@types/chai": "^4.3.5",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^16.18.38",
+    "chai": "^4.3.7",
+    "chai-as-promised": "^7.1.1",
+    "copyfiles": "^2.4.1",
+    "hardhat": "^2.16.0",
+    "hardhat-gas-reporter": "^1.0.9",
+    "mocha": "^10.2.0",
+    "mocha-suppress-logs": "^0.3.1",
+    "prettier": "^2.8.8",
+    "solidity-coverage": "^0.8.3",
+    "ts-node": "^10.9.1",
+    "tslint": "^6.1.3",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.3.0",
+    "typechain": "^8.3.0",
+    "typescript": "^5.1.3"
+  },
+  "dependencies": {
+    "@chainlink/contracts": "0.6.1",
+    "@inquirer/confirm": "^2.0.6",
+    "@inquirer/input": "^1.2.5",
+    "@inquirer/select": "^1.2.5",
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "axios": "^1.4.0",
+    "chalk": "4.1.2",
+    "docker-compose": "^0.24.1",
+    "ethers": "^5.4.7"
+  },
+  "peerDependencies": {
+    "hardhat": "^2.16.0"
+  }
+}
