@@ -27,11 +27,9 @@ jobs:
         run: npm install -g yarn
 
       - name: Setup environment
-        working-directory: packages/hardhat-chainlink
-        run: yarn && yarn typechain && yarn build
+        run: yarn && yarn build
 
       - name: Publish Package to NPM
-        working-directory: packages/hardhat-chainlink
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |

@@ -29,33 +29,25 @@ jobs:
         run: npm install -g yarn
 
       - name: Setup environment
-        working-directory: packages/hardhat-chainlink
-        run: yarn && yarn typechain && yarn build
+        run: yarn && yarn build
 
       - name: Prepare test environment
-        working-directory: packages/hardhat-chainlink
         run: yarn test:prepare
       
       - name: Test chainlink:dataFeed module
-        working-directory: packages/hardhat-chainlink
         run: yarn test:dataFeed
       
       - name: Test chainlink:dataFeedProxy module
-        working-directory: packages/hardhat-chainlink
         run: yarn test:dataFeedProxy
       
       - name: Test chainlink:feedRegistry module
-        working-directory: packages/hardhat-chainlink
         run: yarn test:feedRegistry
       
       - name: Test chainlink:vrf module
-        working-directory: packages/hardhat-chainlink
         run: yarn test:vrfCoordinator
       
       - name: Test chainlink:automationRegistrar module
-        working-directory: packages/hardhat-chainlink
         run: yarn test:automationRegistrar
       
       - name: Test chainlink:automationRegistry module
-        working-directory: packages/hardhat-chainlink
         run: yarn test:automationRegistry
