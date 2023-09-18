@@ -1,0 +1,21 @@
+RootDir = './clroot'
+
+[Log]
+JSONConsole = true
+Level = 'debug'
+
+[WebServer]
+AllowOrigins = '*'
+SecureCookies = false
+SessionTimeout = '999h0m0s'
+
+[WebServer.TLS]
+HTTPSPort = 0
+
+[[EVM]]
+ChainID = '{{CHAIN_ID}}' # Required
+
+[[EVM.Nodes]]
+Name = '{{CHAIN_NAME}}' # Required
+WSURL = '{{CHAIN_WSURL}}'
+HTTPURL = '{{CHAIN_HTTPURL}}'

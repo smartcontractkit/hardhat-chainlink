@@ -1,133 +1,120 @@
 import "@nomiclabs/hardhat-ethers";
-import { BigNumber, BytesLike } from "ethers";
+import { BigNumber, BigNumberish, BytesLike } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import {
-  acceptKeeperPayeeship,
-  cancelKeepersPendingRegistrationRequest,
-  cancelUpkeep,
-  checkUpkeep,
-  fundUpkeep,
-  getActiveUpkeepIDs,
-  getKeeperInfo,
-  getKeepersPendingRegistrationRequest,
-  getKeepersRegistrarConfig,
-  getKeepersRegistrarTypeAndVersion,
-  getKeepersRegistryState,
-  getKeepersRegistryTypeAndVersion,
-  getKeepersRegistryUpkeepTranscoderVersion,
-  getMinBalanceForUpkeep,
-  getUpkeep,
-  isKeepersRegistryPaused,
-  keepersGetMaxPaymentForGas,
-  migrateUpkeeps,
-  receiveMigratedUpkeeps,
-  registerUpkeep,
-  transferKeeperPayeeship,
-  withdrawFundsFromCanceledUpkeep,
-  withdrawKeeperPayment,
-} from "./automation";
-import {
-  addSubscriptionConsumer,
-  cancelSubscription,
-  fundSubscription,
-  getSubscriptionInfo,
-} from "./functions";
-import {
-  Denominations,
-  getAggregatorAddress,
-  getAggregatorRoundId,
-  getCurrentPhaseId,
-  getFeed,
-  getFeedRegistryDecimals,
-  getFeedRegistryDescription,
-  getFeedRegistryLatestRoundData,
-  getFeedRegistryProxyAggregatorVersion,
-  getFeedRegistryRoundData,
-  getHistoricalPrice,
-  getHistoricalPriceFromAggregator,
-  getLatestPrice,
-  getLatestRoundData,
-  getLatestRoundIdOfAggregator,
-  getLatestTimestampOfAggregator,
-  getNextRoundId,
-  getPhase,
-  getPhaseFeed,
-  getPhaseId,
-  getPhaseIdOfAggregator,
-  getPhaseRange,
-  getPreviousRoundId,
-  getPriceFeedAggregatorVersion,
-  getPriceFeedDecimals,
-  getPriceFeedDescription,
-  getRoundData,
-  getRoundFeed,
-  getRoundTimestampOfAggregator,
-  getTimeSinceLayer2SequencerIsUp,
-  getTypeAndVersionOfAggregator,
-  isFeedEnabled,
-  isLayer2SequencerUp,
-  resolveEnsAggregatorAddress,
-  resolveEnsAggregatorAddressWithSubdomains,
-} from "./priceFeeds";
-import {
-  acceptVrfSubscriptionOwnerTransfer,
-  addVrfConsumer,
-  cancelVrfSubscription,
-  createVrfSubscription,
-  fundVrfSubscription,
-  getMaxVrfConsumers,
-  getMaxVrfNumberOfWords,
-  getMaxVrfRequestConfirmations,
-  getMaxVrfRequestGasLimit,
-  getMinVrfRequestConfirmations,
-  getVrfCommitment,
-  getVrfCoordinatorConfig,
-  getVrfCoordinatorTypeAndVersion,
-  getVrfSubscriptionDetails,
-  pendingVrfRequestExists,
-  removeVrfConsumer,
-  requestVrfSubscriptionOwnerTransfer,
-} from "./vrf";
+import * as automationRegistrar from "./automation/keepersRegistrar";
+import * as automationRegistry from "./automation/keepersRegistry";
+import * as dataFeed from "./feeds/dataFeed";
+import * as dataFeedProxy from "./feeds/dataFeedProxy";
+import * as ensFeedsResolver from "./feeds/ensFeedsResolver";
+import * as feedRegistry from "./feeds/feedRegistry";
+import * as l2FeedUptimeSequencer from "./feeds/l2FeedUptimeSequencer";
+import * as registries from "./registries";
+import * as drConsumer from "./sandbox/drConsumer";
+import * as linkToken from "./sandbox/linkToken";
+import * as node from "./sandbox/node";
+import * as operator from "./sandbox/operator";
+import { DockerOutput } from "./shared/types";
+import * as utils from "./utils";
+import * as vrf from "./vrf";
 
 export class HardhatChainlink {
-  public denominations;
-  private env: HardhatRuntimeEnvironment;
+  public registries: {
+    dataFeeds: typeof registries.dataFeedsRegistry;
+    l2Sequencers: typeof registries.l2SequencersRegistry;
+    vrfCoordinators: typeof registries.vrfCoordinatorsRegistry;
+    keeperRegistries: typeof registries.keeperRegistriesRegistry;
+    functionOracles: typeof registries.functionOraclesRegistry;
+    linkTokens: typeof registries.linkTokensRegistry;
+    networks: typeof registries.networksRegistry;
+    denominations: typeof registries.denominationsRegistry;
+  };
+  public dataFeed: DataFeed;
+  public dataFeedProxy: DataFeedProxy;
+  public feedRegistry: FeedRegistry;
+  public ens: ENS;
+  public l2Sequencer: L2Sequencer;
+  public vrf: VRF;
+  public automationRegistrar: AutomationRegistrar;
+  public automationRegistry: AutomationRegistry;
+  public functionOracle: FunctionOracle;
+  public utils: Utils;
+  public sandbox: Sandbox;
+  private hre: HardhatRuntimeEnvironment;
 
-  constructor(env: HardhatRuntimeEnvironment) {
-    this.env = env;
-    this.denominations = Denominations;
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
+    this.registries = {
+      dataFeeds: registries.dataFeedsRegistry,
+      l2Sequencers: registries.l2SequencersRegistry,
+      vrfCoordinators: registries.vrfCoordinatorsRegistry,
+      keeperRegistries: registries.keeperRegistriesRegistry,
+      functionOracles: registries.functionOraclesRegistry,
+      linkTokens: registries.linkTokensRegistry,
+      networks: registries.networksRegistry,
+      denominations: registries.denominationsRegistry,
+    };
+    this.dataFeed = new DataFeed(this.hre);
+    this.dataFeedProxy = new DataFeedProxy(this.hre);
+    this.feedRegistry = new FeedRegistry(this.hre);
+    this.ens = new ENS(this.hre);
+    this.l2Sequencer = new L2Sequencer(this.hre);
+    this.vrf = new VRF(this.hre);
+    this.automationRegistrar = new AutomationRegistrar(this.hre);
+    this.automationRegistry = new AutomationRegistry(this.hre);
+    this.functionOracle = new FunctionOracle(this.hre);
+    this.utils = new Utils(this.hre);
+    this.sandbox = new Sandbox(this.hre);
+  }
+}
+
+class Sandbox {
+  public node: Node;
+  public operator: Operator;
+  public drConsumer: DRConsumer;
+  public linkToken: LinkToken;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.node = new Node(hre);
+    this.operator = new Operator(hre);
+    this.drConsumer = new DRConsumer(hre);
+    this.linkToken = new LinkToken(hre);
+  }
+}
+
+class DataFeed {
+  private hre: HardhatRuntimeEnvironment;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
   }
 
-  public async getLatestPrice(priceFeedAddress: string): Promise<BigNumber> {
-    return getLatestPrice(this.env, priceFeedAddress);
-  }
-
-  public async getLatestRoundData(
+  public async getLatestRoundAnswer(
     dataFeedAddress: string
-  ): Promise<{
+  ): Promise<BigNumber> {
+    return dataFeed.getLatestRoundAnswer(this.hre, dataFeedAddress);
+  }
+
+  public async getLatestRoundData(dataFeedAddress: string): Promise<{
     roundId: BigNumber;
     answer: BigNumber;
     startedAt: BigNumber;
     updatedAt: BigNumber;
     answeredInRound: BigNumber;
   }> {
-    return getLatestRoundData(this.env, dataFeedAddress);
+    return dataFeed.getLatestRoundData(this.hre, dataFeedAddress);
   }
 
-  public async getPriceFeedDecimals(priceFeedAddress: string): Promise<number> {
-    return getPriceFeedDecimals(this.env, priceFeedAddress);
-  }
-
-  public async getPriceFeedDescription(
-    priceFeedAddress: string
-  ): Promise<string> {
-    return getPriceFeedDescription(this.env, priceFeedAddress);
+  public async getRoundAnswer(
+    dataFeedAddress: string,
+    roundId: BigNumberish
+  ): Promise<BigNumber> {
+    return dataFeed.getRoundAnswer(this.hre, dataFeedAddress, roundId);
   }
 
   public async getRoundData(
-    priceFeedAddress: string,
-    roundId: BigNumber
+    dataFeedAddress: string,
+    roundId: BigNumberish
   ): Promise<{
     roundId: BigNumber;
     answer: BigNumber;
@@ -135,44 +122,404 @@ export class HardhatChainlink {
     updatedAt: BigNumber;
     answeredInRound: BigNumber;
   }> {
-    return getRoundData(this.env, priceFeedAddress, roundId);
+    return dataFeed.getRoundData(this.hre, dataFeedAddress, roundId);
   }
 
-  public async getAggregatorAddress(priceFeedAddress: string): Promise<string> {
-    return getAggregatorAddress(this.env, priceFeedAddress);
+  public async getLatestRoundId(dataFeedAddress: string): Promise<BigNumber> {
+    return dataFeed.getLatestRoundId(this.hre, dataFeedAddress);
   }
 
-  public async getAggregatorRoundId(
-    priceFeedAddress: string
+  public async getDecimals(dataFeedAddress: string): Promise<number> {
+    return dataFeed.getDecimals(this.hre, dataFeedAddress);
+  }
+
+  public async getDescription(dataFeedAddress: string): Promise<string> {
+    return dataFeed.getDescription(this.hre, dataFeedAddress);
+  }
+
+  public async getVersion(dataFeedAddress: string): Promise<BigNumber> {
+    return dataFeed.getVersion(this.hre, dataFeedAddress);
+  }
+}
+
+class DataFeedProxy {
+  private hre: HardhatRuntimeEnvironment;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
+  }
+
+  public async getLatestRoundAnswer(
+    dataFeedProxyAddress: string
   ): Promise<BigNumber> {
-    return getAggregatorRoundId(this.env, priceFeedAddress);
+    return dataFeedProxy.getLatestRoundAnswer(this.hre, dataFeedProxyAddress);
   }
 
-  public async getPhaseId(priceFeedAddress: string): Promise<BigNumber> {
-    return getPhaseId(this.env, priceFeedAddress);
+  public async getLatestRoundData(dataFeedProxyAddress: string): Promise<{
+    roundId: BigNumber;
+    answer: BigNumber;
+    startedAt: BigNumber;
+    updatedAt: BigNumber;
+    answeredInRound: BigNumber;
+  }> {
+    return dataFeedProxy.getLatestRoundData(this.hre, dataFeedProxyAddress);
   }
 
-  public async getHistoricalPrice(
-    priceFeedAddress: string,
-    roundId: BigNumber
+  public async getRoundAnswer(
+    dataFeedProxyAddress: string,
+    roundId: BigNumberish
   ): Promise<BigNumber> {
-    return getHistoricalPrice(this.env, priceFeedAddress, roundId);
+    return dataFeedProxy.getRoundAnswer(
+      this.hre,
+      dataFeedProxyAddress,
+      roundId
+    );
   }
 
-  public async getPriceFeedAggregatorVersion(
-    priceFeedAddress: string
+  public async getRoundData(
+    dataFeedProxyAddress: string,
+    roundId: BigNumberish
+  ): Promise<{
+    roundId: BigNumber;
+    answer: BigNumber;
+    startedAt: BigNumber;
+    updatedAt: BigNumber;
+    answeredInRound: BigNumber;
+  }> {
+    return dataFeedProxy.getRoundData(this.hre, dataFeedProxyAddress, roundId);
+  }
+
+  public async getLatestRoundId(
+    dataFeedProxyAddress: string
   ): Promise<BigNumber> {
-    return getPriceFeedAggregatorVersion(this.env, priceFeedAddress);
+    return dataFeedProxy.getLatestRoundId(this.hre, dataFeedProxyAddress);
   }
 
-  public async resolveEnsAggregatorAddress(
+  public async getDecimals(dataFeedProxyAddress: string): Promise<number> {
+    return dataFeedProxy.getDecimals(this.hre, dataFeedProxyAddress);
+  }
+
+  public async getDescription(dataFeedProxyAddress: string): Promise<string> {
+    return dataFeedProxy.getDescription(this.hre, dataFeedProxyAddress);
+  }
+
+  public async getVersion(dataFeedProxyAddress: string): Promise<BigNumber> {
+    return dataFeedProxy.getVersion(this.hre, dataFeedProxyAddress);
+  }
+
+  public async getAggregator(dataFeedProxyAddress: string): Promise<string> {
+    return dataFeedProxy.getAggregator(this.hre, dataFeedProxyAddress);
+  }
+
+  public async getPhaseId(dataFeedProxyAddress: string): Promise<number> {
+    return dataFeedProxy.getPhaseId(this.hre, dataFeedProxyAddress);
+  }
+
+  public async getPhaseAggregators(
+    dataFeedProxyAddress: string,
+    phaseId: BigNumberish
+  ): Promise<string> {
+    return dataFeedProxy.getPhaseAggregators(
+      this.hre,
+      dataFeedProxyAddress,
+      phaseId
+    );
+  }
+}
+
+class FeedRegistry {
+  private hre: HardhatRuntimeEnvironment;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
+  }
+
+  public async getLatestRoundData(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string
+  ): Promise<{
+    roundId: BigNumber;
+    answer: BigNumber;
+    startedAt: BigNumber;
+    updatedAt: BigNumber;
+    answeredInRound: BigNumber;
+  }> {
+    return feedRegistry.getLatestRoundData(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick
+    );
+  }
+
+  public async getRoundData(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string,
+    roundId: BigNumberish
+  ): Promise<{
+    roundId: BigNumber;
+    answer: BigNumber;
+    startedAt: BigNumber;
+    updatedAt: BigNumber;
+    answeredInRound: BigNumber;
+  }> {
+    return feedRegistry.getRoundData(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick,
+      roundId
+    );
+  }
+
+  public async proposedGetLatestRoundData(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string
+  ): Promise<{
+    roundId: BigNumber;
+    answer: BigNumber;
+    startedAt: BigNumber;
+    updatedAt: BigNumber;
+    answeredInRound: BigNumber;
+  }> {
+    return feedRegistry.proposedGetLatestRoundData(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick
+    );
+  }
+
+  public async proposedGetRoundData(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string,
+    roundId: BigNumberish
+  ): Promise<{
+    roundId: BigNumber;
+    answer: BigNumber;
+    startedAt: BigNumber;
+    updatedAt: BigNumber;
+    answeredInRound: BigNumber;
+  }> {
+    return feedRegistry.proposedGetRoundData(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick,
+      roundId
+    );
+  }
+
+  public async getRoundFeed(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string,
+    roundId: BigNumberish
+  ): Promise<string> {
+    return feedRegistry.getRoundFeed(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick,
+      roundId
+    );
+  }
+
+  public async getFeed(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string
+  ): Promise<string> {
+    return feedRegistry.getFeed(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick
+    );
+  }
+
+  public async getProposedFeed(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string
+  ): Promise<string> {
+    return feedRegistry.getProposedFeed(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick
+    );
+  }
+
+  public async isFeedEnabled(
+    feedRegistryAddress: string,
+    aggregatorAddress: string
+  ): Promise<boolean> {
+    return feedRegistry.isFeedEnabled(
+      this.hre,
+      feedRegistryAddress,
+      aggregatorAddress
+    );
+  }
+
+  public async getPreviousRoundId(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string,
+    roundId: BigNumberish
+  ): Promise<BigNumber> {
+    return feedRegistry.getPreviousRoundId(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick,
+      roundId
+    );
+  }
+
+  public async getNextRoundId(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string,
+    roundId: BigNumberish
+  ): Promise<BigNumber> {
+    return feedRegistry.getNextRoundId(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick,
+      roundId
+    );
+  }
+
+  public async getDecimals(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string
+  ): Promise<number> {
+    return feedRegistry.getDecimals(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick
+    );
+  }
+
+  public async getDescription(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string
+  ): Promise<string> {
+    return feedRegistry.getDescription(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick
+    );
+  }
+
+  public async getVersion(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string
+  ): Promise<BigNumber> {
+    return feedRegistry.getVersion(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick
+    );
+  }
+
+  public async getPhase(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string,
+    phaseId: BigNumberish
+  ): Promise<{
+    phaseId: number;
+    startingAggregatorRoundId: BigNumber;
+    endingAggregatorRoundId: BigNumber;
+  }> {
+    return feedRegistry.getPhase(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick,
+      phaseId
+    );
+  }
+
+  public async getPhaseFeed(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string,
+    phaseId: BigNumberish
+  ): Promise<string> {
+    return feedRegistry.getPhaseFeed(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick,
+      phaseId
+    );
+  }
+
+  public async getPhaseRange(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string,
+    phaseId: BigNumberish
+  ): Promise<{
+    startingRoundId: BigNumber;
+    endingRoundId: BigNumber;
+  }> {
+    return feedRegistry.getPhaseRange(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick,
+      phaseId
+    );
+  }
+
+  public async getCurrentPhaseId(
+    feedRegistryAddress: string,
+    feedRegistryBaseTick: string,
+    feedRegistryQuoteTick: string
+  ): Promise<number> {
+    return feedRegistry.getCurrentPhaseId(
+      this.hre,
+      feedRegistryAddress,
+      feedRegistryBaseTick,
+      feedRegistryQuoteTick
+    );
+  }
+}
+
+class ENS {
+  private hre: HardhatRuntimeEnvironment;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
+  }
+
+  public async resolveAggregatorAddress(
     baseTick: string,
     quoteTick: string
   ): Promise<string> {
-    return resolveEnsAggregatorAddress(this.env, baseTick, quoteTick);
+    return ensFeedsResolver.resolveAggregatorAddress(
+      this.hre,
+      baseTick,
+      quoteTick
+    );
   }
 
-  public async resolveEnsAggregatorAddressWithSubdomains(
+  public async resolveAggregatorAddressWithSubdomains(
     baseTick: string,
     quoteTick: string
   ): Promise<{
@@ -180,700 +527,334 @@ export class HardhatChainlink {
     underlyingAggregator: string;
     proposedAggregator: string;
   }> {
-    return resolveEnsAggregatorAddressWithSubdomains(
-      this.env,
+    return ensFeedsResolver.resolveAggregatorAddressWithSubdomains(
+      this.hre,
       baseTick,
       quoteTick
     );
   }
+}
 
-  public async getFeedRegistryDecimals(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string
-  ): Promise<number> {
-    return getFeedRegistryDecimals(this.env, feedRegistryAddress, base, quote);
+class L2Sequencer {
+  private hre: HardhatRuntimeEnvironment;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
   }
 
-  public async getFeedRegistryDescription(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string
-  ): Promise<string> {
-    return getFeedRegistryDescription(
-      this.env,
-      feedRegistryAddress,
-      base,
-      quote
-    );
+  public async isL2SequencerUp(l2SequencerAddress: string): Promise<boolean> {
+    return l2FeedUptimeSequencer.isL2SequencerUp(this.hre, l2SequencerAddress);
   }
 
-  public async getFeedRegistryRoundData(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string,
-    roundId: BigNumber
-  ): Promise<{
-    roundId: BigNumber;
-    answer: BigNumber;
-    startedAt: BigNumber;
-    updatedAt: BigNumber;
-    answeredInRound: BigNumber;
-  }> {
-    return getFeedRegistryRoundData(
-      this.env,
-      feedRegistryAddress,
-      base,
-      quote,
-      roundId
-    );
-  }
-
-  public async getFeedRegistryLatestRoundData(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string
-  ): Promise<{
-    roundId: BigNumber;
-    answer: BigNumber;
-    startedAt: BigNumber;
-    updatedAt: BigNumber;
-    answeredInRound: BigNumber;
-  }> {
-    return getFeedRegistryLatestRoundData(
-      this.env,
-      feedRegistryAddress,
-      base,
-      quote
-    );
-  }
-
-  public async getFeedRegistryProxyAggregatorVersion(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string
-  ): Promise<BigNumber> {
-    return getFeedRegistryProxyAggregatorVersion(
-      this.env,
-      feedRegistryAddress,
-      base,
-      quote
-    );
-  }
-
-  public async getFeed(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string
-  ): Promise<string> {
-    return getFeed(this.env, feedRegistryAddress, base, quote);
-  }
-
-  public async getPhaseFeed(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string,
-    phaseId: BigNumber
-  ): Promise<string> {
-    return getPhaseFeed(this.env, feedRegistryAddress, base, quote, phaseId);
-  }
-
-  public async isFeedEnabled(
-    feedRegistryAddress: string,
-    aggregatorAddress: string
-  ): Promise<boolean> {
-    return isFeedEnabled(this.env, feedRegistryAddress, aggregatorAddress);
-  }
-
-  public async getPhase(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string,
-    phaseId: BigNumber
-  ): Promise<{
-    phaseId: number;
-    startingAggregatorRoundId: BigNumber;
-    endingAggregatorRoundId: BigNumber;
-  }> {
-    return getPhase(this.env, feedRegistryAddress, base, quote, phaseId);
-  }
-
-  public async getRoundFeed(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string,
-    roundId: BigNumber
-  ): Promise<string> {
-    return getRoundFeed(this.env, feedRegistryAddress, base, quote, roundId);
-  }
-
-  public async getPhaseRange(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string,
-    phaseId: BigNumber
-  ): Promise<{
-    startingRoundId: BigNumber;
-    endingRoundId: BigNumber;
-  }> {
-    return getPhaseRange(this.env, feedRegistryAddress, base, quote, phaseId);
-  }
-
-  public async getPreviousRoundId(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string,
-    roundId: BigNumber
-  ): Promise<BigNumber> {
-    return getPreviousRoundId(
-      this.env,
-      feedRegistryAddress,
-      base,
-      quote,
-      roundId
-    );
-  }
-
-  public async getNextRoundId(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string,
-    roundId: BigNumber
-  ): Promise<BigNumber> {
-    return getNextRoundId(this.env, feedRegistryAddress, base, quote, roundId);
-  }
-
-  public async getCurrentPhaseId(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string
-  ): Promise<number> {
-    return getCurrentPhaseId(this.env, feedRegistryAddress, base, quote);
-  }
-
-  public async getHistoricalPriceFromAggregator(
-    aggregatorAddress: string,
-    aggregatorRoundId: BigNumber
-  ): Promise<BigNumber> {
-    return getHistoricalPriceFromAggregator(
-      this.env,
-      aggregatorAddress,
-      aggregatorRoundId
-    );
-  }
-
-  // DEPRECATED
-  // public async getRoundTimestampOfAggregator(
-  //   aggregatorAddress: string,
-  //   aggregatorRoundId: BigNumber
-  // ): Promise<BigNumber> {
-  //   return getRoundTimestampOfAggregator(
-  //     this.env,
-  //     aggregatorAddress,
-  //     aggregatorRoundId
-  //   );
-  // }
-
-  // DEPRECATED
-  // public async getLatestTimestampOfAggregator(
-  //   aggregatorAddress: string
-  // ): Promise<BigNumber> {
-  //   return getLatestTimestampOfAggregator(this.env, aggregatorAddress);
-  // }
-
-  // DEPRECATED
-  // public async getLatestRoundIdOfAggregator(
-  //   aggregatorAddress: string
-  // ): Promise<BigNumber> {
-  //   return getLatestRoundIdOfAggregator(this.env, aggregatorAddress);
-  // }
-
-  public async getTypeAndVersionOfAggregator(
-    aggregatorAddress: string
-  ): Promise<string> {
-    return getTypeAndVersionOfAggregator(this.env, aggregatorAddress);
-  }
-
-  public async getPhaseIdOfAggregator(
-    aggregatorAddress: string
-  ): Promise<BigNumber> {
-    return getPhaseIdOfAggregator(this.env, aggregatorAddress);
-  }
-
-  public async isLayer2SequencerUp(
-    sequencerUptimeFeedAddress: string
-  ): Promise<boolean> {
-    return isLayer2SequencerUp(this.env, sequencerUptimeFeedAddress);
-  }
-
-  public async getTimeSinceLayer2SequencerIsUp(
-    sequencerUptimeFeedAddress: string,
-    gracePeriodTime = BigNumber.from(3600)
+  public async getTimeSinceL2SequencerIsUp(
+    l2SequencerAddress: string,
+    gracePeriodTime: BigNumberish = BigNumber.from(3600)
   ): Promise<{
     isSequencerUp: boolean;
     timeSinceUp: BigNumber;
     isGracePeriodOver: boolean;
   }> {
-    return getTimeSinceLayer2SequencerIsUp(
-      this.env,
-      sequencerUptimeFeedAddress,
+    return l2FeedUptimeSequencer.getTimeSinceL2SequencerIsUp(
+      this.hre,
+      l2SequencerAddress,
       gracePeriodTime
     );
   }
+}
 
-  public async createVrfSubscription(
-    vrfCoordinatorAddress: string,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ subscriptionId: BigNumber; transactionHash: string }> {
-    return createVrfSubscription(
-      this.env,
-      vrfCoordinatorAddress,
-      waitNumberOfConfirmations
-    );
+class VRF {
+  private hre: HardhatRuntimeEnvironment;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
   }
 
-  public async fundVrfSubscription(
+  public async createSubscription(
+    vrfCoordinatorAddress: string
+  ): Promise<{ subscriptionId: BigNumber; transactionHash: string }> {
+    return vrf.createSubscription(this.hre, vrfCoordinatorAddress);
+  }
+
+  public async fundSubscription(
     vrfCoordinatorAddress: string,
     linkTokenAddress: string,
-    amountInJuels: BigNumber,
-    subscriptionId: BigNumber,
-    waitNumberOfConfirmations: number = 1
+    amountInJuels: BigNumberish,
+    subscriptionId: BigNumberish
   ): Promise<{ transactionHash: string }> {
-    return fundVrfSubscription(
-      this.env,
+    return vrf.fundSubscription(
+      this.hre,
       vrfCoordinatorAddress,
       linkTokenAddress,
       amountInJuels,
-      subscriptionId,
-      waitNumberOfConfirmations
+      subscriptionId
     );
   }
 
-  public async addVrfConsumer(
+  public async cancelSubscription(
+    vrfCoordinatorAddress: string,
+    subscriptionId: BigNumberish,
+    receivingWallet: string
+  ): Promise<{ transactionHash: string }> {
+    return vrf.cancelSubscription(
+      this.hre,
+      vrfCoordinatorAddress,
+      subscriptionId,
+      receivingWallet
+    );
+  }
+
+  public async addConsumer(
     vrfCoordinatorAddress: string,
     consumerAddress: string,
-    subscriptionId: BigNumber,
-    waitNumberOfConfirmations: number = 1
+    subscriptionId: BigNumberish
   ): Promise<{ transactionHash: string }> {
-    return addVrfConsumer(
-      this.env,
+    return vrf.addConsumer(
+      this.hre,
       vrfCoordinatorAddress,
       consumerAddress,
-      subscriptionId,
-      waitNumberOfConfirmations
+      subscriptionId
     );
   }
 
-  public async removeVrfConsumer(
+  public async removeConsumer(
     vrfCoordinatorAddress: string,
     consumerAddress: string,
-    subscriptionId: BigNumber,
-    waitNumberOfConfirmations: number = 1
+    subscriptionId: BigNumberish
   ): Promise<{ transactionHash: string }> {
-    return removeVrfConsumer(
-      this.env,
+    return vrf.removeConsumer(
+      this.hre,
       vrfCoordinatorAddress,
       consumerAddress,
-      subscriptionId,
-      waitNumberOfConfirmations
+      subscriptionId
     );
   }
 
-  public async cancelVrfSubscription(
+  public async requestRandomWords(
     vrfCoordinatorAddress: string,
-    subscriptionId: BigNumber,
-    receivingWallet: string,
-    waitNumberOfConfirmations: number = 1
+    keyHash: BytesLike,
+    subscriptionId: BigNumberish,
+    requestConfirmations: BigNumberish,
+    callbackGasLimit: BigNumberish,
+    numWords: BigNumberish
   ): Promise<{ transactionHash: string }> {
-    return cancelVrfSubscription(
-      this.env,
+    return vrf.requestRandomWords(
+      this.hre,
       vrfCoordinatorAddress,
+      keyHash,
       subscriptionId,
-      receivingWallet,
-      waitNumberOfConfirmations
+      requestConfirmations,
+      callbackGasLimit,
+      numWords
     );
   }
 
-  public async getVrfSubscriptionDetails(
+  public async getSubscriptionDetails(
     vrfCoordinatorAddress: string,
-    subscriptionId: BigNumber
+    subscriptionId: BigNumberish
   ): Promise<{
     balance: BigNumber;
     reqCount: BigNumber;
     owner: string;
     consumers: string[];
   }> {
-    return getVrfSubscriptionDetails(
-      this.env,
+    return vrf.getSubscriptionDetails(
+      this.hre,
       vrfCoordinatorAddress,
       subscriptionId
     );
   }
 
-  public async pendingVrfRequestExists(
+  public async isPendingRequestExists(
     vrfCoordinatorAddress: string,
-    subscriptionId: BigNumber
+    subscriptionId: BigNumberish
   ): Promise<boolean> {
-    return pendingVrfRequestExists(
-      this.env,
+    return vrf.isPendingRequestExists(
+      this.hre,
       vrfCoordinatorAddress,
       subscriptionId
     );
   }
 
-  public async requestVrfSubscriptionOwnerTransfer(
+  public async requestSubscriptionOwnerTransfer(
     vrfCoordinatorAddress: string,
-    subscriptionId: BigNumber,
-    newOwnerAddress: string,
-    waitNumberOfConfirmations: number = 1
+    subscriptionId: BigNumberish,
+    newOwnerAddress: string
   ): Promise<{ transactionHash: string }> {
-    return requestVrfSubscriptionOwnerTransfer(
-      this.env,
+    return vrf.requestSubscriptionOwnerTransfer(
+      this.hre,
       vrfCoordinatorAddress,
       subscriptionId,
-      newOwnerAddress,
-      waitNumberOfConfirmations
+      newOwnerAddress
     );
   }
 
-  public async acceptVrfSubscriptionOwnerTransfer(
+  public async acceptSubscriptionOwnerTransfer(
     vrfCoordinatorAddress: string,
-    subscriptionId: BigNumber,
-    waitNumberOfConfirmations: number = 1
+    subscriptionId: BigNumberish
   ): Promise<{ transactionHash: string }> {
-    return acceptVrfSubscriptionOwnerTransfer(
-      this.env,
+    return vrf.acceptSubscriptionOwnerTransfer(
+      this.hre,
       vrfCoordinatorAddress,
-      subscriptionId,
-      waitNumberOfConfirmations
+      subscriptionId
     );
   }
 
-  public async getMaxVrfConsumers(
-    vrfCoordinatorAddress: string
-  ): Promise<number> {
-    return getMaxVrfConsumers(this.env, vrfCoordinatorAddress);
-  }
-
-  public async getMaxVrfNumberOfWords(
-    vrfCoordinatorAddress: string
-  ): Promise<number> {
-    return getMaxVrfNumberOfWords(this.env, vrfCoordinatorAddress);
-  }
-
-  public async getMaxVrfRequestConfirmations(
-    vrfCoordinatorAddress: string
-  ): Promise<number> {
-    return getMaxVrfRequestConfirmations(this.env, vrfCoordinatorAddress);
-  }
-
-  public async getMinVrfRequestConfirmations(
-    vrfCoordinatorAddress: string
-  ): Promise<number> {
-    return getMinVrfRequestConfirmations(this.env, vrfCoordinatorAddress);
-  }
-
-  public async getMaxVrfRequestGasLimit(
-    vrfCoordinatorAddress: string
-  ): Promise<number> {
-    return getMaxVrfRequestGasLimit(this.env, vrfCoordinatorAddress);
-  }
-
-  public async getVrfCommitment(
+  public async getCommitment(
     vrfCoordinatorAddress: string,
-    requestId: BigNumber
+    requestId: BigNumberish
   ): Promise<BytesLike> {
-    return getVrfCommitment(this.env, vrfCoordinatorAddress, requestId);
+    return vrf.getCommitment(this.hre, vrfCoordinatorAddress, requestId);
   }
 
-  public async getVrfCoordinatorConfig(
+  public async getMaxConsumers(vrfCoordinatorAddress: string): Promise<number> {
+    return vrf.getMaxConsumers(this.hre, vrfCoordinatorAddress);
+  }
+
+  public async getMaxNumberOfWords(
     vrfCoordinatorAddress: string
-  ): Promise<{
+  ): Promise<number> {
+    return vrf.getMaxNumberOfWords(this.hre, vrfCoordinatorAddress);
+  }
+
+  public async getMaxRequestConfirmations(
+    vrfCoordinatorAddress: string
+  ): Promise<number> {
+    return vrf.getMaxRequestConfirmations(this.hre, vrfCoordinatorAddress);
+  }
+
+  public async getMinRequestConfirmations(
+    vrfCoordinatorAddress: string
+  ): Promise<number> {
+    return vrf.getMinRequestConfirmations(this.hre, vrfCoordinatorAddress);
+  }
+
+  public async getMaxRequestGasLimit(
+    vrfCoordinatorAddress: string
+  ): Promise<number> {
+    return vrf.getMaxRequestGasLimit(this.hre, vrfCoordinatorAddress);
+  }
+
+  public async getConfig(vrfCoordinatorAddress: string): Promise<{
     minimumRequestConfirmations: number;
     maxGasLimit: number;
     stalenessSeconds: number;
     gasAfterPaymentCalculation: number;
   }> {
-    return getVrfCoordinatorConfig(this.env, vrfCoordinatorAddress);
+    return vrf.getConfig(this.hre, vrfCoordinatorAddress);
   }
 
-  public async getVrfCoordinatorTypeAndVersion(
+  public async getTypeAndVersion(
     vrfCoordinatorAddress: string
   ): Promise<string> {
-    return getVrfCoordinatorTypeAndVersion(this.env, vrfCoordinatorAddress);
+    return vrf.getTypeAndVersion(this.hre, vrfCoordinatorAddress);
+  }
+}
+
+class AutomationRegistrar {
+  private hre: HardhatRuntimeEnvironment;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
   }
 
   public async registerUpkeep(
+    keepersRegistrarAddress: string,
     linkTokenAddress: string,
-    automationRegistrarAddress: string,
-    amountInJuels: BigNumber,
-    name: string,
+    amountInJuels: BigNumberish,
+    upkeepName: string,
     encryptedEmail: BytesLike,
     upkeepContract: string,
-    gasLimit: number,
+    gasLimit: BigNumberish,
     adminAddress: string,
     checkData: BytesLike,
-    source: number,
-    sender: string,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }> {
-    return registerUpkeep(
-      this.env,
+    ocrConfig: BytesLike | undefined,
+    source: BigNumberish | undefined,
+    sender: string
+  ): Promise<{
+    transactionHash: string;
+    requestHash: string;
+    upkeepId: BigNumber;
+  }> {
+    return automationRegistrar.registerUpkeep(
+      this.hre,
+      keepersRegistrarAddress,
       linkTokenAddress,
-      automationRegistrarAddress,
       amountInJuels,
-      name,
+      upkeepName,
       encryptedEmail,
       upkeepContract,
       gasLimit,
       adminAddress,
       checkData,
+      ocrConfig,
       source,
-      sender,
-      waitNumberOfConfirmations
+      sender
     );
   }
 
-  public async getAutomationPendingRegistrationRequest(
-    automationRegistrarAddress: string,
-    hash: BytesLike
+  public async getPendingRequest(
+    keepersRegistrarAddress: string,
+    requestHash: BytesLike
   ): Promise<{
     adminAddress: string;
     balance: BigNumber;
   }> {
-    return getKeepersPendingRegistrationRequest(
-      this.env,
-      automationRegistrarAddress,
-      hash
+    return automationRegistrar.getPendingRequest(
+      this.hre,
+      keepersRegistrarAddress,
+      requestHash
     );
   }
 
-  public async cancelAutomationPendingRegistrationRequest(
-    automationRegistrarAddress: string,
-    hash: BytesLike,
-    waitNumberOfConfirmations: number = 1
+  public async cancelRequest(
+    keepersRegistrarAddress: string,
+    requestHash: BytesLike
   ): Promise<{ transactionHash: string }> {
-    return cancelKeepersPendingRegistrationRequest(
-      this.env,
-      automationRegistrarAddress,
-      hash,
-      waitNumberOfConfirmations
+    return automationRegistrar.cancelRequest(
+      this.hre,
+      keepersRegistrarAddress,
+      requestHash
     );
   }
 
-  public async getAutomationRegistrarConfig(
-    automationRegistrarAddress: string
-  ): Promise<{
+  public async getRegistrationConfig(keepersRegistrarAddress: string): Promise<{
     autoApproveConfigType: number;
     autoApproveMaxAllowed: number;
     approvedCount: number;
-    automationRegistry: string;
+    keeperRegistry: string;
     minLINKJuels: BigNumber;
   }> {
-    return getKeepersRegistrarConfig(this.env, automationRegistrarAddress);
+    return automationRegistrar.getRegistrationConfig(
+      this.hre,
+      keepersRegistrarAddress
+    );
   }
 
-  public async getAutomationRegistrarTypeAndVersion(
-    automationRegistrarAddress: string
+  public async getTypeAndVersion(
+    keepersRegistrarAddress: string
   ): Promise<string> {
-    return getKeepersRegistrarTypeAndVersion(
-      this.env,
-      automationRegistrarAddress
+    return automationRegistrar.getTypeAndVersion(
+      this.hre,
+      keepersRegistrarAddress
     );
   }
+}
 
-  public async fundUpkeep(
-    automationRegistryAddress: string,
-    id: BigNumber,
-    amountInJuels: BigNumber,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }> {
-    return fundUpkeep(
-      this.env,
-      automationRegistryAddress,
-      id,
-      amountInJuels,
-      waitNumberOfConfirmations
-    );
+class AutomationRegistry {
+  private hre: HardhatRuntimeEnvironment;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
   }
 
-  public async checkUpkeep(
-    automationRegistryAddress: string,
-    id: BigNumber,
-    address: string
-  ): Promise<{
-    performData: BytesLike;
-    maxLinkPayment: BigNumber;
-    gasLimit: BigNumber;
-    adjustedGasWei: BigNumber;
-    linkEth: BigNumber;
-  }> {
-    return checkUpkeep(this.env, automationRegistryAddress, id, address);
-  }
-
-  public async migrateUpkeeps(
-    automationRegistryAddress: string,
-    ids: BigNumber[],
-    destination: string,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }> {
-    return migrateUpkeeps(
-      this.env,
-      automationRegistryAddress,
-      ids,
-      destination,
-      waitNumberOfConfirmations
-    );
-  }
-
-  public async receiveMigratedUpkeeps(
-    automationRegistryAddress: string,
-    encodedUpkeeps: BytesLike,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }> {
-    return receiveMigratedUpkeeps(
-      this.env,
-      automationRegistryAddress,
-      encodedUpkeeps,
-      waitNumberOfConfirmations
-    );
-  }
-
-  public async cancelUpkeep(
-    automationRegistryAddress: string,
-    id: BigNumber,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }> {
-    return cancelUpkeep(
-      this.env,
-      automationRegistryAddress,
-      id,
-      waitNumberOfConfirmations
-    );
-  }
-
-  public async withdrawFundsFromCanceledUpkeep(
-    automationRegistryAddress: string,
-    id: BigNumber,
-    to: string,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }> {
-    return withdrawFundsFromCanceledUpkeep(
-      this.env,
-      automationRegistryAddress,
-      id,
-      to,
-      waitNumberOfConfirmations
-    );
-  }
-
-  public async transferAutomationPayeeship(
-    automationRegistryAddress: string,
-    automationNode: string,
-    proposed: string,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }> {
-    return transferKeeperPayeeship(
-      this.env,
-      automationRegistryAddress,
-      automationNode,
-      proposed,
-      waitNumberOfConfirmations
-    );
-  }
-
-  public async acceptAutomationPayeeship(
-    automationRegistryAddress: string,
-    automationNode: string,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }> {
-    return acceptKeeperPayeeship(
-      this.env,
-      automationRegistryAddress,
-      automationNode,
-      waitNumberOfConfirmations
-    );
-  }
-
-  public async withdrawAutomationPayment(
-    automationRegistryAddress: string,
-    from: string,
-    to: string,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }> {
-    return withdrawKeeperPayment(
-      this.env,
-      automationRegistryAddress,
-      from,
-      to,
-      waitNumberOfConfirmations
-    );
-  }
-
-  public async getActiveUpkeepIDs(
-    automationRegistryAddress: string,
-    startIndex: BigNumber,
-    maxCount: BigNumber
-  ): Promise<BigNumber[]> {
-    return getActiveUpkeepIDs(
-      this.env,
-      automationRegistryAddress,
-      startIndex,
-      maxCount
-    );
-  }
-
-  public async getUpkeep(
-    automationRegistryAddress: string,
-    id: BigNumber
-  ): Promise<{
-    target: string;
-    executeGas: number;
-    checkData: BytesLike;
-    balance: BigNumber;
-    lastAutomationNode: string;
-    admin: string;
-    maxValidBlocknumber: BigNumber;
-    amountSpent: BigNumber;
-  }> {
-    return getUpkeep(this.env, automationRegistryAddress, id);
-  }
-
-  public async getAutomationNodeInfo(
-    automationRegistryAddress: string,
-    query: string
-  ): Promise<{ payee: string; active: boolean; balance: BigNumber }> {
-    return getKeeperInfo(this.env, automationRegistryAddress, query);
-  }
-
-  public async automationGetMaxPaymentForGas(
-    automationRegistryAddress: string,
-    gasLimit: BigNumber
-  ): Promise<BigNumber> {
-    return keepersGetMaxPaymentForGas(
-      this.env,
-      automationRegistryAddress,
-      gasLimit
-    );
-  }
-
-  public async getMinBalanceForUpkeep(
-    automationRegistryAddress: string,
-    id: BigNumber
-  ): Promise<BigNumber> {
-    return getMinBalanceForUpkeep(this.env, automationRegistryAddress, id);
-  }
-
-  public async getAutomationRegistryState(
-    automationRegistryAddress: string
-  ): Promise<{
+  public async getState(keeperRegistryAddress: string): Promise<{
     nonce: number;
     ownerLinkBalance: BigNumber;
     expectedLinkBalance: BigNumber;
     numUpkeeps: BigNumber;
     paymentPremiumPPB: number;
     flatFeeMicroLink: number;
-    blockCountPerTurn: number;
+    blockCountPerTurn: number | undefined;
     checkGasLimit: number;
     stalenessSeconds: number;
     gasCeilingMultiplier: number;
@@ -883,84 +864,338 @@ export class HardhatChainlink {
     fallbackLinkPrice: BigNumber;
     transcoder: string;
     registrar: string;
-    automationNodes: string[];
+    keepers: string[] | undefined;
   }> {
-    return getKeepersRegistryState(this.env, automationRegistryAddress);
+    return automationRegistry.getState(this.hre, keeperRegistryAddress);
   }
 
-  public async isAutomationRegistryPaused(
-    automationRegistryAddress: string
-  ): Promise<boolean> {
-    return isKeepersRegistryPaused(this.env, automationRegistryAddress);
-  }
-
-  public async getAutomationRegistryTypeAndVersion(
-    automationRegistryAddress: string
-  ): Promise<string> {
-    return getKeepersRegistryTypeAndVersion(
-      this.env,
-      automationRegistryAddress
+  public async getActiveUpkeepIDs(
+    keeperRegistryAddress: string,
+    startIndex: BigNumberish,
+    maxCount: BigNumberish
+  ): Promise<BigNumber[]> {
+    return automationRegistry.getActiveUpkeepIDs(
+      this.hre,
+      keeperRegistryAddress,
+      startIndex,
+      maxCount
     );
   }
 
-  public async getAutomationRegistryUpkeepTranscoderVersion(
-    automationRegistryAddress: string
-  ): Promise<number> {
-    return getKeepersRegistryUpkeepTranscoderVersion(
-      this.env,
-      automationRegistryAddress
-    );
-  }
-
-  // --- Functions ---
-
-  public async functionsGetSubscriptionInfo(
-    registryAddress: string,
-    subscriptionId: number
-  ): Promise<{
-    balance: BigNumber;
-    owner: string;
-    consumers: string[];
-  }> {
-    return getSubscriptionInfo(this.env, registryAddress, subscriptionId);
-  }
-
-  public async functionsFundSubscription(
-    registryAddress: string,
-    subscriptionId: number,
-    linkAmount: string
+  public async getMaxPaymentForGas(
+    keeperRegistryAddress: string,
+    gasLimit: BigNumberish
   ): Promise<BigNumber> {
-    return fundSubscription(
-      this.env,
-      registryAddress,
-      subscriptionId,
-      linkAmount
+    return automationRegistry.getMaxPaymentForGas(
+      this.hre,
+      keeperRegistryAddress,
+      gasLimit
     );
   }
 
-  public async functionsCancelSubscription(
-    registryAddress: string,
-    subscriptionId: number,
-    refundAddress: string
-  ): Promise<void> {
-    return cancelSubscription(
-      this.env,
-      registryAddress,
-      subscriptionId,
-      refundAddress
+  public async isPaused(keeperRegistryAddress: string): Promise<boolean> {
+    return automationRegistry.isPaused(this.hre, keeperRegistryAddress);
+  }
+
+  public async getUpkeep(
+    keeperRegistryAddress: string,
+    upkeepId: BigNumberish
+  ): Promise<{
+    target: string;
+    executeGas: number;
+    checkData: BytesLike;
+    balance: BigNumber;
+    lastAutomationNode: string | undefined;
+    admin: string;
+    maxValidBlocknumber: BigNumber;
+    amountSpent: BigNumber;
+  }> {
+    return automationRegistry.getUpkeep(
+      this.hre,
+      keeperRegistryAddress,
+      upkeepId
     );
   }
 
-  public async functionsAddSubscriptionConsumer(
-    registryAddress: string,
-    subscriptionId: number,
-    consumerAddress: string
-  ): Promise<void> {
-    return addSubscriptionConsumer(
-      this.env,
-      registryAddress,
-      subscriptionId,
-      consumerAddress
+  public async fundUpkeep(
+    keeperRegistryAddress: string,
+    upkeepId: BigNumberish,
+    amountInJuels: BigNumberish
+  ): Promise<{ transactionHash: string }> {
+    return automationRegistry.fundUpkeep(
+      this.hre,
+      keeperRegistryAddress,
+      upkeepId,
+      amountInJuels
+    );
+  }
+
+  public async getMinBalanceForUpkeep(
+    keeperRegistryAddress: string,
+    upkeepId: BigNumberish
+  ): Promise<BigNumber> {
+    return automationRegistry.getMinBalanceForUpkeep(
+      this.hre,
+      keeperRegistryAddress,
+      upkeepId
+    );
+  }
+
+  public async cancelUpkeep(
+    keeperRegistryAddress: string,
+    upkeepId: BigNumberish
+  ): Promise<{ transactionHash: string }> {
+    return automationRegistry.cancelUpkeep(
+      this.hre,
+      keeperRegistryAddress,
+      upkeepId
+    );
+  }
+
+  public async withdrawFunds(
+    keeperRegistryAddress: string,
+    upkeepId: BigNumberish,
+    receivingAddress: string
+  ): Promise<{ transactionHash: string }> {
+    return automationRegistry.withdrawFunds(
+      this.hre,
+      keeperRegistryAddress,
+      upkeepId,
+      receivingAddress
+    );
+  }
+
+  public async migrateUpkeeps(
+    keeperRegistryAddress: string,
+    upkeepIds: BigNumberish[],
+    destination: string
+  ): Promise<{ transactionHash: string }> {
+    return automationRegistry.migrateUpkeeps(
+      this.hre,
+      keeperRegistryAddress,
+      upkeepIds,
+      destination
+    );
+  }
+
+  public async getKeeperInfo(
+    keeperRegistryAddress: string,
+    keeperAddress: string
+  ): Promise<{ payee: string; active: boolean; balance: BigNumber }> {
+    return automationRegistry.getKeeperInfo(
+      this.hre,
+      keeperRegistryAddress,
+      keeperAddress
+    );
+  }
+
+  public async getTypeAndVersion(
+    keeperRegistryAddress: string
+  ): Promise<string> {
+    return automationRegistry.getTypeAndVersion(
+      this.hre,
+      keeperRegistryAddress
+    );
+  }
+
+  public async getUpkeepTranscoderVersion(
+    keeperRegistryAddress: string
+  ): Promise<number> {
+    return automationRegistry.getUpkeepTranscoderVersion(
+      this.hre,
+      keeperRegistryAddress
+    );
+  }
+}
+
+class FunctionOracle {
+  private hre: HardhatRuntimeEnvironment;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
+  }
+}
+
+class Utils {
+  private hre: HardhatRuntimeEnvironment;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
+  }
+
+  public getRoundId(
+    phaseId: BigNumberish,
+    aggregatorRoundId: BigNumberish
+  ): BigNumber {
+    return utils.getRoundId(phaseId, aggregatorRoundId);
+  }
+
+  public parseRoundId(roundId: BigNumberish): {
+    phaseId: BigNumber;
+    aggregatorRoundId: BigNumber;
+  } {
+    return utils.parseRoundId(roundId);
+  }
+
+  public async transferETH(
+    recipient: string,
+    amount: BigNumberish
+  ): Promise<{
+    transactionHash: string;
+  }> {
+    return utils.transferETH(this.hre, recipient, amount);
+  }
+}
+
+// SANDBOX
+
+class Node {
+  private hre: HardhatRuntimeEnvironment;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
+  }
+
+  public async run(): Promise<DockerOutput> {
+    return node.run(this.hre);
+  }
+
+  public async restart(): Promise<DockerOutput> {
+    return node.restart(this.hre);
+  }
+
+  public async stop(): Promise<DockerOutput> {
+    return node.stop(this.hre);
+  }
+
+  public async getETHKeys(): Promise<string> {
+    return node.getETHKeys(this.hre);
+  }
+
+  public async getP2PKeys(): Promise<string> {
+    return node.getP2PKeys(this.hre);
+  }
+
+  public async getJobs(): Promise<string> {
+    return node.getJobs(this.hre);
+  }
+
+  public async createDirectRequestJob(operatorAddress: string): Promise<void> {
+    return node.createDirectRequestJob(this.hre, operatorAddress);
+  }
+}
+
+class Operator {
+  private hre: HardhatRuntimeEnvironment;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
+  }
+
+  public async deploy(linkTokenAddress: string): Promise<string> {
+    return operator.deploy(this.hre, linkTokenAddress);
+  }
+
+  public async setAuthorizedSender(
+    operatorAddress: string,
+    sender: string
+  ): Promise<{ transactionHash: string }> {
+    return operator.setAuthorizedSender(this.hre, operatorAddress, sender);
+  }
+}
+
+class DRConsumer {
+  private hre: HardhatRuntimeEnvironment;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
+  }
+
+  public async deploy(linkTokenAddress: string): Promise<string> {
+    return drConsumer.deploy(this.hre, linkTokenAddress);
+  }
+
+  public async requestData(
+    directRequestConsumerAddress: string,
+    operatorAddress: string,
+    externalJobID: string,
+    observationURL: string,
+    pathToData: string,
+    multiplyTimes: string
+  ): Promise<{ transactionHash: string }> {
+    return drConsumer.requestData(
+      this.hre,
+      directRequestConsumerAddress,
+      operatorAddress,
+      externalJobID,
+      observationURL,
+      pathToData,
+      multiplyTimes
+    );
+  }
+
+  public async getLatestAnswer(
+    directRequestConsumerAddress: string
+  ): Promise<BigNumber> {
+    return drConsumer.getLatestAnswer(this.hre, directRequestConsumerAddress);
+  }
+}
+
+class LinkToken {
+  private hre: HardhatRuntimeEnvironment;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
+  }
+
+  public async deploy(): Promise<string> {
+    return linkToken.deploy(this.hre);
+  }
+
+  public async transfer(
+    linkTokenAddress: string,
+    recipient: string,
+    addedValue: BigNumberish
+  ): Promise<{ transactionHash: string }> {
+    return linkToken.transfer(
+      this.hre,
+      linkTokenAddress,
+      recipient,
+      addedValue
+    );
+  }
+
+  public async getAllowance(
+    linkTokenAddress: string,
+    owner: string,
+    spender: string
+  ): Promise<BigNumber> {
+    return linkToken.getAllowance(this.hre, linkTokenAddress, owner, spender);
+  }
+
+  public async increaseApproval(
+    linkTokenAddress: string,
+    spender: string,
+    addedValue: BigNumberish
+  ): Promise<{ transactionHash: string }> {
+    return linkToken.increaseApproval(
+      this.hre,
+      linkTokenAddress,
+      spender,
+      addedValue
+    );
+  }
+
+  public async decreaseApproval(
+    linkTokenAddress: string,
+    spender: string,
+    subtractedValue: BigNumberish
+  ): Promise<{ transactionHash: string }> {
+    return linkToken.decreaseApproval(
+      this.hre,
+      linkTokenAddress,
+      spender,
+      subtractedValue
     );
   }
 }

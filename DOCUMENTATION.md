@@ -1,2010 +1,1036 @@
 # Hardhat Chainlink Plugin Documentation
+This document provides detailed information about each service module and its related methods available in the Hardhat Chainlink plugin.
+
+
+<!-- TOC -->
+* [Hardhat Chainlink Plugin Documentation](#hardhat-chainlink-plugin-documentation)
+  * [Data Feed Services](#data-feed-services)
+    * [Service alias: `dataFeed`](#service-alias-datafeed)
+    * [Methods](#methods)
+      * [Get Latest RoundAnswer](#get-latest-roundanswer)
+      * [Get Round Answer](#get-round-answer)
+      * [Get Latest Round Data](#get-latest-round-data)
+      * [Get Round Data](#get-round-data)
+      * [Get LatestRoundId](#get-latestroundid)
+      * [Get Decimals](#get-decimals)
+      * [Get Description](#get-description)
+      * [Get Version](#get-version)
+    * [Service alias: `dataFeedProxy`](#service-alias-datafeedproxy)
+    * [Methods](#methods-1)
+      * [Get Latest Round Answer](#get-latest-round-answer)
+      * [Get Round Answer](#get-round-answer-1)
+      * [Get Latest Round Data](#get-latest-round-data-1)
+      * [Get Round Data](#get-round-data-1)
+      * [Get Latest RoundId](#get-latest-roundid)
+      * [Get Decimals](#get-decimals-1)
+      * [Get Description](#get-description-1)
+      * [Get Version](#get-version-1)
+      * [Get Aggregator](#get-aggregator)
+      * [Get PhaseId](#get-phaseid)
+      * [Get Phase Aggregators](#get-phase-aggregators)
+    * [Service alias: `feedRegistry`](#service-alias-feedregistry)
+    * [Methods](#methods-2)
+      * [Get Latest Round Data](#get-latest-round-data-2)
+      * [Get Round Data](#get-round-data-2)
+      * [Get Proposed Latest Round Data](#get-proposed-latest-round-data)
+      * [Get Proposed Round Data](#get-proposed-round-data)
+      * [Get Round Feed](#get-round-feed)
+      * [Get Feed](#get-feed)
+      * [Get Proposed Feed](#get-proposed-feed)
+      * [Is Feed Enabled](#is-feed-enabled)
+      * [Get Previous Round ID](#get-previous-round-id)
+      * [Get Next Round ID](#get-next-round-id)
+      * [Get Decimals](#get-decimals-2)
+      * [Get Description](#get-description-2)
+      * [Get Version](#get-version-2)
+      * [Get Phase](#get-phase)
+      * [Get Phase Feed](#get-phase-feed)
+      * [Get Phase Range](#get-phase-range)
+      * [Get Current Phase ID](#get-current-phase-id)
+    * [Service alias: `l2Sequencer`](#service-alias-l2sequencer)
+    * [Methods](#methods-3)
+      * [Is L2 Sequencer Up](#is-l2-sequencer-up)
+      * [Get Time Since L2 Sequencer Is Up](#get-time-since-l2-sequencer-is-up)
+    * [Service alias: `ens`](#service-alias-ens)
+    * [Methods](#methods-4)
+      * [Resolve Aggregator Address](#resolve-aggregator-address)
+      * [Resolve Aggregator Address With Subdomains](#resolve-aggregator-address-with-subdomains)
+  * [VRF Service](#vrf-service)
+    * [Service alias: `vrf`](#service-alias-vrf)
+    * [Methods](#methods-5)
+      * [Create Subscription](#create-subscription)
+      * [Fund Subscription](#fund-subscription)
+      * [Cancel Subscription](#cancel-subscription)
+      * [Add Consumer](#add-consumer)
+      * [Remove Consumer](#remove-consumer)
+      * [Get Subscription Details](#get-subscription-details)
+      * [Request Random Words](#request-random-words)
+      * [Check Pending Request](#check-pending-request)
+      * [Request Subscription Owner Transfer](#request-subscription-owner-transfer)
+      * [Accept Subscription Owner Transfer](#accept-subscription-owner-transfer)
+      * [Get Maximum Consumers](#get-maximum-consumers)
+      * [Get Maximum Number of Words](#get-maximum-number-of-words)
+      * [Get Maximum Request Confirmations](#get-maximum-request-confirmations)
+      * [Get Minimum Request Confirmations](#get-minimum-request-confirmations)
+      * [Get Maximum Request Gas Limit](#get-maximum-request-gas-limit)
+      * [Get Commitment](#get-commitment)
+      * [Get Configuration](#get-configuration)
+      * [Get Type and Version](#get-type-and-version)
+  * [Automation Services](#automation-services)
+    * [Service alias: `automationRegistrar`](#service-alias-automationregistrar)
+    * [Methods](#methods-6)
+      * [Register Upkeep](#register-upkeep)
+      * [Get Pending Request](#get-pending-request)
+      * [Cancel Request](#cancel-request)
+      * [Get Registration Config](#get-registration-config)
+      * [Get Type And Version](#get-type-and-version-1)
+    * [Service alias: `automationRegistry`](#service-alias-automationregistry)
+    * [Methods](#methods-7)
+      * [Get State](#get-state)
+      * [Get Active Upkeep IDs](#get-active-upkeep-ids)
+      * [Get Max Payment For Gas](#get-max-payment-for-gas)
+      * [Is Paused](#is-paused)
+      * [Get Upkeep](#get-upkeep)
+      * [Get Min Balance For Upkeep](#get-min-balance-for-upkeep)
+      * [Fund Upkeep](#fund-upkeep)
+      * [Cancel Upkeep](#cancel-upkeep)
+      * [Withdraw Funds](#withdraw-funds)
+      * [Migrate Upkeeps](#migrate-upkeeps)
+      * [Get Keeper Info](#get-keeper-info)
+      * [Get Type And Version](#get-type-and-version-2)
+      * [Get Upkeep Transcoder Version](#get-upkeep-transcoder-version)
+  * [Utilities](#utilities)
+    * [Service alias: `utils`](#service-alias-utils)
+    * [Methods](#methods-8)
+      * [Get Data Feed Proxy/Registry Round ID](#get-data-feed-proxyregistry-round-id)
+      * [Parse Data Feed Proxy/Registry Round ID](#parse-data-feed-proxyregistry-round-id)
+      * [Transfer ETH](#transfer-eth)
+  * [Sandbox `sandbox`](#sandbox-sandbox)
+    * [Service alias: `node`](#service-alias-node)
+    * [Methods](#methods-9)
+      * [Run Chainlink node](#run-chainlink-node)
+      * [Restart Chainlink node](#restart-chainlink-node)
+      * [Stop Chainlink node](#stop-chainlink-node)
+      * [Get ETH keys](#get-eth-keys)
+      * [Get P2P keys](#get-p2p-keys)
+      * [Get OCR keys](#get-ocr-keys)
+      * [Get jobs](#get-jobs)
+      * [Create Direct Request job](#create-direct-request-job)
+    * [Service alias: `linkToken`](#service-alias-linktoken)
+    * [Methods](#methods-10)
+      * [Deploy contract](#deploy-contract)
+      * [Transfer](#transfer)
+      * [Get allowance](#get-allowance)
+      * [Increase approval](#increase-approval)
+      * [Decrease approval](#decrease-approval)
+    * [Service alias: `operator`](#service-alias-operator)
+    * [Methods](#methods-11)
+      * [Deploy contract](#deploy-contract-1)
+      * [Set authorized sender](#set-authorized-sender)
+    * [Service alias: `drConsumer`](#service-alias-drconsumer)
+    * [Methods](#methods-12)
+      * [Deploy contract](#deploy-contract-2)
+      * [Request data](#request-data)
+      * [Get latest answer](#get-latest-answer)
+<!-- TOC -->
+
+## Data Feed Services
+
+Chainlink [Data Feeds](https://docs.chain.link/data-feeds) are decentralized oracles that provide reliable off-chain data to smart contracts on the blockchain.
+Using this service, developers can access the latest round answer and other relevant information from the Data Feeds,
+enabling them to fetch real-world data in their web3 projects.
+
+### Service alias: `dataFeed`
+
+This section provides methods and functionalities designed to interact with the OffchainAggregator smart contract, 
+which serves as the core component of Chainlink Data Feeds.
+
+### Methods
+
+#### Get Latest RoundAnswer
+
+- **Method:** getLatestRoundAnswer
+- **Description:** Get the latest round answer for a data feed
+- **Arguments:**
+  - `dataFeedAddress`: Address of Data Feed
+
+#### Get Round Answer
+
+- **Method:** getRoundAnswer
+- **Description:** Get the round answer for a data feed
+- **Arguments:**
+  - `dataFeedAddress`: Address of Data Feed
+  - `roundId`: Round ID of Data Feed
+
+#### Get Latest Round Data
+
+- **Method:** getLatestRoundData
+- **Description:** Get the latest round data for a data feed
+- **Arguments:**
+  - `dataFeedAddress`: Address of Data Feed
+
+#### Get Round Data
+
+- **Method:** getRoundData
+- **Description:** Get the round data for a data feed
+- **Arguments:**
+  - `dataFeedAddress`: Address of Data Feed
+  - `roundId`: Round ID of Data Feed
+
+#### Get LatestRoundId
+
+- **Method:** getLatestRoundId
+- **Description:** Get the latest round ID
+- **Arguments:**
+  - `dataFeedAddress`: Address of Data Feed
+  - `roundId`: Round ID of Data Feed
+
+#### Get Decimals
+
+- **Method:** getDecimals
+- **Description:** Get the decimals for a data feed
+- **Arguments:**
+  - `dataFeedAddress`: Address of Data Feed
+
+#### Get Description
+
+- **Method:** getDescription
+- **Description:** Get the description for a data feed
+- **Arguments:**
+  - `dataFeedAddress`: Address of Data Feed
 
-Welcome to the Hardhat Chainlink Plugin Documentation page.
-
-New to Hardhat? Check the [Official Hardhat Documentation](https://hardhat.org/docs).
-
-New to Chainlink? Check the [Official Chainlink Documentation](https://docs.chain.link/).
-
-## Installation
-
-```console
-npm install @chainlink/hardhat-chainlink
-
-# or
-
-yarn add @chainlink/hardhat-chainlink
-```
-
-Import the plugin in your `hardhat.config.js`:
-
-```js
-require("@chainlink/hardhat-chainlink");
-```
-
-Or, if you are using TypeScript, in your `hardhat.config.ts`:
-
-```ts
-import "@chainlink/hardhat-chainlink";
-```
-
-## Environment extensions and Hardhat tasks
-
-This plugin extends the Hardhat Runtime Environment by adding a `chainlink` field
-whose type is `ExampleHardhatRuntimeEnvironmentField`. To use it, import in your tests/scripts/tasks the `chainlink` field from `hardhat`:
-
-```typescript
-import { chainlink } from "hardhat";
-
-// or
-
-const { chainlink } = require("hardhat");
-```
-
-This plugin comes with predefined Hardhat tasks for interacting with the local Chainlink Node. To see the available tasks, run the following command:
-
-```console
-npx hardhat
-```
-
-## Denominations library
-
-This plugin comes up with the predefined [Denominations library](https://github.com/smartcontractkit/chainlink/blob/develop/contracts/src/v0.8/Denominations.sol). This library is available for you to fetch currency identifiers that lack a canonical Ethereum address.
-
-#### Example
-
-```typescript
-import { chainlink } from "hardhat";
-
-const ethDenomination = chainlink.denominations.ETH; // 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE
-const usdDenomination = chainlink.denominations.USD; // 0x0000000000000000000000000000000000000348
-```
-
-Here is the list of all available currency identifiers available in the Denominations library:
-
-<table>
-  <thead>
-    <th colspan="5">Currency identifiers</th>
-  </thead>
-  <tbody>
-    <tr>
-      <td>
-        ETH<br/>
-        BTC<br/>
-        USD<br/>
-        GBP<br/>
-        EUR<br/>
-      </td>
-      <td>
-        JPY<br/>
-        KRW<br/>
-        CNY<br/>
-        AUD<br/>
-        CAD<br/>
-      </td>
-      <td>
-        CHF<br/>
-        ARS<br/>
-        PHP<br/>
-        NZD<br/>
-        SGD<br/>
-      </td>
-      <td>
-        NGN<br/>
-        ZAR<br/>
-        RUB<br/>
-        INR<br/>
-        BRL<br/>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-## Chainlink Functions
-
-Chainlink Functions provides your smart contracts with access to a trust-minimized compute infrastructure. Your smart contract sends your code to a Decentralized Oracle Network (DON), and each DON’s oracle will run the same code in a serverless environment. Finally, the DON aggregates all the independent runs and returns the final result to your smart contract. Your code can be anything from a simple computation to fetching data from API providers.
-
-Chainlink Functions do not require your consumer contracts to hold LINK tokens and send them to oracles when making requests. Instead, you must create a subscription account and fund it to pre-pay for your Chainlink Functions requests.
-
-### Tasks
-
-Run `npx hardhat` to see the full list of tasks. Run a specific task without arguments to see the expected arguments.
-
-|Task name                          |Description                              |
-|-----------------------------------|-----------------------------------------|
-|`chainlink:functions-deploy-consumer-contract`|Deploys FunctionsConsumer contract |
-|`chainlink:functions-generate-consumer-contract`| Generates a new `FunctionsConsumer.sol` contract in your `contracts` directory |
-|`chainlink:functions-get-subscription-info`|Retrieve Functions subscription info |
-|`chainlink:functions-simulate-request`|Simulates an end-to-end fulfillment locally for the FunctionsConsumer contract |
-|`chainlink:functions-add-subscription-consumer`|Authorize a client contract address to consumer the subscription |
-|`chainlink:functions-cancel-subscription`| Cancels a subscription and refunds to a specified address |
-|`chainlink:functions-create-subscription`| Creates a new subscription |
-|`chainlink:functions-fund-subscription` | Funds an existing subscription with the given amount of LINK |
-
-### functionsGetSubscriptionInfo
-
-Returns the Chainlink Functions Subscription details.
-
-```typescript
-public async functionsGetSubscriptionInfo(
-    registryAddress: string,
-    subscriptionId: number
-  ): Promise<{
-    balance: BigNumber;
-    owner: string;
-    consumers: string[];
-  }>;
-```
-
-- Parameters:
-
-  - `registryAddress` - Chainlink Functions Registry Address.
-  - `subscriptionId` - The Chainlink Functions Subscription ID.
-
-- Return values:
-  - `balance` - The Chainlink Functions Subscription balance (LINK).
-  - `owner` - The Chainlink Functions Subscription owner (address).
-  - `consumers` - The list of authorized client contract addresses.
-
-### functionsFundSubscription
-
-```typescript
-public async functionsFundSubscription(
-    registryAddress: string,
-    subscriptionId: number,
-    linkAmount: string,
-  ): Promise<BigNumber> 
-```
-
-- Parameters:
-
-  - `registryAddress` - Chainlink Functions Registry Address.
-  - `subscriptionId` - The Chainlink Functions Subscription ID.
-  - `linkAmount` - Amount of LINK to add to the subscription balance.
-
-- Return values:
-
-  - `BigNumber` - The new subscription balance (LINK).
-
-### functionsCancelSubscription
-
-```typescript
-public async functionsCancelSubscription(
-    registryAddress: string,
-    subscriptionId: number,
-    refundAddress: string,
-  ): Promise<void> 
-```
-
-- Parameters:
-
-  - `registryAddress` - Chainlink Functions Registry Address.
-  - `subscriptionId` - The Chainlink Functions Subscription ID.
-  - `refundAddress` - A refund address (or keep empty for the subscription owner address).
-
-### functionsAddSubscriptionConsumer
-
-```typescript
-public async functionsAddSubscriptionConsumer(
-    registryAddress: string,
-    subscriptionId: number,
-    consumerAddress: string,
-  ): Promise<void> 
-```
-
-- Parameters:
-
-  - `registryAddress` - Chainlink Functions Registry Address.
-  - `subscriptionId` - The Chainlink Functions Subscription ID.
-  - `consumerAddress` - A consumer contract address.
-
-## Chainlink Data Feeds
-
-Chainlink Data Feeds are the quickest way to connect your smart contracts to the real-world data such as asset prices, reserve balances, and L2 sequencer health. Data feeds provide many different types of data for your applications:
-
-- **Price Feeds**
-  Chainlink Data Feeds are the quickest way to connect your smart contracts to the real-world market prices of assets. List of Price Feed Contract Addresses is available [here](https://docs.chain.link/data-feeds/price-feeds/addresses).
-
-- **Proof of Reserve Feeds**
-  Proof of Reserves feeds provide the status of reserves for stablecoins, wrapped assets, and real world assets. Proof of Reserve Feeds operate similarly to Price Feeds, but provide answers in units of measurement such as ounces (oz) or number of tokens. List of Proof of Reserve Feed Addresses is available [here](https://docs.chain.link/data-feeds/proof-of-reserve/addresses).
-
-- **NFT Floor Pricing Feeds**
-  NFT Floor Pricing Feeds provide the price of the lowest priced NFT available in a collection. List of NFT Floor Pricing Feed Addresses is available [here](https://docs.chain.link/data-feeds/nft-floor-price/addresses).
-
-- **L2 Sequencer Uptime Feeds**
-  L2 sequencer feeds track the last known status of the sequencer on an L2 network at a given point in time. This helps you prevent mass liquidations by providing a grace period to allow customers to react to these events. List of L2 Sequencer Uptime Feeds is available [here](https://docs.chain.link/data-feeds/l2-sequencer-feeds).
-
-### getLatestPrice
-
-Returns the latest price of an asset.
-
-```typescript
-public async getLatestPrice(priceFeedAddress: string): Promise<BigNumber>;
-```
-
-- Parameters:
-
-  - `priceFeedAddress` - Data Feed address
-    -  [Price Feed contract addresses](https://docs.chain.link/data-feeds/price-feeds/addresses)
-    -  [Proof of Reserve feed addresses](https://docs.chain.link/data-feeds/proof-of-reserve/addresses)
-    -  [NFT Floor Pricing feed addresses](https://docs.chain.link/data-feeds/nft-floor-price/addresses)
-
-- `RETURN`: The latest price
-
-### getLatestRoundData
-
-Returns the latest round data of an asset.
-
-```typescript
-public async getLatestRoundData(
-    dataFeedAddress: string
-  ): Promise<{
-    roundId: BigNumber;
-    answer: BigNumber;
-    startedAt: BigNumber;
-    updatedAt: BigNumber;
-    answeredInRound: BigNumber;
-  }>;
-```
-
-- Parameters:
-
-  - `dataFeedAddress` - Data Feed address
-
-- Return values:
-  - `roundId` - The round ID.
-  - `answer` - The price.
-  - `startedAt` - Timestamp of when the round started.
-  - `updatedAt` - Timestamp of when the round was updated.
-  - `answeredInRound` - The round ID of the round in which the answer was computed.
-
-### getPriceFeedDecimals
-
-Returns the number of decimals present in the response value.
-
-```typescript
-public async getPriceFeedDecimals(priceFeedAddress: string): Promise<number>
-```
-
-- Parameters:
-
-  - `priceFeedAddress` - Data Feed address
-
-- `RETURN`: The number of decimals.
-
-### getPriceFeedDescription
-
-Returns the description of the underlying aggregator that the proxy points to.
-
-```typescript
-public async getPriceFeedDescription(
-    priceFeedAddress: string
-  ): Promise<string>;
-```
-
-- Parameters:
-
-  - `priceFeedAddress` - Data Feed address
-
-- `RETURN`: The description of the underlying aggregator.
-
-### getRoundData
-
-Returns data about a specific round.
-
-```typescript
-public async getRoundData(
-    priceFeedAddress: string,
-    roundId: BigNumber
-  ): Promise<{
-    roundId: BigNumber;
-    answer: BigNumber;
-    startedAt: BigNumber;
-    updatedAt: BigNumber;
-    answeredInRound: BigNumber;
-  }>;
-```
-
-- Parameters:
-
-  - `priceFeedAddress` - Data Feed Address.
-  - `roundId` - The round ID.
-
-- Return values:
-  - `roundId` - The round ID.
-  - `answer` - The answer for this round.
-  - `startedAt` - Timestamp of when the round started.
-  - `updatedAt` - Timestamp of when the round was updated.
-  - `answeredInRound` - The round ID of the round in which the answer was computed.
-
-### getAggregatorAddress
-
-Returns the actual contract address of the underlying aggregator that the proxy points to.
-
-```typescript
- public async getAggregatorAddress(priceFeedAddress: string): Promise<string>;
-```
-
-- Parameters:
-
-  - `priceFeedAddress` - Data Feed Address.
-
-- `RETURN`: The address of the underlying aggregator.
-
-### getAggregatorRoundId
-
-Returns the Round ID of the underlying aggregator that the proxy points to.
-
-```typescript
- public async getAggregatorRoundId(priceFeedAddress: string): Promise<BigNumber>;
-```
-
-- Parameters:
-
-  - `priceFeedAddress` - Data Feed Address.
-
-- `RETURN`: The Round ID of the underlying aggregator.
-
-### getPhaseId
-
-Returns the Phase ID of the underlying aggregator that the proxy points to.
-
-```typescript
- public async getPhaseId(priceFeedAddress: string): Promise<BigNumber>;
-```
-
-- Parameters:
-
-  - `priceFeedAddress` - Data Feed Address.
-
-- `RETURN`: The Phase ID of the underlying aggregator.
-
-### getHistoricalPrice
-
-Returns the price of asset in a specific round. Learn more about Historical Price Data [here](https://docs.chain.link/data-feeds/price-feeds/historical-data).
-
-```typescript
-public async getHistoricalPrice(
-    priceFeedAddress: string,
-    roundId: BigNumber
-  ): Promise<BigNumber>;
-```
-
-- Parameters:
-
-  - `priceFeedAddress` - Data Feed Address.
-  - `roundId` - The round ID.
-
-- `RETURN`: The historical price.
-
-### getPriceFeedAggregatorVersion
-
-Returns the current version of the underlying aggregator that the proxy points to.
-
-```typescript
-public async getPriceFeedAggregatorVersion(priceFeedAddress: string): Promise<BigNumber>;
-```
-
-- Parameters:
-
-  - `priceFeedAddress` - Data Feed Address.
-
-- `RETURN`: The current version of the underlying aggregator.
-
-### resolveEnsAggregatorAddress
-
-Returns specific Proxy Feed address using [Chainlink ENS Resolver](https://app.ens.domains/address/0x122eb74f9d0F1a5ed587F43D120C1c2BbDb9360B). For each network, there is a single Chainlink resolver, which does not change. Chainlink data feeds fall under the `data.eth` naming suffix. Reverse lookup is not supported. Learn more [here](https://docs.chain.link/data-feeds/ens).
-
-```typescript
-public async resolveEnsAggregatorAddress(
-    baseTick: string,
-    quoteTick: string
-  ): Promise<string>;
-```
-
-- Parameters:
-
-  - `baseTick` - Tick of a Base Asset of a Data Feed. For example, in a ETH / USD Data Feed ETH is a Base Asset.
-  - `quoteTick` - Tick of a Quote Asset of a Data Feed. For example, in a ETH / USD Data Feed USD is a Quote Asset.
-
-- `RETURN`: The Data Feed Address.
-
-#### Example
-
-To get an ETH / USD Aggregator address on Ethereum Mainnet using Chainlink ENS Resolver, type:
-
-```typescript
-const aggregatorAddress = await chainlink.resolveEnsAggregatorAddress(
-  `ETH`,
-  `USD`
-);
-```
-
-### resolveEnsAggregatorAddressWithSubdomains
-
-Returns all Subdomain Addresses using [Chainlink ENS Resolver](https://app.ens.domains/address/0x122eb74f9d0F1a5ed587F43D120C1c2BbDb9360B). When a new Aggregator is deployed for a specific Data Feed, it is first proposed, and when accepted becomes the Aggregator for that Feed. During this process, the Proposed and Aggregator subdomains for that Feed will change. The above `resolveEnsAggregatorAddress` function returns only the Proxy address for particular Data Feed, while this one returns Underlying Aggregator and Proposed Aggregator addresses as well. Learn more [here](https://docs.chain.link/data-feeds/ens).
-
-```typescript
-public async resolveEnsAggregatorAddressWithSubdomains(
-    baseTick: string,
-    quoteTick: string
-  ): Promise<{
-    proxy: string;
-    underlyingAggregator: string;
-    proposedAggregator: string;
-  }>;
-```
-
-- Parameters:
-
-  - `baseTick` - Tick of a Base Asset of a Data Feed. For example, in a ETH / USD Data Feed ETH is a Base Asset.
-  - `quoteTick` - Tick of a Quote Asset of a Data Feed. For example, in a ETH / USD Data Feed USD is a Quote Asset.
-
-- Return values:
-  - `proxy` - The Proxy Data Feed Address.
-  - `underlyingAggregator` - The Underlying Aggregator Address.
-  - `proposedAggregator` - The Proposed Aggregator Address.
-
-### getFeedRegistryDecimals
-
-Returns the number of decimals present in the response value from Chainlink’s Feed Registry.
-
-The Chainlink Feed Registry is an on-chain mapping of assets to feeds. It enables you to query Chainlink data feeds from asset addresses directly, without needing to know the feed contract addresses. They enable smart contracts to get the latest price of an asset in a single call, from a single contract.
-
-```typescript
-public async getFeedRegistryDecimals(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string
-  ): Promise<number>;
-```
-
-- Parameters:
-
-  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  - `base` - The Base Asset Address.
-  - `quote` - The Quote Asset Address.
-
-- `RETURN`: The number of decimals present in the response value from Chainlink’s Feed Registry.
-
-### getFeedRegistryDescription
-
-Returns the description of the underlying aggregator that the proxy points to.
-
-The Chainlink Feed Registry is an on-chain mapping of assets to feeds. It enables you to query Chainlink data feeds from asset addresses directly, without needing to know the feed contract addresses. They enable smart contracts to get the latest price of an asset in a single call, from a single contract.
-
-```typescript
-public async getFeedRegistryDescription(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string
-  ): Promise<string>;
-```
-
-- Parameters:
-
-  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  - `base` - The Base Asset Address.
-  - `quote` - The Quote Asset Address.
-
-- `RETURN`: The description of the underlying aggregator that the proxy points to.
-
-### getFeedRegistryRoundData
-
-Returns data about a specific round, using the `roundId` and Chainlink’s Feed Registry.
-
-The Chainlink Feed Registry is an on-chain mapping of assets to feeds. It enables you to query Chainlink data feeds from asset addresses directly, without needing to know the feed contract addresses. They enable smart contracts to get the latest price of an asset in a single call, from a single contract.
-
-```typescript
-public async getFeedRegistryRoundData(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string,
-    roundId: BigNumber
-  ): Promise<{
-    roundId: BigNumber;
-    answer: BigNumber;
-    startedAt: BigNumber;
-    updatedAt: BigNumber;
-    answeredInRound: BigNumber;
-  }>;
-```
-
-- Parameters:
-
-  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  - `base` - The Base Asset Address.
-  - `quote` - The Quote Asset Address.
-  - `roundId` - The round ID.
-
-- Return values:
-  - `roundId` - The round ID.
-  - `answer` - The price.
-  - `startedAt` - Timestamp of when the round started.
-  - `updatedAt` - Timestamp of when the round was updated.
-  - `answeredInRound` - The round ID of the round in which the answer was computed.
-
-### getFeedRegistryLatestRoundData
-
-Returns the price from the latest round using Chainlink’s Feed Registry.
-
-The Chainlink Feed Registry is an on-chain mapping of assets to feeds. It enables you to query Chainlink data feeds from asset addresses directly, without needing to know the feed contract addresses. They enable smart contracts to get the latest price of an asset in a single call, from a single contract.
-
-```typescript
-public async getFeedRegistryLatestRoundData(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string
-  ): Promise<{
-    roundId: BigNumber;
-    answer: BigNumber;
-    startedAt: BigNumber;
-    updatedAt: BigNumber;
-    answeredInRound: BigNumber;
-  }>;
-```
-
-- Parameters:
-
-  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  - `base` - The Base Asset Address.
-  - `quote` - The Quote Asset Address.
-
-- Return values:
-  - `roundId` - The round ID.
-  - `answer` - The price.
-  - `startedAt` - Timestamp of when the round started.
-  - `updatedAt` - Timestamp of when the round was updated.
-  - `answeredInRound` - The round ID of the round in which the answer was computed.
-
-### getFeedRegistryProxyAggregatorVersion
-
-Returns the version representing the type of aggregator the proxy points to.
-
-The Chainlink Feed Registry is an on-chain mapping of assets to feeds. It enables you to query Chainlink data feeds from asset addresses directly, without needing to know the feed contract addresses. They enable smart contracts to get the latest price of an asset in a single call, from a single contract.
-
-```typescript
-public async getFeedRegistryProxyAggregatorVersion(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string
-  ): Promise<BigNumber>;
-```
-
-- Parameters:
-
-  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  - `base` - The Base Asset Address.
-  - `quote` - The Quote Asset Address.
-
-- `RETURN`: The version representing the type of aggregator the proxy points to.
-
-### getFeed
-
-Returns the primary aggregator address of a base/quote pair. Note that on-chain contracts cannot read from aggregators directly, only through Feed Registry or Proxy contracts.
-
-The Chainlink Feed Registry is an on-chain mapping of assets to feeds. It enables you to query Chainlink data feeds from asset addresses directly, without needing to know the feed contract addresses. They enable smart contracts to get the latest price of an asset in a single call, from a single contract.
-
-```typescript
-public async getFeed(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string
-  ): Promise<string>;
-```
-
-- Parameters:
-
-  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  - `base` - The Base Asset Address.
-  - `quote` - The Quote Asset Address.
-
-- `RETURN`: The primary aggregator address of a base/quote pair.
-
-### getCurrentPhaseId
-
-Returns the current phase id of a base/quote pair using Chainlink's Feed Registry.
-
-The Chainlink Feed Registry is an on-chain mapping of assets to feeds. It enables you to query Chainlink data feeds from asset addresses directly, without needing to know the feed contract addresses. They enable smart contracts to get the latest price of an asset in a single call, from a single contract.
-
-```typescript
-public async getCurrentPhaseId(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string
-  ): Promise<number>;
-```
-
-- Parameters:
-
-  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  - `base` - The Base Asset Address.
-  - `quote` - The Quote Asset Address.
-
-- `RETURN`: The current phase id of a base/quote pair.
-
-### getPhaseFeed
-
-Returns the underlying aggregator address of a base/quote pair at a specified phase. Note that on-chain contracts cannot read from aggregators directly, only through Feed Registry or Proxy contracts. Phase ids start at `1`. You can get the current Phase by calling the `getCurrentPhaseId()` function of this plugin.
-
-The Chainlink Feed Registry is an on-chain mapping of assets to feeds. It enables you to query Chainlink data feeds from asset addresses directly, without needing to know the feed contract addresses. They enable smart contracts to get the latest price of an asset in a single call, from a single contract.
-
-```typescript
-public async getPhaseFeed(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string,
-    phaseId: BigNumber
-  ): Promise<string>;
-```
-
-- Parameters:
-
-  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  - `base` - The Base Asset Address.
-  - `quote` - The Quote Asset Address.
-  - `phaseId` - The Phase ID.
-
-- `RETURN`: The underlying aggregator address of a base/quote pair at a specified phase.
-
-### isFeedEnabled
-
-Returns true if an Aggregator is enabled as primary on the Chainlink's Feed Registry. This is useful to check if you should index events from an aggregator contract, because you want to only index events of primary aggregators.
-
-The Chainlink Feed Registry is an on-chain mapping of assets to feeds. It enables you to query Chainlink data feeds from asset addresses directly, without needing to know the feed contract addresses. They enable smart contracts to get the latest price of an asset in a single call, from a single contract.
-
-```typescript
-public async isFeedEnabled(
-    feedRegistryAddress: string,
-    aggregatorAddress: string
-  ): Promise<boolean>;
-```
-
-- Parameters:
-
-  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  - `aggregatorAddress` - The Address of an Aggregator Data Feed.
-
-- `RETURN`: `true` if an Aggregator is enabled as primary on the Chainlink's Feed Registry, `false` otherwise.
-
-### getPhase
-
-Returns the starting and ending aggregator round ids of a base/quote pair using Chainlink's Feed Registry.
-
-The Chainlink Feed Registry is an on-chain mapping of assets to feeds. It enables you to query Chainlink data feeds from asset addresses directly, without needing to know the feed contract addresses. They enable smart contracts to get the latest price of an asset in a single call, from a single contract.
-
-```typescript
-public async getPhase(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string,
-    phaseId: BigNumber
-  ): Promise<{
-    phaseId: number;
-    startingAggregatorRoundId: BigNumber;
-    endingAggregatorRoundId: BigNumber;
-  }>;
-```
-
-- Parameters:
-
-  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  - `base` - The Base Asset Address.
-  - `quote` - The Quote Asset Address.
-  - `phaseId` - The Phase ID.
-
-- Return values:
-  - `phaseId` - The Phase ID.
-  - `startingAggregatorRoundId` - The ID of the aggregator when the phase started.
-  - `endingAggregatorRoundId` - The ID of the aggregator when the phase ended.
-
-### getRoundFeed
-
-Returns the underlying aggregator address of a base/quote pair at a specified round. Note that on-chain contracts cannot read from aggregators directly, only through Feed Registry or Proxy contracts.
-
-The Chainlink Feed Registry is an on-chain mapping of assets to feeds. It enables you to query Chainlink data feeds from asset addresses directly, without needing to know the feed contract addresses. They enable smart contracts to get the latest price of an asset in a single call, from a single contract.
-
-```typescript
-public async getRoundFeed(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string,
-    roundId: BigNumber
-  ): Promise<string>;
-```
-
-- Parameters:
-
-  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  - `base` - The Base Asset Address.
-  - `quote` - The Quote Asset Address.
-  - `phaseId` - The Phase ID.
-
-- `RETURN`: The underlying aggregator address of a base/quote pair at a specified round.
-
-### getPhaseRange
-
-Returns the starting and ending round ids of a base/quote pair at a specified phase. Please note that this `roundId` is calculated from the phase id and the underlying aggregator’s round id. To get the raw aggregator round ids of a phase for indexing purposes, please use the `getPhase()` function of this plugin.
-
-The Chainlink Feed Registry is an on-chain mapping of assets to feeds. It enables you to query Chainlink data feeds from asset addresses directly, without needing to know the feed contract addresses. They enable smart contracts to get the latest price of an asset in a single call, from a single contract.
-
-```typescript
-public async getPhaseRange(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string,
-    phaseId: BigNumber
-  ): Promise<{
-    startingRoundId: BigNumber;
-    endingRoundId: BigNumber;
-  }>;
-```
-
-- Parameters:
-
-  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  - `base` - The Base Asset Address.
-  - `quote` - The Quote Asset Address.
-  - `phaseId` - The Phase ID.
-
-- Return values:
-  - `phaseId` - The Phase ID.
-  - `startingRoundId` - The Round ID when the phase started.
-  - `endingRoundId` - The Round ID when the phase ended.
-
-### getPreviousRoundId
-
-Returns the previous round id of a base/quote pair given a specified round using Chainlink's Feed Registry. Note that rounds are non-monotonic across phases.
-
-The Chainlink Feed Registry is an on-chain mapping of assets to feeds. It enables you to query Chainlink data feeds from asset addresses directly, without needing to know the feed contract addresses. They enable smart contracts to get the latest price of an asset in a single call, from a single contract.
-
-```typescript
-public async getPreviousRoundId(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string,
-    roundId: BigNumber
-  ): Promise<BigNumber>;
-```
-
-- Parameters:
-
-  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  - `base` - The Base Asset Address.
-  - `quote` - The Quote Asset Address.
-  - `roundId` - The Round ID.
-
-- `RETURN`: The previous round id of a base/quote pair.
-
-### getNextRoundId
-
-Returns the next round id of a base/quote pair given a specified round using Chainlink's Feed Registry. Note that rounds are non-monotonic across phases.
-
-The Chainlink Feed Registry is an on-chain mapping of assets to feeds. It enables you to query Chainlink data feeds from asset addresses directly, without needing to know the feed contract addresses. They enable smart contracts to get the latest price of an asset in a single call, from a single contract.
-
-```typescript
-public async getNextRoundId(
-    feedRegistryAddress: string,
-    base: string,
-    quote: string,
-    roundId: BigNumber
-  ): Promise<BigNumber>;
-```
-
-- Parameters:
-
-  - `feedRegistryAddress` - The Address of [Chainlink's Feed Registry](https://docs.chain.link/data-feeds/feed-registry/) Contract.
-  - `base` - The Base Asset Address.
-  - `quote` - The Quote Asset Address.
-  - `roundId` - The Round ID.
-
-- `RETURN`: The next round id of a base/quote pair.
-
-### getHistoricalPriceFromAggregator
-
-Returns the historical price of an asset directly from the `AccessControlledOffchainAggregator` contract. Note that you should read the aggregator contract only if you need functions that are not available in the proxy.
-
-There are two parameters that can cause Chainlink nodes to update:
-
-1. **Deviation Threshold** - Chainlink nodes are monitoring data off-chain. The deviation of the real-world data beyond a certain interval triggers all the nodes to update.
-2. **Heartbeat Threshold** - If the data values stay within the deviation parameters, it will only trigger an update every X minutes/hours.
-
-```typescript
-public async getHistoricalPriceFromAggregator(
-    aggregatorAddress: string,
-    aggregatorRoundId: BigNumber
-  ): Promise<BigNumber>;
-```
-
-- Parameters:
-
-  - `aggregatorAddress` - The [AccessControlledOffchainAggregator](https://docs.chain.link/data-feeds/price-feeds/api-reference#accesscontrolledoffchainaggregator) contract address.
-  - `aggregatorRoundId` - The Round ID of the AccessControlledOffchainAggregator contract.
-
-- `RETURN`: The price of an asset at the given Round ID.
-
-### getTypeAndVersionOfAggregator
-
-Returns the aggregator type and version. Many aggregators are `AccessControlledOffchainAggregator 2.0.0`, but there are other variants in production. The version is for the type of aggregator, and different from the contract `version`.
-
-```typescript
-public async getTypeAndVersionOfAggregator(
-    aggregatorAddress: string
-  ): Promise<string>;
-```
-
-- Parameters:
-
-  - `aggregatorAddress` - The [AccessControlledOffchainAggregator](https://docs.chain.link/data-feeds/price-feeds/api-reference#accesscontrolledoffchainaggregator) contract address.
-
-- `RETURN`: The aggregator type and version.
-
-### getPhaseIdOfAggregator
-
-Returns the contract version. This is different from the `getTypeAndVersionOfAggregator`.
-
-```typescript
-public async getPhaseIdOfAggregator(
-    aggregatorAddress: string
-  ): Promise<BigNumber>;
-```
-
-- Parameters:
-
-  - `aggregatorAddress` - The [AccessControlledOffchainAggregator](https://docs.chain.link/data-feeds/price-feeds/api-reference#accesscontrolledoffchainaggregator) contract address.
-
-- `RETURN`: The aggregator contract version, widely known as Phase ID.
-
-### isLayer2SequencerUp
-
-Returns `false` if a Layer 2 Sequencer is currently unavailable, `true` otherwise. More info [here](https://docs.chain.link/data-feeds/l2-sequencer-feeds).
-
-```typescript
-public async isLayer2SequencerUp(
-    sequencerUptimeFeedAddress: string
-  ): Promise<boolean>;
-```
-
-- Parameters:
-
-  - `sequencerUptimeFeedAddress` - The Address of a [Sequencer Uptime Feed Contract](https://docs.chain.link/data-feeds/l2-sequencer-feeds#available-networks).
-
-- `RETURN`: `false` if Layer 2 Sequencer is currently unavailable, `true` otherwise.
-
-### getTimeSinceLayer2SequencerIsUp
-
-Returns the number of seconds (Unix timestamp format) since a Layer 2 Sequencer became available. More info [here](https://docs.chain.link/data-feeds/l2-sequencer-feeds).
-
-```typescript
-public async getTimeSinceLayer2SequencerIsUp(
-    sequencerUptimeFeedAddress: string,
-    gracePeriodTime = BigNumber.from(3600)
-  ): Promise<{
-    isSequencerUp: boolean;
-    timeSinceUp: BigNumber;
-    isGracePeriodOver: boolean;
-  }>;
-```
-
-- Parameters:
-
-  - `sequencerUptimeFeedAddress` - The Address of a [Sequencer Uptime Feed Contract](https://docs.chain.link/data-feeds/l2-sequencer-feeds#available-networks).
-  - `gracePeriodTime` - Number of seconds to wait after the Layer 2 Sequencer became available before accepting answers from the price data feed. Optional parameter. If not provided, the default value is 3600 seconds.
-
-- Return values:
-  - `isSequencerUp` - `false` if Layer 2 Sequencer is currently unavailable, `true` otherwise.
-  - `timeSinceUp` - The number of seconds since the Layer 2 Sequencer became available.
-  - `isGracePeriodOver` - `true` if more seconds since the Layer 2 Sequencer became available than `gracePeriodTime` passed, `false` otherwise.
-
-## Chainlink VRF (Verifiable Random Function)
-
-Chainlink VRF (Verifiable Random Function) is a provably fair and verifiable random number generator (RNG) that enables smart contracts to access random values without compromising security or usability. For each request, Chainlink VRF generates one or more random values and cryptographic proof of how those values were determined. The proof is published and verified on-chain before any consuming applications can use it. This process ensures that results cannot be tampered with or manipulated by any single entity including oracle operators, miners, users, or smart contract developers.
-
-### createVrfSubscription
-
-Creates new VRF Subscription programmatically. This is a replacement for managing VRF Subscriptions through [Subscription Manager User Interface](https://docs.chain.link/vrf/v2/subscription/ui).
+#### Get Version
+
+- **Method:** getAggregatorVersion
+- **Description:** Get the version for a data feed
+- **Arguments:**
+  - `dataFeedAddress`: Address of Data Feed
+
+
+### Service alias: `dataFeedProxy`
+
+This section provides methods and functionalities designed to interact with the EACAggregatorProxy smart contract, 
+which acts as a proxy for Chainlink Data Feeds.
+
+### Methods
+
+#### Get Latest Round Answer
+
+- **Method:** getLatestRoundAnswer
+- **Description:** Get the latest round answer for a current data feed via proxy
+- **Arguments:**
+  - `dataFeedProxyAddress`: Address of Data Feed Proxy
+
+#### Get Round Answer
+
+- **Method:** getRoundAnswer
+- **Description:** Get round answer for a current data feed via proxy
+- **Arguments:**
+  - `dataFeedProxyAddress`: Address of Data Feed Proxy
+  - `roundId`: Round ID of Data Feed Proxy
+
+#### Get Latest Round Data
+
+- **Method:** getLatestRoundData
+- **Description:** Get the latest round data for a current data feed via proxy
+- **Arguments:**
+  - `dataFeedProxyAddress`: Address of Data Feed Proxy
+
+#### Get Round Data
+
+- **Method:** getRoundData
+- **Description:** Get round data for a current data feed via proxy
+- **Arguments:**
+  - `dataFeedProxyAddress`: Address of Data Feed
+  - `roundId`: Round ID of Data Feed Proxy
+
+#### Get Latest RoundId
+
+- **Method:** getLatestRoundId
+- **Description:** Get the latest round ID of a proxy
+- **Arguments:**
+  - `dataFeedProxyAddress`: Address of Data Feed Proxy
+  - `roundId`: Round ID of Data Feed Proxy
+
+#### Get Decimals
+
+- **Method:** getDecimals
+- **Description:** Get decimals for a data feed
+- **Arguments:**
+  - `dataFeedProxyAddress`: Address of Data Feed Proxy
+
+#### Get Description
+
+- **Method:** getDescription
+- **Description:** Get description for a current data feed via proxy
+- **Arguments:**
+  - `dataFeedProxyAddress`: Address of Data Feed Proxy
+
+#### Get Version
+
+- **Method:** getVersion
+- **Description:** Get version for a current data feed via proxy
+- **Arguments:**
+  - `dataFeedProxyAddress`: Address of Data Feed Proxy
+
+#### Get Aggregator
+
+- **Method:** getAggregator
+- **Description:** Get current data feed address via proxy
+- **Arguments:**
+  - `dataFeedProxyAddress`: Address of Data Feed Proxy
+
+#### Get PhaseId
+
+- **Method:** getPhaseId
+- **Description:** Get current phase ID of a proxy
+- **Arguments:**
+  - `dataFeedProxyAddress`: Address of Data Feed Proxy
+
+#### Get Phase Aggregators
+
+- **Method:** getPhaseAggregators
+- **Description:** Get data feed address related to a phase ID of a proxy
+- **Arguments:**
+  - `dataFeedProxyAddress`: Address of Data Feed Proxy
+  - `phaseId`: Phase ID of Data Feed Proxy
+
+
+### Service alias: `feedRegistry`
+
+This section provides methods and functionalities designed to interact with the [Feed Registry](https://docs.chain.link/data-feeds/feed-registry) smart contracts,
+which acts is an on-chain mapping of assets to Data Feeds.
 
 > **Note**
->
-> Calling this function costs gas.
+>  Chainlink Feed Registry is exclusively available on the Ethereum mainnet.
 
-```typescript
-public async createVrfSubscription(
-    vrfCoordinatorAddress: string,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ subscriptionId: BigNumber; transactionHash: string }>;
-```
+### Methods
 
-- Parameters:
-  `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, the execution continues after this function immediately.
+#### Get Latest Round Data
 
-- Return values:
-  - `subscriptionId` - The ID of newly created VRF Subscription.
-  - `transactionHash` - The transaction hash.
+- **Method:** `getLatestRoundData`
+- **Description:** Get the latest round data for a specific data feed from the Feed Registry
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
 
-### fundVrfSubscription
+#### Get Round Data
 
-Funds your VRF Subscription. This is a replacement for managing VRF Subscriptions through [Subscription Manager User Interface](https://docs.chain.link/vrf/v2/subscription/ui).
+- **Method:** `getRoundData`
+- **Description:** Get the round data for a specific data feed from the Feed Registry based on the provided round ID
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+  - `roundId`: Feed Registry Round ID
 
-> **Note**
->
-> Calling this function costs gas. Reverts if you don't have enough LINK tokens provided as a function argument.
+#### Get Proposed Latest Round Data
 
-```typescript
-public async fundVrfSubscription(
-    vrfCoordinatorAddress: string,
-    linkTokenAddress: string,
-    amountInJuels: BigNumber,
-    subscriptionId: BigNumber,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }>;
-```
+- **Method:** `proposedGetLatestRoundData`
+- **Description:** Get the latest round data (proposed) for a specific data feed from the Feed Registry
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
 
-- Parameters:
-  `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
-  `linkTokenAddress` - The [Address of a LINK token](https://docs.chain.link/resources/link-token-contracts) smart contract.
-  `amountInJuels` - The Amount of LINK tokens for funding in Juels. The smallest denomination of LINK is called a Juel, and 1,000,000,000,000,000,000 (1e18) Juels are equal to 1 LINK. This is similar to Wei, which is the smallest denomination of ETH.
-  `subscriptionId` - The VRF Subscription ID.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, and the execution continues after this function immediately.
+#### Get Proposed Round Data
 
-- `RETURN`: The transaction hash.
+- **Method:** `proposedGetRoundData`
+- **Description:** Get the round data (proposed) for a specific data feed from the Feed Registry based on the provided round ID
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+  - `roundId`: Data Feed Round ID
 
-### addVrfConsumer
+#### Get Round Feed
 
-Adds new consumer smart contract to your VRF Subscription. This is a replacement for managing VRF Subscriptions through [Subscription Manager User Interface](https://docs.chain.link/vrf/v2/subscription/ui).
+- **Method:** `getRoundFeed`
+- **Description:** Get the data feed address for a specific data feed from the Feed Registry based on the provided round ID
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+  - `roundId`: Feed Registry Round ID
 
-> **Note**
->
-> Calling this function costs gas.
+#### Get Feed
 
-```typescript
-public async addVrfConsumer(
-    vrfCoordinatorAddress: string,
-    consumerAddress: string,
-    subscriptionId: BigNumber,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }>;
-```
+- **Method:** `getFeed`
+- **Description:** Get current data feed address for a specific token pair from the Feed Registry
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
 
-- Parameters:
-  `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
-  `consumerAddress` - The Address of your consumer smart contract.
-  `subscriptionId` - The VRF Subscription ID.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, and the execution continues after this function immediately.
+#### Get Proposed Feed
 
-- `RETURN`: The transaction hash.
+- **Method:** `getProposedFeed`
+- **Description:** Get the proposed data feed address for a specific token pair from the Feed Registry
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
 
-### removeVrfConsumer
+#### Is Feed Enabled
 
-Removes consumer smart contract from your VRF Subscription. This is a replacement for managing VRF Subscriptions through [Subscription Manager User Interface](https://docs.chain.link/vrf/v2/subscription/ui).
+- **Method:** `isFeedEnabled`
+- **Description:** Check if a specific data feed is enabled in the Feed Registry
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `aggregatorAddress`: Address of a Data Feed Offchain Aggregator
 
-> **Note**
->
-> Calling this function costs gas.
+#### Get Previous Round ID
 
-```typescript
-public async removeVrfConsumer(
-    vrfCoordinatorAddress: string,
-    consumerAddress: string,
-    subscriptionId: BigNumber,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }>;
-```
+- **Method:** `getPreviousRoundId`
+- **Description:** Get previous round ID for a specific data feed from the Feed Registry based on the provided round ID
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+  - `roundId`: Feed Registry Round ID
 
-- Parameters:
-  `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
-  `consumerAddress` - The Address of your consumer smart contract.
-  `subscriptionId` - The VRF Subscription ID.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, and the execution continues after this function immediately.
+#### Get Next Round ID
 
-- `RETURN`: The transaction hash.
+- **Method:** `getNextRoundId`
+- **Description:** Get next round ID for a specific data feed from the Feed Registry based on the provided round ID
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+  - `roundId`: Feed Registry Round ID
 
-### cancelVrfSubscription
+#### Get Decimals
 
-Cancels your VRF Subscription. Sends the remaining funds to provided wallet address. This is a replacement for managing VRF Subscriptions through [Subscription Manager User Interface](https://docs.chain.link/vrf/v2/subscription/ui).
+- **Method:** `getDecimals`
+- **Description:** Get the decimals of a specific data feed from the Feed Registry
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
 
-> **Note**
->
-> Calling this function costs gas.
+#### Get Description
 
-```typescript
-public async cancelVrfSubscription(
-    vrfCoordinatorAddress: string,
-    subscriptionId: BigNumber,
-    receivingWallet: string,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }>;
-```
+- **Method:** `getDescription`
+- **Description:** Get the description of a specific data feed from the Feed Registry
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
 
-- Parameters:
-  `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
-  `subscriptionId` - The VRF Subscription ID.
-  `receivingWallet` - The wallet address to send the remaining funds to.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, and the execution continues after this function immediately.
+#### Get Version
 
-- `RETURN`: The transaction hash.
+- **Method:** `getVersion`
+- **Description:** Get the version of a specific data feed from the Feed Registry
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
 
-### getVrfSubscriptionDetails
+#### Get Phase
 
-Returns details about the specific VRF Subscription.
+- **Method:** `getPhase`
+- **Description:** Get phase data for a specific data feed from the Feed Registry based on the provided phase ID
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+  - `phaseId`: Feed Registry Phase ID
 
-```typescript
-public async getVrfSubscriptionDetails(
-    vrfCoordinatorAddress: string,
-    subscriptionId: BigNumber
-  ): Promise<{
-    balance: BigNumber;
-    reqCount: BigNumber;
-    owner: string;
-    consumers: string[];
-  }>;
-```
+#### Get Phase Feed
 
-- Parameters:
+- **Method:** `getPhaseFeed`
+- **Description:** Get data feed address for a specific token pair from the Feed Registry based on the provided phase ID
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+  - `phaseId`: Feed Registry Phase ID
 
-  - `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
-  - `subscriptionId` - The VRF Subscription ID.
+#### Get Phase Range
 
-- Return values:
-  - `balance` - The current balance of LINK tokens available for a VRF Subscription to consume for requests.
-  - `reqCount` - The VRF requests counter.
-  - `owner` - The Address of a VRF Subscription owner. By default, it's a VRF Subscription creator.
-  - `consumers` - The array of consumer smart contracts addresses.
+- **Method:** `getPhaseRange`
+- **Description:** Get the phase range data for a specific data feed from the Feed Registry based on the provided phase ID
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
+  - `phaseId`: Feed Registry Phase ID
 
-### pendingVrfRequestExists
+#### Get Current Phase ID
 
-Checks if there is an outgoing VRF request that is not fulfilled yet.
+- **Method:** `getCurrentPhaseId`
+- **Description:** Get current phase ID for a specific data feed from the Feed Registry
+- **Arguments:**
+  - `feedRegistryAddress`: Address of Feed Registry
+  - `feedRegistryBaseTick`: Address or denomination of the base tick in a token pair
+  - `feedRegistryQuoteTick`: Address or denomination of the quote tick in a token pair
 
-```typescript
-public async pendingVrfRequestExists(
-    vrfCoordinatorAddress: string,
-    subscriptionId: BigNumber
-  ): Promise<boolean>;
-```
 
-- Parameters:
+### Service alias: `l2Sequencer`
 
-  - `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
-  - `subscriptionId` - The VRF Subscription ID.
-
-- `RETURN`: `true` if there is an outgoing VRF request that is not fulfilled yet, `false` otherwise.
-
-### requestVrfSubscriptionOwnerTransfer
-
-Requests the transfer of ownership of VRF Subscription.
-
-> **Note**
->
-> Calling this function costs gas.
-
-```typescript
-public async requestVrfSubscriptionOwnerTransfer(
-    vrfCoordinatorAddress: string,
-    subscriptionId: BigNumber,
-    newOwnerAddress: string,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }>;
-```
-
-- Parameters:
-  `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
-  `subscriptionId` - The VRF Subscription ID.
-  `newOwnerAddress` - The Address of a new owner. It needs to call `acceptVrfSubscriptionOwnerTransfer` function afteward.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, and the execution continues after this function immediately.
-
-- `RETURN`: The transaction hash.
-
-### acceptVrfSubscriptionOwnerTransfer
-
-Accepts the transfer of ownership of VRF Subscription.
+This section provides methods and functionalities designed to interact with the L2 Sequencer Uptime Feeds, 
+which acts as data feeds that track the availability status of the sequencer in Layer 2 (L2) networks, specifically in optimistic rollup protocols.
 
 > **Note**
->
-> Calling this function costs gas.
+> L2 Sequencer Uptime Feeds are available only on specific networks, 
+> including Arbitrum mainnet, Arbitrum Goerli testnet, Optimism mainnet, 
+> Optimism Goerli testnet, and Metis mainnet (Andromeda)
 
-```typescript
-public async acceptVrfSubscriptionOwnerTransfer(
-    vrfCoordinatorAddress: string,
-    subscriptionId: BigNumber,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }>;
-```
+### Methods
 
-- Parameters:
-  `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
-  `subscriptionId` - The VRF Subscription ID.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, and the execution continues after this function immediately.
+#### Is L2 Sequencer Up
 
-- `RETURN`: The transaction hash.
+- **Method:** `isL2SequencerUp`
+- **Description:** Checks the availability status of the Layer 2 (L2) Sequencer using the provided address of the Layer 2 Sequencer Uptime Status Feed
+- **Arguments:**
+  - `l2SequencerAddress`: Address of the Layer 2 Sequencer Uptime Status Feed
 
-### getMaxVrfConsumers
+#### Get Time Since L2 Sequencer Is Up
 
-Returns the maximum number of consumer smart contracts that can be added to a VRF Subscription.
+- **Method:** `getTimeSinceL2SequencerIsUp`
+- **Description:** Retrieves the time elapsed since the Layer 2 (L2) Sequencer has been up and operational, based on the provided address of the Layer 2 Sequencer Uptime Status Feed
+- **Arguments:**
+  - `l2SequencerAddress`: Address of the Layer 2 Sequencer Uptime Status Feed
+  - `gracePeriodTime`: Grace period duration in which the Sequencer is allowed to not return results
 
-```typescript
-public async getMaxVrfConsumers(vrfCoordinatorAddress: string): Promise<number>;
-```
+### Service alias: `ens`
 
-- Parameters:
-
-  - `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
-
-- `RETURN`: The maximum number of consumer smart contracts that can be added to a VRF Subscription.
-
-### getMaxVrfNumberOfWords
-
-Returns the maximum number of 32bytes words that can be requested from a Chainlink VRF Coordinator. Since `uint256` Solidity data type is a 32byte word, this function will return the maximum number of `uint256` values that can be requested from a Chainlink VRF Coordinator.
-
-```typescript
-public async getMaxVrfNumberOfWords(vrfCoordinatorAddress: string): Promise<number>;
-```
-
-- Parameters:
-
-  - `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
-
-- `RETURN`: The maximum number of 32bytes words that can be requested from a Chainlink VRF Coordinator.
-
-### getMaxVrfRequestConfirmations
-
-Returns the maximum possible number of VRF Request Confirmations.
-
-```typescript
-public async getMaxVrfRequestConfirmations(vrfCoordinatorAddress: string): Promise<number>;
-```
-
-- Parameters:
-
-  - `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
-
-- `RETURN`: The maximum possible number of VRF Request Confirmations.
-
-### getMinVrfRequestConfirmations
-
-Returns the minimum possible number of VRF Request Confirmations.
-
-```typescript
-public async getMinVrfRequestConfirmations(vrfCoordinatorAddress: string): Promise<number>;
-```
-
-- Parameters:
-
-  - `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
-
-- `RETURN`: The minimum possible number of VRF Request Confirmations.
-
-### getMaxVrfRequestGasLimit
-
-Returns the maximum gas limit for a single VRF Request.
-
-```typescript
-public async getMaxVrfRequestGasLimit(vrfCoordinatorAddress: string): Promise<number>;
-```
-
-- Parameters:
-
-  - `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
-
-- `RETURN`: The maximum gas limit for a single VRF Request.
-
-### getVrfCommitment
-
-Returns the VRF cryptographic commitment scheme of a given VRF Request.
-
-```typescript
-public async getVrfCommitment(
-    vrfCoordinatorAddress: string,
-    requestId: BigNumber
-  ): Promise<BytesLike>;
-```
-
-- Parameters:
-
-  - `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
-  - `requestId` - The VRF Request ID.
-
-- `RETURN`: The VRF cryptographic commitment scheme of a given VRF Request.
-
-### getVrfCoordinatorConfig
-
-Returns the VRF Coordinator smart contract configuration details.
-
-```typescript
-public async getVrfCoordinatorConfig(
-    vrfCoordinatorAddress: string
-  ): Promise<{
-    minimumRequestConfirmations: number;
-    maxGasLimit: number;
-    stalenessSeconds: number;
-    gasAfterPaymentCalculation: number;
-  }>;
-```
-
-- Parameters:
-
-  - `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
-
-- Return values:
-  - `minimumRequestConfirmations` - The minimum possible number of VRF Request Confirmations.
-  - `maxGasLimit` - The maximum gas limit for a single VRF Request.
-  - `stalenessSeconds` - The number of seconds before the feed price can be considered stale.
-  - `gasAfterPaymentCalculation` - The gas to cover the oracle payment after calculations.
-
-### getVrfCoordinatorTypeAndVersion
-
-Returns the Type and Version of a VRF Coordinator smart contract.
-
-```typescript
-public async getVrfCoordinatorTypeAndVersion(vrfCoordinatorAddress: string): Promise<string>;
-```
-
-- Parameters:
-
-  - `vrfCoordinatorAddress` - The Address of a [VRF Coordinator](https://docs.chain.link/vrf/v2/subscription/supported-networks/) smart contract.
-
-- `RETURN`: The Type and Version of a VRF Coordinator smart contract.
-
-## Chainlink Automation
-
-Smart contracts can't trigger or initiate their own functions at arbitrary times or under arbitrary conditions. State changes will only occur when another account initiates a transaction (such as a user, oracle, or contract). [Chainlink Automation](https://docs.chain.link/docs/chainlink-automation/introduction/) enables conditional execution of your smart contracts functions through a hyper-reliable and decentralized automation platform that uses the same external network of node operators that secures billions in value.
-
-### registerUpkeep
-
-Registers new Automation Upkeep.
+This section provides methods and functionalities designed to interact with the [Chainlink ENS Resolver](https://docs.chain.link/data-feeds/ens).
 
 > **Note**
->
-> Calling this function costs gas.
-
-```typescript
-public async registerUpkeep(
-    linkTokenAddress: string,
-    automationRegistrarAddress: string,
-    amountInJuels: BigNumber,
-    name: string,
-    encryptedEmail: BytesLike,
-    upkeepContract: string,
-    gasLimit: number,
-    adminAddress: string,
-    checkData: BytesLike,
-    source: number,
-    sender: string,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }>;
-```
-
-- Parameters:
-  `linkTokenAddress` - The [Address of a LINK token](https://docs.chain.link/resources/link-token-contracts) smart contract.
-  `automationRegistrarAddress` - The Address of the [Automation Registrar contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that accepts requests for upkeep registrations.
-  `amountInJuels` - The Amount of LINK tokens for funding in Juels. The smallest denomination of LINK is called a Juel, and 1,000,000,000,000,000,000 (1e18) Juels are equal to 1 LINK. This is similar to Wei, which is the smallest denomination of ETH. The minimum amount is 5 LINK. To fund 5 LINK please set this to `5000000000000000000`
-  `name` - The Name of the Upkeep.
-  `encryptedEmail` - Not in use in programmatic registration. Please specify with `0x`
-  `upkeepContract` - The Address of the Automation-compatible contract that will be automated.
-  `gasLimit` - The maximum amount of gas that will be used to execute your function on-chain.
-  `adminAddress` - The Address for the Upkeep administrator. The Upkeep administrator can fund the contract.
-  `checkData` - ABI-encoded fixed and specified at Upkeep registration and used in every checkUpkeep. Can be empty (`0x`)
-  `source` - Not in use in programmatic registration. Please specify with `0`.
-  `sender` - The Address of the sender making the request.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, and the execution continues after this function immediately.
-
-- `RETURN`: The transaction hash.
-
-### getAutomationPendingRegistrationRequest
-
-Returns the Admin Address and the current balance of an Automation Upkeep Registration Request.
-
-```typescript
-public async getAutomationPendingRegistrationRequest(
-    automationRegistrarAddress: string,
-    hash: BytesLike
-  ): Promise<{
-    adminAddress: string;
-    balance: BigNumber;
-  }>;
-```
-
-- Parameters:
-
-  - `automationRegistrarAddress` - The Address of the [Automation Registrar contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that accepts requests for upkeep registrations.
-  - `hash` - The Keccak256 hash of ABI encoded values: `upkeepContract`, `gasLimit`, `adminAddress`, `checkData`
-
-- Return values:
-  - `adminAddress` - The Address of the Upkeep Registration Request administrator.
-  - `balance` - The current balance of the Upkeep Registration Request.
-
-### cancelAutomationPendingRegistrationRequest
-
-Cancels the pending Automation Upkeep Registration Request.
-
-> **Note**
->
-> Calling this function costs gas.
-
-```typescript
-public async cancelAutomationPendingRegistrationRequest(
-    automationRegistrarAddress: string,
-    hash: BytesLike,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }>;
-```
-
-- Parameters:
-  `automationRegistrarAddress` - The Address of the [Automation Registrar contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that accepts requests for upkeep registrations.
-  `hash` - The Keccak256 hash of ABI encoded values: `upkeepContract`, `gasLimit`, `adminAddress`, `checkData`
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, and the execution continues after this function immediately.
-
-- `RETURN`: The transaction hash.
-
-### getAutomationRegistrarConfig
-
-Returns the configuration parameters of the [Automation Registrar](https://docs.chain.link/chainlink-automation/supported-networks/) smart contract. This is a contract that accepts requests for upkeep registrations.
-
-```typescript
-public async getAutomationRegistrarConfig(
-    automationRegistrarAddress: string
-  ): Promise<{
-    autoApproveConfigType: number;
-    autoApproveMaxAllowed: number;
-    approvedCount: number;
-    automationRegistry: string;
-    minLINKJuels: BigNumber;
-  }>;
-```
-
-- Parameters:
-
-  - `automationRegistrarAddress` - The Address of the [Automation Registrar contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that accepts requests for upkeep registrations.
-
-- Return values:
-  - `autoApproveConfigType` - The setting for auto-approve registrations. It can be DISABLED (No auto approvals, all new upkeeps should be approved manually), ENABLED_SENDER_ALLOWLIST (Auto approvals for allowed senders subject to max allowed. Manual for rest), or ENABLED_ALL (Auto approvals for all new upkeeps subject to max allowed).
-  - `autoApproveMaxAllowed` - The maximum number of registrations that can be auto-approved.
-  - `approvedCount` - The current number of auto-approved registrations.
-  - `automationRegistry` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
-  - `minLINKJuels` - The minimum amount of LINK token in Juels that new registrations should fund their upkeep with. The smallest denomination of LINK is called a Juel, and 1,000,000,000,000,000,000 (1e18) Juels are equal to 1 LINK. This is similar to Wei, which is the smallest denomination of ETH.
-
-### getAutomationRegistrarTypeAndVersion
-
-Returns the Type and Version of an [Automation Registrar contract](https://docs.chain.link/chainlink-automation/supported-networks/).
+>  Chainlink ENS is exclusively available on the Ethereum mainnet.
 
-```typescript
-public async getAutomationRegistrarTypeAndVersion(automationRegistrarAddress: string): Promise<string>;
-```
+### Methods
 
-- Parameters:
-
-  - `automationRegistrarAddress` - The Address of the [Automation Registrar contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that accepts requests for upkeep registrations.
-
-- `RETURN`: The Type and Version of an Automation Registrar contract.
-
-### fundUpkeep
-
-Funds Automation Upkeep with LINK tokens.
-
-> **Note**
->
-> Calling this function costs gas.
-
-```typescript
-public async fundUpkeep(
-    automationRegistryAddress: string,
-    id: BigNumber,
-    amountInJuels: BigNumber,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }>;
-```
+#### Resolve Aggregator Address
 
-- Parameters:
-  `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
-  `id` - The Upkeep ID.
-  `amountInJuels` - The Amount of LINK tokens for funding in Juels. The smallest denomination of LINK is called a Juel, and 1,000,000,000,000,000,000 (1e18) Juels are equal to 1 LINK. This is similar to Wei, which is the smallest denomination of ETH.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, the execution continues after this function immediately.
-
-- `RETURN`: The transaction hash.
-
-### checkUpkeep
-
-Checks if Upkeep on an Automation-compatible contract needs to be performed or not. Simulated by Automation Nodes via `eth_call`. If Upkeep is needed, the call then simulates the `performUpkeep` function to ensure it succeeds. Finally, it returns the success status along with payment information and the perform data payload. Reverts if Upkeep is not needed.
-
-> **Note**
->
-> Calling this function costs gas.
-
-```typescript
-public async checkUpkeep(
-    automationRegistryAddress: string,
-    id: BigNumber,
-    address: string
-  ): Promise<{
-    performData: BytesLike;
-    maxLinkPayment: BigNumber;
-    gasLimit: BigNumber;
-    adjustedGasWei: BigNumber;
-    linkEth: BigNumber;
-  }>;
-```
-
-- Parameters:
-  `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
-  `id` - The Upkeep ID.
-  `address` - The Address to simulate performing the Upkeep from.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, the execution continues after this function immediately.
-
-- Return values:
-  - `performData` - The calldata parameter to be passed to the target Upkeep.
-  - `maxLinkPayment` - The maximum amount of LINK tokens to be spent for payment for a given gas limit.
-  - `gasLimit` - The amount of gas to provide the target contract when performing Upkeep.
-  - `adjustedGasWei` - The adjusted gas price in Wei needed for performing the Upkeep.
-  - `linkEth` - The amount of LINK in terms of Wei needed for a gas received from the Chainlink Fast Gas Data Feed
-
-### migrateUpkeeps
+- **Method:** `resolveAggregatorAddress`
+- **Description:** Resolve Data Feed address for a token pair using the Chainlink ENS Resolver
+- **Arguments:**
+  - `baseTick`: Base tick of the token pair
+  - `quoteTick`: Quote tick of the token pair
 
-Migrate Upkeeps from one Automation Registry to another, including LINK and Upkeep parameters. Only callable by the Upkeep Admin. Can only migrate active Upkeeps.
-
-> **Note**
->
-> Calling this function costs gas.
-
-```typescript
-public async migrateUpkeeps(
-    automationRegistryAddress: string,
-    ids: BigNumber[],
-    destination: string,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }>;
-```
-
-- Parameters:
-  `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
-  `ids` - The list of IDs of Upkeeps to migrate.
-  `destination` - The Address of the Registry to migrate to.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, the execution continues after this function immediately.
-
-- `RETURN`: The transaction hash.
-
-### receiveMigratedUpkeeps
-
-Receives migrated Upkeeps. Called by other Registries when migrating Upkeeps.
-
-> **Note**
->
-> Calling this function costs gas.
-
-```typescript
-public async receiveMigratedUpkeeps(
-    automationRegistryAddress: string,
-    encodedUpkeeps: BytesLike,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }>;
-```
-
-- Parameters:
-  `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
-  `encodedUpkeeps` - The ABI encoding of Upkeeps to import - decoded by the Transcoder.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, the execution continues after this function immediately.
-
-- `RETURN`: The transaction hash.
-
-### cancelUpkeep
+#### Resolve Aggregator Address With Subdomains
 
-Cancels an active Upkeep. Prevents an Upkeep from being performed in the future.
-
-> **Note**
->
-> Calling this function costs gas.
-
-```typescript
-public async cancelUpkeep(
-    automationRegistryAddress: string,
-    id: BigNumber,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }>;
-```
-
-- Parameters:
-  `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
-  `id` - The Upkeep ID.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, the execution continues after this function immediately.
-
-- `RETURN`: The transaction hash.
-
-### withdrawFundsFromCanceledUpkeep
-
-Withdraws any remaining funds from a canceled Upkeep.
-
-> **Note**
->
-> Calling this function costs gas.
-
-```typescript
-public async withdrawFundsFromCanceledUpkeep(
-    automationRegistryAddress: string,
-    id: BigNumber,
-    to: string,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }>;
-```
-
-- Parameters:
-  `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
-  `id` - The Upkeep ID.
-  `to` - The destination Address for sending the remaining funds.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, the execution continues after this function immediately.
+- **Method:** `resolveAggregatorAddressWithSubdomains`
+- **Description:** Resolve Data Feed address for a token pair using the Chainlink ENS Resolver with subdomains
+- **Arguments:**
+  - `baseTick`: Base tick of the token pair.
+  - `quoteTick`: Quote tick of the token pair.
 
-- `RETURN`: The transaction hash.
+## VRF Service
 
-### transferAutomationPayeeship
+Chainlink [VRF](https://docs.chain.link/vrf/v2/introduction) (Verifiable Random Function) service is a critical component
+provided by Chainlink that enables smart contracts on the blockchain to securely and transparently access cryptographically secure and unpredictable randomness.
 
-Proposes the safe transfer of an Automation Node's Payee to another Address.
-
-> **Note**
->
-> Calling this function costs gas.
-
-```typescript
-public async transferAutomationPayeeship(
-    automationRegistryAddress: string,
-    automationNode: string,
-    proposed: string,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }>;
-```
-
-- Parameters:
-  `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
-  `automationNode` - The Address of the Automation Node to transfer the Payee role.
-  `proposed` - The Address to nominate for the next Payeeship.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, the execution continues after this function immediately.
-
-- `RETURN`: The transaction hash.
-
-### acceptAutomationPayeeship
-
-Accepts the safe transfer of the Payee role for an Automation Node.
-
-> **Note**
->
-> Calling this function costs gas.
-
-```typescript
-public async acceptAutomationPayeeship(
-    automationRegistryAddress: string,
-    automationNode: string,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }>;
-```
-
-- Parameters:
-  `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
-  `automationNode` - The Address of the Automation Node address to accept the Payee role.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, the execution continues after this function immediately.
-
-- `RETURN`: The transaction hash.
-
-### withdrawAutomationPayment
-
-Withdraws an Automation Node's payment. Callable only by the Automation Node's Payee.
-
-> **Note**
->
-> Calling this function costs gas.
-
-```typescript
-public async withdrawAutomationPayment(
-    automationRegistryAddress: string,
-    from: string,
-    to: string,
-    waitNumberOfConfirmations: number = 1
-  ): Promise<{ transactionHash: string }>;
-```
-
-- Parameters:
-  `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
-  `from` - The Automation Node Address.
-  `to` - The Address to send the payment to.
-  `waitNumberOfConfirmations` - The number of block confirmations to wait before continuing with the execution. Optional parameter. If not provided, the default value is 1, the execution continues after this function immediately.
-
-- `RETURN`: The transaction hash.
+### Service alias: `vrf`
 
-### getActiveUpkeepIDs
-
-Returns the list of IDs of all currently active Upkeeps. The order of IDs in the list is **not guaranteed**, therefore, if making successive calls, one should consider keeping the `blockheight` constant to ensure a wholistic picture of the contract state.
-
-```typescript
-public async getActiveUpkeepIDs(
-    automationRegistryAddress: string,
-    startIndex: BigNumber,
-    maxCount: BigNumber
-  ): Promise<BigNumber[]> ;
-```
+This section provides methods and functionalities designed to interact with the VRFCoordinator smart contract,
+which serves as the intermediary between smart contracts on the blockchain and the VRF service.
 
-- Parameters:
+### Methods
 
-  - `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
-  - `startIndex` - The starting index in the list.
-  - `maxCount` - The maximum count to retrieve, starting from 0 to unlimited.
+#### Create Subscription
 
-- `RETURN`: The list of IDs of all currently active Upkeeps.
+- **Method:** createSubscription
+- **Description:** Create a new subscription to the VRF service
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
 
-### getUpkeep
+#### Fund Subscription
 
-Returns all of the details about an Upkeep.
+- **Method:** fundSubscription
+- **Description:** Fund a subscription to the VRF service with LINK tokens
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+  - `linkTokenAddress`: Address of the LINK token contract
+  - `amountInJuels`: Amount of LINK tokens to be sent (in Juels)
+  - `subscriptionId`: VRF Subscription ID
 
-```typescript
-public async getUpkeep(
-    automationRegistryAddress: string,
-    id: BigNumber
-  ): Promise<{
-    target: string;
-    executeGas: number;
-    checkData: BytesLike;
-    balance: BigNumber;
-    lastAutomationNode: string;
-    admin: string;
-    maxValidBlocknumber: BigNumber;
-    amountSpent: BigNumber;
-  }> ;
-```
-
-- Parameters:
-
-  - `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
-  - `id` - The Upkeep ID.
-
-- Return values:
-  - `target` - The address of a target contract to perform an Upkeep on.
-  - `executeGas` - The amount of gas specified for performing a single Upkeep.
-  - `checkData` - The data passed to the contract when checking for an Upkeep.
-  - `balance` - The current amount of LINK of Upkeep. To top up, call the `fundUpkeep` function of this plugin.
-  - `lastAutomationNode` - The Address of an Automation Node that performed the last Upkeep.
-  - `admin` - The address of an Upkeep Admin.
-  - `maxValidBlocknumber` - The Maximum Valid Block Number.
-  - `amountSpent`- The total amount of LINK spent for performing this Upkeep.
-
-### getAutomationNodeInfo
-
-Returns the current info about any Automation Node Address.
-
-```typescript
-public async getAutomationNodeInfo(
-    automationRegistryAddress: string,
-    query: string
-  ): Promise<{ payee: string; active: boolean; balance: BigNumber }> ;
-```
-
-- Parameters:
-
-  - `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
-  - `query` - The Address of an Automation Node to query information details for.
-
-- Return values:
-  - `payee` - The Address of the Payee.
-  - `active` - `true` if an Automation Node is currently active, `false` otherwise.
-  - `balance` - The current balance of LINK tokens of an Automation Node.
-
-### automationGetMaxPaymentForGas
-
-Calculates the maximum payment for a given gas limit.
-
-```typescript
-public async automationGetMaxPaymentForGas(
-    automationRegistryAddress: string,
-    gasLimit: BigNumber
-  ): Promise<BigNumber>;
-```
-
-- Parameters:
-
-  - `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
-  - `gasLimit` - The amount of gas to calculate the payment for.
-
-- `RETURN` - The maximum payment for a given gas limit.
-
-### getMinBalanceForUpkeep
+#### Cancel Subscription
 
-Calculates the minimum balance required for an Upkeep to remain eligible.
-
-```typescript
-public async getMinBalanceForUpkeep(
-    automationRegistryAddress: string,
-    id: BigNumber
-  ): Promise<BigNumber>;
-```
+- **Method:** cancelSubscription
+- **Description:** Cancel a subscription to the VRF service and receive the remaining balance
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+  - `subscriptionId`: VRF Subscription ID
+  - `receivingAddress`: Address to receive the balance of the subscription
 
-- Parameters:
+#### Add Consumer
 
-  - `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
-  - `id` - The Upkeep ID.
+- **Method:** addConsumer
+- **Description:** Add a new consumer to an existing VRF subscription
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+  - `consumerAddress`: Address of the consumer
+  - `subscriptionId`: VRF Subscription ID
 
-- `RETURN` - The minimum balance required for an Upkeep to remain eligible.
+#### Remove Consumer
 
-### getAutomationRegistryState
+- **Method:** removeConsumer
+- **Description:** Remove a consumer from an existing VRF subscription
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+  - `consumerAddress`: Address of the consumer
+  - `subscriptionId`: VRF Subscription ID
 
-Returns the current state of the Automation Registry smart contract.
+#### Get Subscription Details
 
-```typescript
-public async getAutomationRegistryState(
-    automationRegistryAddress: string
-  ): Promise<{
-    nonce: number;
-    ownerLinkBalance: BigNumber;
-    expectedLinkBalance: BigNumber;
-    numUpkeeps: BigNumber;
-    paymentPremiumPPB: number;
-    flatFeeMicroLink: number;
-    blockCountPerTurn: number;
-    checkGasLimit: number;
-    stalenessSeconds: number;
-    gasCeilingMultiplier: number;
-    minUpkeepSpend: BigNumber;
-    maxPerformGas: number;
-    fallbackGasPrice: BigNumber;
-    fallbackLinkPrice: BigNumber;
-    transcoder: string;
-    registrar: string;
-    automationNodes: string[];
-  }>;
-```
+- **Method:** getSubscriptionDetails
+- **Description:** Get details of an existing VRF subscription
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+  - `subscriptionId`: VRF Subscription ID
 
-- Parameters:
+#### Request Random Words
 
-  - `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
+- **Method:** requestRandomWords
+- **Description:** Request random words from the VRF service
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+  - `keyHash`: Key hash related to maxGasPrice of a VRF. Different keyHashes have different gas prices
+  - `subscriptionId`: VRF Subscription ID. Must be funded with the minimum subscription balance required for the selected keyHash
+  - `requestConfirmations`: How many blocks you'd like the oracle to wait before responding to the request
+  - `callbackGasLimit`: How much gas you allow for fulfillRandomWords callback
+  - `numWords`: The number of random values you'd like to receive in fulfillRandomWords callback
 
-- Return values:
-  - `nonce` - The number that increments for each newly created Upkeep. Serves as one of the parameters for generating the unique Upkeep ID.
-  - `ownerLinkBalance` - The amount of LINK funds collected through cancellation fees. This is the withdrawable balance of LINK by the contract owner.
-  - `expectedLinkBalance` - The expected amount of LINK tokens of a Registry.
-  - `numUpkeeps` - The number of active Upkeeps on a Registry.
-  - `paymentPremiumPPB` - The payment premium rate oracles receive on top of being reimbursed for gas, measured in parts per billion.
-  - `flatFeeMicroLink` - The flat fee paid to oracles for performing Upkeeps, priced in MicroLink; can be used in conjunction with or independently of `paymentPremiumPPB`.
-  - `blockCountPerTurn` - The number of blocks each oracle has during their turn to perform upkeep before it will be the next Automation Node's turn to submit.
-  - `checkGasLimit` - The gas limit when checking for Upkeep.
-  - `stalenessSeconds` - The number of seconds that is allowed for feed data to be stale before switching to the fallback pricing.
-  - `gasCeilingMultiplier` - The multiplier to apply to the fast gas feed price when calculating the payment ceiling for Automation Nodes.
-  - `minUpkeepSpend` - The minimum amount of LINK tokens that an Upkeep must spend before canceling.
-  - `maxPerformGas` - The maximum `executeGas` allowed for an Upkeep on this Registry.
-  - `fallbackGasPrice` - The gas price used if the Fast Gas Data Feed is stale.
-  - `fallbackLinkPrice` - The LINK price used if the LINK Data Feed is stale.
-  - `transcoder` - The Address of the Transcoder contract.
-  - `registrar` - The Address of the Automation Registrar contract.
-  - `automationNodes` - The list of Automation Nodes addresses.
+#### Check Pending Request
 
-### isAutomationRegistryPaused
+- **Method:** isPendingRequestExists
+- **Description:** Check if there is a pending request for an existing VRF subscription
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+  - `subscriptionId`: VRF Subscription ID
 
-Returns `true` if the Automation Registry contract is currently paused, `false` otherwise.
+#### Request Subscription Owner Transfer
 
-```typescript
-public async isAutomationRegistryPaused(automationRegistryAddress: string): Promise<boolean>;
-```
+- **Method:** requestSubscriptionOwnerTransfer
+- **Description:** Request to transfer ownership of a VRF subscription to a new owner
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+  - `subscriptionId`: VRF Subscription ID
+  - `newOwnerAddress`: Address of the new subscription owner
 
-- Parameters:
+#### Accept Subscription Owner Transfer
 
-  - `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
+- **Method:** acceptSubscriptionOwnerTransfer
+- **Description:** Accept the transfer of ownership of a VRF subscription
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+  - `subscriptionId`: VRF Subscription ID
 
-- `RETURN`: `true` if the Automation Registry contract is currently paused, `false` otherwise.
+#### Get Maximum Consumers
 
-### getAutomationRegistryTypeAndVersion
+- **Method:** getMaxConsumers
+- **Description:** Get the maximum number of consumers that can be added to a VRF subscription
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
 
-Returns the type and version of an Automation Registry smart contract.
+#### Get Maximum Number of Words
 
-```typescript
-public async getAutomationRegistryTypeAndVersion(automationRegistryAddress: string): Promise<string>;
-```
+- **Method:** getMaxNumberOfWords
+- **Description:** Get the maximum number of random words that can be requested from the VRF service
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
 
-- Parameters:
+#### Get Maximum Request Confirmations
 
-  - `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
+- **Method:** getMaxRequestConfirmations
+- **Description:** Get the maximum number of block confirmations allowed for a VRF request
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
 
-- `RETURN`: The type and version of an Automation Registry smart contract.
+#### Get Minimum Request Confirmations
 
-### getAutomationRegistryUpkeepTranscoderVersion
+- **Method:** getMinRequestConfirmations
+- **Description:** Get the minimum number of block confirmations required for a VRF request
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
 
-Returns the version of the Transcoder smart contract on the Automation Registry smart contract.
+#### Get Maximum Request Gas Limit
 
-```typescript
-public async getAutomationRegistryUpkeepTranscoderVersion(
-    automationRegistryAddress: string
-  ): Promise<number>;
-```
+- **Method:** getMaxRequestGasLimit
+- **Description:** Get the maximum gas limit for a VRF request
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
 
-- Parameters:
+#### Get Commitment
 
-  - `automationRegistryAddress` - The Address of the [Automation Registry contract](https://docs.chain.link/chainlink-automation/supported-networks/). This is a contract that adds work for Chainlink Automation to perform on the registered Automation-compatible contracts.
+- **Method:** getCommitment
+- **Description:** Get the commitment data for a VRF request
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
+  - `requestId`: Request ID
 
-- `RETURN`: The version of the Transcoder smart contract on the Automation Registry smart contract.
+#### Get Configuration
 
-## Running a Chainlink Node on a Hardhat Network
+- **Method:** getConfig
+- **Description:** Get the configuration details of VRF Coordinator
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
 
-Operating a Chainlink node allows you to be part of the Chainlink Network, helping developers build hybrid smart contracts, giving them access to real-world data and services. Using a set of Hardhat tasks from this plugin, you can easily spin up a Chainlink Node locally and test your smart contracts against it.
+#### Get Type and Version
 
-#### Prerequisites
+- **Method:** getTypeAndVersion
+- **Description:** Get the type and version details of VRF Coordinator
+- **Arguments:**
+  - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
 
-- [node](https://nodejs.org/en/) version > 16.X
-- [npm](https://www.npmjs.com/) version > 7
-- [Docker](https://www.docker.com/)
 
-To view the list of all available tasks, enter the following command:
+## Automation Services
 
-```console
-npx hardhat
-```
+Chainlink [Automation](https://docs.chain.link/vrf/v2/introduction) service that enables conditional execution 
+of your smart contracts functions through a hyper-reliable and decentralized automation platform.
 
-### chainlink:run-node
+### Service alias: `automationRegistrar`
 
-Open the Docker Desktop and run the Hardhat node by typing `npx hardhat node`.
+This section provides methods and functionalities designed to interact with the KeeperRegistrar smart contract,
+which accepts requests for upkeep registrations.
 
-Spins up a Chainlink node, which will set-up some predefined env variables. Please do not start it from the Docker Desktop.
+### Methods
 
-```console
-npx hardhat chainlink:run-node
-```
+#### Register Upkeep
 
-> **Note**
->
-> IMPORTANT!
->
-> Each time this command runs, it will remove all containers and re-create them (before running `docker compose up`, we first run `docker compose down`)
->
-> This behavior is analogous to the hardhat EVM node losing all previous history each time it is restarted.
->
-> If you want to restart, only pass an additional `true` parameter (`restartOnly`) like this `npx hardhat chainlink:run-node true`
+- **Method:** registerUpkeep
+- **Description:** Register an upkeep task for Chainlink Keepers to perform on a specified contract
+- **Arguments:**
+  - `keeperRegistrarAddress`: Address of Keeper Registrar
+  - `linkTokenAddress`: Address of Link Token
+  - `amountInJuels`: Amount of LINK in juels to fund the upkeep
+  - `upkeepName`: Upkeep name to be registered
+  - `encryptedEmail`: Encrypted email address of upkeep contact
+  - `upkeepContract`: Upkeep contract address to perform task on
+  - `gasLimit`: Limit of gas to provide the target contract when performing upkeep
+  - `adminAddress`: Address to cancel upkeep and withdraw remaining funds
+  - `checkData`: Data passed to the contract when checking upkeep
+  - `ocrConfig`: OffchainConfig for upkeep in bytes [Keeper Registrar v2_0 ONLY], default value: "0x"
+  - `source`: ID of the application sending this request [Keeper Registrar v1_1 ONLY], default value: "0"
+  - `sender`: Address of the sender making the request
 
-If you visit http://127.0.0.1:6688 in your browser, you should see the Chainlink node login page displayed.
+#### Get Pending Request
 
-You can use the following credentials to log in to your local Chainlink node:
+- **Method:** getPendingRequest
+- **Description:** Get information about a pending registration request for an upkeep task
+- **Arguments:**
+  - `keeperRegistrarAddress`: Address of Keeper Registrar
+  - `requestHash`: Hash of the registration request
 
-- username - **user@hardhatchainlink.io**
-- password - **strongpassword777**
+#### Cancel Request
 
-<img width="1014" alt="Chainlink Node Log In Page" src="https://user-images.githubusercontent.com/37881789/203107776-8f0fcd14-e35f-445a-becd-83a2448a73b3.png">
+- **Method:** cancelRequest
+- **Description:** Cancel a pending registration request for an upkeep task
+- **Arguments:**
+  - `keeperRegistrarAddress`: Address of Keeper Registrar
+  - `requestHash`: Hash of the registration request
 
-### chainlink:node-info
+#### Get Registration Config
 
-Open the Docker Desktop and run the Hardhat node by typing `npx hardhat node`.
+- **Method:** getRegistrationConfig
+- **Description:** Get the registration configuration for upkeep tasks from the Keeper Registrar
+- **Arguments:**
+  - `keeperRegistrarAddress`: Address of Keeper Registrar
 
-Returns the Node Information.
+#### Get Type And Version
 
-```console
-npx hardhat chainlink:node-info --network localhost
-```
+- **Method:** getTypeAndVersion
+- **Description:** Get the type and version for the Keeper Registrar
+- **Arguments:**
+  - `keeperRegistrarAddress`: Address of Keeper Registrar
 
-The output will look like this:
+### Service alias: `automationRegistry`
 
-```console
-┌─────────┬──────────────────────────────────────────────┐
-│ (index) │                    Values                    │
-├─────────┼──────────────────────────────────────────────┤
-│ Address │ '0x786729C810294D47E935aE636F66f6cE35E9B99d' │
-│ Balance │            '0.000000000000000000'            │
-│ ChainID │                   '31337'                    │
-└─────────┴──────────────────────────────────────────────┘
-```
+This section provides methods and functionalities designed to interact with the KeeperRegistry smart contract,
+which serves to add tasks for Chainlink Keepers to perform on client contracts.
 
-### chainlink:fund-eth
+### Methods
 
-Open the Docker Desktop and run the Hardhat node by typing `npx hardhat node`.
+#### Get State
 
-Funds the Chainlink Node with ETH to fulfill requests.
+- **Method:** getState
+- **Description:** Get the current state of Keeper Registry
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
 
-```console
-npx hardhat chainlink:fund-eth <node_address> <eth_amount> --network localhost
-```
+#### Get Active Upkeep IDs
 
-- Input parameters:
-  `node_address` - The Address of a Chainlink Node on a Hardhat Network.
-  `eth_amount` - The amount of Hardhat's Network ETH.
+- **Method:** getActiveUpkeepIDs
+- **Description:** Get a list of active upkeep IDs from Keeper Registry
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
+  - `startIndex`: Starting index of Upkeeps to get
+  - `maxCount`: Quantity of Upkeeps to get
 
-#### Example
+#### Get Max Payment For Gas
 
-```console
-npx hardhat chainlink:fund-eth 0x786729C810294D47E935aE636F66f6cE35E9B99d 20 --network localhost
-```
+- **Method:** getMaxPaymentForGas
+- **Description:** Get maximum payment for the gas limit, calculated using the Keeper Registry parameters
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
+  - `gasLimit`: Gas limit
 
-Now recheck the Node info again, to see the updated balance.
+#### Is Paused
 
-```console
-npx hardhat chainlink:node-info --network localhost
-```
+- **Method:** isPaused
+- **Description:** Check if the Keeper Registry is currently paused
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
 
-The output will look like this:
+#### Get Upkeep
 
-```console
-┌─────────┬──────────────────────────────────────────────┐
-│ (index) │                    Values                    │
-├─────────┼──────────────────────────────────────────────┤
-│ Address │ '0x786729C810294D47E935aE636F66f6cE35E9B99d' │
-│ Balance │            '20.000000000000000000'           │
-│ ChainID │                   '31337'                    │
-└─────────┴──────────────────────────────────────────────┘
-```
+- **Method:** getUpkeep
+- **Description:** Get information about a specific upkeep from the Keeper Registry
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
+  - `upkeepId`: Upkeep ID
 
-### chainlink:deploy-link
+#### Get Min Balance For Upkeep
 
-Open the Docker Desktop and run the Hardhat node by typing `npx hardhat node`.
+- **Method:** getMinBalanceForUpkeep
+- **Description:** Get the minimum required balance for upkeep from the Keeper Registry
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
+  - `upkeepId`: Upkeep ID
 
-Deploys the LINK token smart contract on a Hardhat Network. LINK token will be used by the Consumer contract to pay for Oracle requests.
+#### Fund Upkeep
 
-```console
-npx hardhat chainlink:deploy-link --network localhost
-```
+- **Method:** fundUpkeep
+- **Description:** Fund an upkeep task with a specified amount of LINK in Juels
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
+  - `upkeepId`: Upkeep ID
+  - `amountInJuels`: Amount of LINK in Juels to fund upkeep
 
-The output will look like this:
+#### Cancel Upkeep
 
-```console
-┌────────────────────┬──────────────────────────────────────────────┐
-│      (index)       │                    Values                    │
-├────────────────────┼──────────────────────────────────────────────┤
-│ Link Token Address │ '0x5FbDB2315678afecb367f032d93F642f64180aa3' │
-└────────────────────┴──────────────────────────────────────────────┘
-```
+- **Method:** cancelUpkeep
+- **Description:** Cancel an upkeep task in Keeper Registry
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
+  - `upkeepId`: Upkeep ID
 
-### chainlink:deploy-oracle
+#### Withdraw Funds
 
-Open the Docker Desktop and run the Hardhat node by typing `npx hardhat node`.
+- **Method:** withdrawFunds
+- **Description:** Withdraw funds from an upkeep task in Keeper Registry
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
+  - `upkeepId`: Upkeep ID
+  - `receivingAddress`: Address to withdraw funds
 
-Deploys the Oracle contract.
+#### Migrate Upkeeps
 
-```console
-npx hardhat chainlink:deploy-oracle <node_address> <link_address> --network localhost
-```
+- **Method:** migrateUpkeeps
+- **Description:** Migrate multiple upkeep tasks to another Keeper Registry
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
+  - `upkeepIds`: Upkeep IDs to migrate
+  - `destination`: Address of destination Keeper Registry
 
-- Input parameters:
-  `node_address` - The Address of a Chainlink Node on a Hardhat Network.
-  `link_address` - The Address of a LINK token smart contract on a Hardhat Network.
+#### Get Keeper Info
 
-#### Example
+- **Method:** getKeeperInfo
+- **Description:** Get information about a specific keeper from Keeper Registry
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
+  - `keeperAddress`: Keeper address
 
-```console
-npx hardhat chainlink:deploy-oracle 0x786729C810294D47E935aE636F66f6cE35E9B99d 0x5FbDB2315678afecb367f032d93F642f64180aa3 --network localhost
-```
+#### Get Type And Version
 
-The output will look like this:
+- **Method:** getTypeAndVersion
+- **Description:** Get the type and version for Keeper Registry
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
 
-```console
-┌────────────────┬──────────────────────────────────────────────┐
-│    (index)     │                    Values                    │
-├────────────────┼──────────────────────────────────────────────┤
-│ Oracle Address │ '0xBe576260A47175829f250732421522B7ec204D06' │
-└────────────────┴──────────────────────────────────────────────┘
-```
+#### Get Upkeep Transcoder Version
 
-### chainlink:create-job
+- **Method:** getUpkeepTranscoderVersion
+- **Description:** Get the upkeep transcoder version from Keeper Registry
+- **Arguments:**
+  - `keeperRegistryAddress`: Address of Keeper Registry
 
-Open the Docker Desktop and run the Hardhat node by typing `npx hardhat node`.
+## Utilities
 
-Creates a Chainlink Job.
+The plugin utility methods.
 
-```console
-npx hardhat chainlink:create-job <oracle_address> <job_type>{cron | direct}
-```
+### Service alias: `utils`
 
-- Input parameters:
-  `oracle_address` - The Address of an Oracle smart contract on a Hardhat Network.
-  `job_type` - The Chainlink Job type. It can be either `cron` or `direct`.
+### Methods
 
-#### Example
+#### Get Data Feed Proxy/Registry Round ID
 
-```console
-npx hardhat chainlink:create-job 0x5FbDB2315678afecb367f032d93F642f64180aa3 direct
-```
+- **Method:** getRoundId
+- **Description:** Obtain the Data Feed Proxy/Registry round ID using the provided phase ID and aggregator round ID
+- **Arguments:**
+  - `phaseId`: Data Feed Proxy/Registry phase ID
+  - `aggregatorRoundId`: Data Feed round ID
 
-The output will look like this:
+#### Parse Data Feed Proxy/Registry Round ID
 
-```console
-┌────────────┬────────────────────────────────────────┐
-│  (index)   │                 Values                 │
-├────────────┼────────────────────────────────────────┤
-│   Status   │               'Success'                │
-│   Error    │                  null                  │
-│   JobID    │                  '1'                   │
-│ ExternalID │ '95cd6192-8dc8-4e1d-903d-3e7b885bc9d5' │
-└────────────┴────────────────────────────────────────┘
-```
+- **Method:** parseRoundId
+- **Description:** Parse the given Data Feed Proxy/Registry round ID to extract relevant information
+- **Arguments:**
+  - `roundId`: Data Feed Proxy/Registry round ID
 
-### TROUBLESHOOTING
+#### Transfer ETH
 
-If you turn off the hardhat node all history will get wiped. In that case, you will also need to run the chainlink node again using the `chainlink:run-node` command.
+- **Method:** transferETH
+- **Description:** Transfer ETH to recipient
+- **Arguments:**
+  - `recipient`: Recipient address
+  - `amount`: Amount of ETH in wei
 
-If the chainlink node becomes out of sync (info not updating) then you can run `chainlink:run-node true` which will restart the node without destroying the containers.
+## Sandbox `sandbox`
 
-Take note of the External ID of the Job.
+This module contains a group of services for starting and managing a Chainlink node and setting up Chainlink jobs.
+
+### Service alias: `node`
+
+This section provides methods and functionalities designed to spin up and manage Chainlink node.
+
+### Methods
+
+#### Run Chainlink node
+
+- **Method:** run
+- **Description:** Run local Chainlink node
+
+#### Restart Chainlink node
+
+- **Method:** restart
+- **Description:** Restart local Chainlink node
+
+#### Stop Chainlink node
+
+- **Method:** stop
+- **Description:** Stop local Chainlink node
+
+#### Get ETH keys
+
+- **Method:** getETHKeys
+- **Description:** Get list of Chainlink node's ETH keys
+
+#### Get P2P keys
+
+- **Method:** getP2PKeys
+- **Description:** Get list of Chainlink node's P2P keys
+
+#### Get OCR keys
+
+- **Method:** getOCRKeys
+- **Description:** Get list of Chainlink node's OCR keys
+
+#### Get jobs
+
+- **Method:** getJobs
+- **Description:** Get list of Chainlink node's jobs
+
+#### Create Direct Request job
+
+- **Method:** createDirectRequestJob
+- **Description:** Set up Direct Request job for local Chainlink node
+- **Arguments:**
+  - `operatorAddress`: Operator contract address
+
+Check Direct Request job configuration template: [direct-request-job_template.toml](src%2Fsandbox%2Fnode%2Fsetup%2Fclroot%2Fjobs%2Fdirect-request-job_template.toml). 
+
+### Service alias: `linkToken`
+
+This section provides methods and functionalities designed to interact with the [Link Token](contracts%2FLinkToken.sol).
+
+### Methods
+
+#### Deploy contract
+
+- **Method:** deploy
+- **Description:** Deploy Link Token contract
+
+#### Transfer
+
+- **Method:** transfer
+- **Description:** Transfer Link Tokens to recipient
+- **Arguments:**
+  - `linkTokenAddress`: Link Token address
+  - `recipient`: Account to which Link Tokens will be transferred
+  - `amount`: Amount of Link Tokens to be transferred
+
+#### Get allowance
+
+- **Method:** getAllowance
+- **Description:** Get Link Token allowance
+- **Arguments:**
+  - `linkTokenAddress`: Link Token address
+  - `owner`: Link Tokens owner
+  - `spender`: Owner's Link Tokens spender
+
+#### Increase approval
+
+- **Method:** increaseApproval
+- **Description:** Increase Link Token approval
+- **Arguments:**
+  - `linkTokenAddress`: Link Token address
+  - `spender`: Account for which Link Token approval will be increased
+  - `addedValue`: Amount of Link Tokens to be added
+
+#### Decrease approval
+
+- **Method:** decreaseApproval
+- **Description:** Decrease Link Token approval
+- **Arguments:**
+  - `linkTokenAddress`: Link Token address
+  - `spender`: Account for which Link Token approval will be decreased
+  - `subtractedValue`: Amount of Link Tokens to be decreased
+
+### Service alias: `operator`
+
+This section provides methods and functionalities designed to interact with the [Operator](contracts%2FOperator.sol).
+
+### Methods
+
+#### Deploy contract
+
+- **Method:** deploy
+- **Description:** Deploy Operator contract
+- **Arguments:**
+  - `linkTokenAddress`: Link Token address
+
+#### Set authorized sender
+
+- **Method:** setAuthorizedSender
+- **Description:** Set authorized sender
+- **Arguments:**
+  - `operatorAddress`: Operator address
+  - `sender`: Address to be authorized
+
+### Service alias: `drConsumer`
+
+This section provides methods and functionalities designed to interact with the [Direct Request Consumer](contracts%2FChainlinkDirectRequestConsumer.sol).
+
+### Methods
+
+#### Deploy contract
+
+- **Method:** deploy
+- **Description:** Deploy Direct Request Consumer contract
+- **Arguments:**
+  - `linkTokenAddress`: Link Token address
+
+#### Request data
+
+- **Method:** requestData
+- **Description:** Request data to be fulfilled with Direct Request job
+- **Arguments:**
+  - `directRequestConsumerAddress`: Direct Request Consumer address
+  - `operatorAddress`: Operator address
+  - `externalJobID`: Direct Request External Job ID
+  - `observationURL`: URL to retrieve data
+  - `pathToData`: JSON path to data in observation URL response, e.g. "ethereum,usd"
+  - `multiplyTimes`: Multiplier for the received answer
+
+#### Get latest answer
+
+- **Method:** getLatestAnswer
+- **Description:** Get latest answer
+- **Arguments:**
+  - `directRequestConsumerAddress`: Direct Request Consumer address
+

@@ -1,4 +1,9 @@
-import { BigNumber, ContractReceipt, ContractTransaction } from "ethers";
+import {
+  BigNumber,
+  BigNumberish,
+  ContractReceipt,
+  ContractTransaction,
+} from "ethers";
 import { BytesLike, defaultAbiCoder } from "ethers/lib/utils";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
@@ -7,19 +12,20 @@ import {
   VRFCoordinatorV2__factory,
 } from "../../types";
 
-export const createVrfSubscription = async (
-  env: HardhatRuntimeEnvironment,
-  vrfCoordinatorAddress: string,
-  waitNumberOfConfirmations: number
+export const createSubscription = async (
+  hre: HardhatRuntimeEnvironment,
+  vrfCoordinatorAddress: string
 ): Promise<{ subscriptionId: BigNumber; transactionHash: string }> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
     vrfCoordinatorAddress,
     signer
   );
 
   const tx: ContractTransaction = await vrfCoordinatorV2.createSubscription();
-  const txReceipt: ContractReceipt = await tx.wait(waitNumberOfConfirmations);
+  const txReceipt: ContractReceipt = await tx.wait(
+    hre.config.chainlink.confirmations
+  );
   if (!txReceipt.events) {
     throw new Error("Error Creating New Subscription");
   }
@@ -29,15 +35,14 @@ export const createVrfSubscription = async (
   return { subscriptionId, transactionHash: tx.hash };
 };
 
-export const fundVrfSubscription = async (
-  env: HardhatRuntimeEnvironment,
+export const fundSubscription = async (
+  hre: HardhatRuntimeEnvironment,
   vrfCoordinatorAddress: string,
   linkTokenAddress: string,
-  amountInJuels: BigNumber,
-  subscriptionId: BigNumber,
-  waitNumberOfConfirmations: number
+  amountInJuels: BigNumberish,
+  subscriptionId: BigNumberish
 ): Promise<{ transactionHash: string }> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const linkToken = LinkTokenInterface__factory.connect(
     linkTokenAddress,
     signer
@@ -48,19 +53,39 @@ export const fundVrfSubscription = async (
     amountInJuels,
     defaultAbiCoder.encode(["uint64"], [subscriptionId])
   );
-  await tx.wait(waitNumberOfConfirmations);
+  await tx.wait(hre.config.chainlink.confirmations);
 
   return { transactionHash: tx.hash };
 };
 
-export const addVrfConsumer = async (
-  env: HardhatRuntimeEnvironment,
+export const cancelSubscription = async (
+  hre: HardhatRuntimeEnvironment,
+  vrfCoordinatorAddress: string,
+  subscriptionId: BigNumberish,
+  receivingAddress: string
+): Promise<{ transactionHash: string }> => {
+  const [signer] = await hre.ethers.getSigners();
+  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
+    vrfCoordinatorAddress,
+    signer
+  );
+
+  const tx: ContractTransaction = await vrfCoordinatorV2.cancelSubscription(
+    subscriptionId,
+    receivingAddress
+  );
+  await tx.wait(hre.config.chainlink.confirmations);
+
+  return { transactionHash: tx.hash };
+};
+
+export const addConsumer = async (
+  hre: HardhatRuntimeEnvironment,
   vrfCoordinatorAddress: string,
   consumerAddress: string,
-  subscriptionId: BigNumber,
-  waitNumberOfConfirmations: number
+  subscriptionId: BigNumberish
 ): Promise<{ transactionHash: string }> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
     vrfCoordinatorAddress,
     signer
@@ -70,19 +95,18 @@ export const addVrfConsumer = async (
     subscriptionId,
     consumerAddress
   );
-  await tx.wait(waitNumberOfConfirmations);
+  await tx.wait(hre.config.chainlink.confirmations);
 
   return { transactionHash: tx.hash };
 };
 
-export const removeVrfConsumer = async (
-  env: HardhatRuntimeEnvironment,
+export const removeConsumer = async (
+  hre: HardhatRuntimeEnvironment,
   vrfCoordinatorAddress: string,
   consumerAddress: string,
-  subscriptionId: BigNumber,
-  waitNumberOfConfirmations: number
+  subscriptionId: BigNumberish
 ): Promise<{ transactionHash: string }> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
     vrfCoordinatorAddress,
     signer
@@ -92,65 +116,70 @@ export const removeVrfConsumer = async (
     subscriptionId,
     consumerAddress
   );
-  await tx.wait(waitNumberOfConfirmations);
+  await tx.wait(hre.config.chainlink.confirmations);
 
   return { transactionHash: tx.hash };
 };
 
-export const cancelVrfSubscription = async (
-  env: HardhatRuntimeEnvironment,
+export const requestRandomWords = async (
+  hre: HardhatRuntimeEnvironment,
   vrfCoordinatorAddress: string,
-  subscriptionId: BigNumber,
-  receivingWallet: string,
-  waitNumberOfConfirmations: number
+  keyHash: BytesLike,
+  subscriptionId: BigNumberish,
+  requestConfirmations: BigNumberish,
+  callbackGasLimit: BigNumberish,
+  numWords: BigNumberish
 ): Promise<{ transactionHash: string }> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
     vrfCoordinatorAddress,
     signer
   );
 
-  const tx: ContractTransaction = await vrfCoordinatorV2.cancelSubscription(
+  const tx: ContractTransaction = await vrfCoordinatorV2.requestRandomWords(
+    keyHash,
     subscriptionId,
-    receivingWallet
+    requestConfirmations,
+    callbackGasLimit,
+    numWords
   );
-  await tx.wait(waitNumberOfConfirmations);
+  await tx.wait(hre.config.chainlink.confirmations);
 
   return { transactionHash: tx.hash };
 };
 
-export const getVrfSubscriptionDetails = async (
-  env: HardhatRuntimeEnvironment,
+export const getSubscriptionDetails = async (
+  hre: HardhatRuntimeEnvironment,
   vrfCoordinatorAddress: string,
-  subscriptionId: BigNumber
+  subscriptionId: BigNumberish
 ): Promise<{
   balance: BigNumber;
   reqCount: BigNumber;
   owner: string;
   consumers: string[];
 }> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
     vrfCoordinatorAddress,
     signer
   );
 
-  const callback = await vrfCoordinatorV2.getSubscription(subscriptionId);
+  const result = await vrfCoordinatorV2.getSubscription(subscriptionId);
 
   return {
-    balance: callback.balance,
-    reqCount: callback.reqCount,
-    owner: callback.owner,
-    consumers: callback.consumers,
+    balance: result.balance,
+    reqCount: result.reqCount,
+    owner: result.owner,
+    consumers: result.consumers,
   };
 };
 
-export const pendingVrfRequestExists = async (
-  env: HardhatRuntimeEnvironment,
+export const isPendingRequestExists = async (
+  hre: HardhatRuntimeEnvironment,
   vrfCoordinatorAddress: string,
-  subscriptionId: BigNumber
+  subscriptionId: BigNumberish
 ): Promise<boolean> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
     vrfCoordinatorAddress,
     signer
@@ -159,98 +188,89 @@ export const pendingVrfRequestExists = async (
   return vrfCoordinatorV2.pendingRequestExists(subscriptionId);
 };
 
-export const requestVrfSubscriptionOwnerTransfer = async (
-  env: HardhatRuntimeEnvironment,
+export const requestSubscriptionOwnerTransfer = async (
+  hre: HardhatRuntimeEnvironment,
   vrfCoordinatorAddress: string,
-  subscriptionId: BigNumber,
-  newOwnerAddress: string,
-  waitNumberOfConfirmations: number
+  subscriptionId: BigNumberish,
+  newOwnerAddress: string
 ): Promise<{ transactionHash: string }> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
     vrfCoordinatorAddress,
     signer
   );
 
-  const tx: ContractTransaction = await vrfCoordinatorV2.requestSubscriptionOwnerTransfer(
-    subscriptionId,
-    newOwnerAddress
-  );
-  await tx.wait(waitNumberOfConfirmations);
+  const tx: ContractTransaction =
+    await vrfCoordinatorV2.requestSubscriptionOwnerTransfer(
+      subscriptionId,
+      newOwnerAddress
+    );
+  await tx.wait(hre.config.chainlink.confirmations);
 
   return { transactionHash: tx.hash };
 };
 
-export const acceptVrfSubscriptionOwnerTransfer = async (
-  env: HardhatRuntimeEnvironment,
+export const acceptSubscriptionOwnerTransfer = async (
+  hre: HardhatRuntimeEnvironment,
   vrfCoordinatorAddress: string,
-  subscriptionId: BigNumber,
-  waitNumberOfConfirmations: number
+  subscriptionId: BigNumberish
 ): Promise<{ transactionHash: string }> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
     vrfCoordinatorAddress,
     signer
   );
 
-  const tx: ContractTransaction = await vrfCoordinatorV2.acceptSubscriptionOwnerTransfer(
-    subscriptionId
-  );
-  await tx.wait(waitNumberOfConfirmations);
+  const tx: ContractTransaction =
+    await vrfCoordinatorV2.acceptSubscriptionOwnerTransfer(subscriptionId);
+  await tx.wait(hre.config.chainlink.confirmations);
 
   return { transactionHash: tx.hash };
 };
 
-export const getMaxVrfConsumers = async (
-  env: HardhatRuntimeEnvironment,
+export const getMaxConsumers = async (
+  hre: HardhatRuntimeEnvironment,
   vrfCoordinatorAddress: string
 ): Promise<number> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
+  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
+    vrfCoordinatorAddress,
+    signer
+  );
+  return vrfCoordinatorV2.MAX_CONSUMERS();
+};
+
+export const getMaxNumberOfWords = async (
+  hre: HardhatRuntimeEnvironment,
+  vrfCoordinatorAddress: string
+): Promise<number> => {
+  const [signer] = await hre.ethers.getSigners();
   const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
     vrfCoordinatorAddress,
     signer
   );
 
-  const maxConsumers = await vrfCoordinatorV2.MAX_CONSUMERS();
-
-  return maxConsumers;
+  return vrfCoordinatorV2.MAX_NUM_WORDS();
 };
 
-export const getMaxVrfNumberOfWords = async (
-  env: HardhatRuntimeEnvironment,
+export const getMaxRequestConfirmations = async (
+  hre: HardhatRuntimeEnvironment,
   vrfCoordinatorAddress: string
 ): Promise<number> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
     vrfCoordinatorAddress,
     signer
   );
 
-  const maxNumWords = await vrfCoordinatorV2.MAX_NUM_WORDS();
-
-  return maxNumWords;
+  return vrfCoordinatorV2.MAX_REQUEST_CONFIRMATIONS();
 };
 
-export const getMaxVrfRequestConfirmations = async (
-  env: HardhatRuntimeEnvironment,
+export const getMinRequestConfirmations = async (
+  hre: HardhatRuntimeEnvironment,
   vrfCoordinatorAddress: string
 ): Promise<number> => {
-  const [signer] = await env.ethers.getSigners();
-  const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
-    vrfCoordinatorAddress,
-    signer
-  );
-
-  const maxRequestConfirmations = await vrfCoordinatorV2.MAX_REQUEST_CONFIRMATIONS();
-
-  return maxRequestConfirmations;
-};
-
-export const getMinVrfRequestConfirmations = async (
-  env: HardhatRuntimeEnvironment,
-  vrfCoordinatorAddress: string
-): Promise<number> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
     vrfCoordinatorAddress,
     signer
@@ -261,11 +281,11 @@ export const getMinVrfRequestConfirmations = async (
   return requestConfig[0];
 };
 
-export const getMaxVrfRequestGasLimit = async (
-  env: HardhatRuntimeEnvironment,
+export const getMaxRequestGasLimit = async (
+  hre: HardhatRuntimeEnvironment,
   vrfCoordinatorAddress: string
 ): Promise<number> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
     vrfCoordinatorAddress,
     signer
@@ -276,24 +296,22 @@ export const getMaxVrfRequestGasLimit = async (
   return requestConfig[1];
 };
 
-export const getVrfCommitment = async (
-  env: HardhatRuntimeEnvironment,
+export const getCommitment = async (
+  hre: HardhatRuntimeEnvironment,
   vrfCoordinatorAddress: string,
-  requestId: BigNumber
+  requestId: BigNumberish
 ): Promise<BytesLike> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
     vrfCoordinatorAddress,
     signer
   );
 
-  const commitment = await vrfCoordinatorV2.getCommitment(requestId);
-
-  return commitment;
+  return vrfCoordinatorV2.getCommitment(requestId);
 };
 
-export const getVrfCoordinatorConfig = async (
-  env: HardhatRuntimeEnvironment,
+export const getConfig = async (
+  hre: HardhatRuntimeEnvironment,
   vrfCoordinatorAddress: string
 ): Promise<{
   minimumRequestConfirmations: number;
@@ -301,7 +319,7 @@ export const getVrfCoordinatorConfig = async (
   stalenessSeconds: number;
   gasAfterPaymentCalculation: number;
 }> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
     vrfCoordinatorAddress,
     signer
@@ -317,17 +335,15 @@ export const getVrfCoordinatorConfig = async (
   };
 };
 
-export const getVrfCoordinatorTypeAndVersion = async (
-  env: HardhatRuntimeEnvironment,
+export const getTypeAndVersion = async (
+  hre: HardhatRuntimeEnvironment,
   vrfCoordinatorAddress: string
 ): Promise<string> => {
-  const [signer] = await env.ethers.getSigners();
+  const [signer] = await hre.ethers.getSigners();
   const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
     vrfCoordinatorAddress,
     signer
   );
 
-  const typeAndVersion = await vrfCoordinatorV2.typeAndVersion();
-
-  return typeAndVersion;
+  return vrfCoordinatorV2.typeAndVersion();
 };

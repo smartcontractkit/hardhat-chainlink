@@ -1,6 +1,14 @@
+<p align="center">
+  <a href="https://chain.link" target="_blank">
+    <img src="https://raw.githubusercontent.com/smartcontractkit/hardhat-starter-kit/main/box-img-lg.png" width="225" alt="Chainlink Hardhat logo">
+  </a>
+</p>
+
 # Hardhat Chainlink Plugin
 
-Integrates [Chainlink](https://chain.link) into [Hardhat](https://hardhat.org) projects.
+The Hardhat Chainlink plugin allows users to seamlessly interact with Chainlink services in their Hardhat-based projects.
+It provides atomic methods to interact with smart contracts related to the main Chainlink services: Data Feeds, VRF, and Automation.
+This plugin offers a convenient way to integrate Chainlink functionality into your web3 development workflow.
 
 > **Warning**
 >
@@ -8,191 +16,296 @@ Integrates [Chainlink](https://chain.link) into [Hardhat](https://hardhat.org) p
 >
 > **Open issues to submit bugs and earn the Beta Tester POAP.**
 
-## What
-
-This plugin will help you to use the Chainlink protocol inside your tests, scripts & tasks. This is a community initiative, so everyone is welcome to contribute. Start by opening a "Feature Request" issue.
-
 ## Installation
+> **Note**  
+If you are starting a new Hardhat project, we recommend following the [Hardhat Getting Started](https://hardhat.org/hardhat-runner/docs/getting-started#overview) documentation first.
 
+You can install the Hardhat Chainlink plugin using either npm or yarn.
+Choose the package manager that you prefer and run one of the following commands:
+
+Using npm:
 ```console
 npm install @chainlink/hardhat-chainlink
+```
 
-# or
+Using yarn:
 
+```console
 yarn add @chainlink/hardhat-chainlink
 ```
 
-Import the plugin in your `hardhat.config.js`:
+After installation, add the plugin to your Hardhat config:
 
+`hardhat.config.js`:
 ```js
 require("@chainlink/hardhat-chainlink");
 ```
 
-Or, if you are using TypeScript, in your `hardhat.config.ts`:
-
+`hardhat.config.ts`:
 ```ts
 import "@chainlink/hardhat-chainlink";
 ```
 
-## Environment extensions
-
-This plugin extends the Hardhat Runtime Environment by adding a `chainlink` field
-whose type is `ExampleHardhatRuntimeEnvironmentField`.
+This plugin also extends the Hardhat configuration and adds `chainlink` parameters group:
+`hardhat.config.ts`:
+```ts
+module.exports = {
+  chainlink: {
+    confirmations // Number of confirmations to wait for transactions, default: 1
+  },
+  ...
+}
+```
 
 ## Usage
 
-Full documentation is available at [DOCUMENTATION.md](./DOCUMENTATION.md). Here are a couple of examples of how to use the plugin.
+The Hardhat Chainlink plugin offers multiple ways to interact with Chainlink services,
+giving you the flexibility to choose the approach that suits your workflow best.
 
-### Example 1 - Get the latest price of ETH
+### 1. CLI
 
-To get the latest price of a given asset, prepare the network field inside `hardhat.config` file. To add the Goerli Testnet for example, type:
+Interact with the Hardhat Chainlink plugin through the command line interface (CLI) using the following format:
+```
+npx hardhat chainlink:{service} [method] [--args]
+```
+This approach serves both as a CLI method and Hardhat tasks.
+However, it's important to note that the methods in each service are "hidden" with subtasks and won't be shown when you call `npx hardhat`.
+Instead, you can call the methods by passing its name as a parameter for the related task.
 
-```typescript
-  networks: {
-    goerli: {
-      url: GOERLI_RPC_URL,
-      accounts: [PRIVATE_KEY]
-    }
-  }
+If the subtask and/or args are not passed directly, they will be interactively inquired during the CLI command execution.
+
+> **Note**  
+Arguments for methods called with CLI should be provided as a valid JSON string.
+
+To get a list of all available methods (subtasks) and their arguments for a specific service, you can use:
+```
+npx hardhat chainlink:{task}:subtasks
 ```
 
-Then import `chainlink` from `hardhat`, call the `getLatestPrice` function and pass it the [Aggregator contract address](https://docs.chain.link/docs/reference-contracts/):
-
-```typescript
-import { chainlink } from "hardhat";
-
-const ethUsdGoerliAggregator: string = `0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e`;
-const ethPrice = await chainlink.getLatestPrice(ethUsdGoerliAggregator);
+Example of calling a subtask with arguments directly in the CLI:
+```shell
+npx hardhat chainlink:dataFeed getLatestRoundAnswer --args '{"dataFeedAddress": "0xE62B71cf983019BFf55bC83B48601ce8419650CC"}'
 ```
 
-Make sure that your network points to the correct one (Goerli in this example), and double-check that provided aggregator address is correct. For example, if you are writing your tests with the `forking` feature enabled or developing scripts and tasks on a Goerli network, in which case you will run the above code snippet like this:
-
-```console
-npx hardhat run scripts/myScript.ts --network goerli
+Example of interacting with the CLI interactively, where the subtask and arguments are inquired:
+```shell
+npx hardhat chainlink:dataFeed
+# The CLI will ask you to select a subtask (getLatestRoundAnswer) and provide arguments interactively.
 ```
 
-### Example 2 - Create and Manage VRF Subscriptions inside the deployment script
+### 2. Hardhat Tasks
 
-Start by creating `VRFv2Consumer.sol` contract, which you can get from the [Official Chainlink Documentation](https://docs.chain.link/vrf/v2/subscription/examples/get-a-random-number).
-
-Prepare `hardhat.config` file for deployment on the Goerli network, for example:
-
-```typescript
-  networks: {
-    goerli: {
-      url: GOERLI_RPC_URL,
-      accounts: [PRIVATE_KEY]
-    }
-  }
+Integrate the Hardhat Chainlink plugin as a subtask in your own Hardhat tasks. Use the following format to run a subtask:
+```
+hre.run("chainlink:{service}:{method}", { ...args });
 ```
 
-Usually, you will create and manage your subscriptions on the VRF Subscription Management page, but with the plugin, you can automate that process.
+This method is well-suited for more complex workflows and automation.
+You can call the {service} and {method} directly in your custom Hardhat tasks, passing the required arguments as an object containing the necessary parameters.
 
-Expand your deployment script to include the following:
-
-- Creating new VRF subscriptions
-- Funding VRF subscriptions (Make sure to claim LINKs from the [faucet](https://faucets.chain.link/))
-- Adding new VRF consumers
-- And optionally,
-  - Getting details about VRF subscriptions
-  - Checking if there is a pending outgoing VRF request
-  - Removing VRF consumers
-  - Canceling VRF subscriptions
-
-```typescript
-// scripts/deploy.ts
-import { chainlink, ethers } from "hardhat";
-
-async function main() {
-  // NOTE: If you already have an active VRF Subscription, proceed to step 3
-
-  // Step 1: Create a new VRF Subscription
-  const vrfCoordinatorAddress = `0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D`;
-  const { subscriptionId } = await chainlink.createVrfSubscription(
-    vrfCoordinatorAddress
-  );
-
-  // Step 2: Fund VRF Subscription
-  const linkTokenAddress = `0x326C977E6efc84E512bB9C30f76E30c160eD06FB`;
-  const amountInJuels = ethers.BigNumber.from(`1000000000000000000`); // 1 LINK
-  await chainlink.fundVrfSubscription(
-    vrfCoordinatorAddress,
-    linkTokenAddress,
-    amountInJuels,
-    subscriptionId
-  );
-
-  // Step 3: Deploy your smart contract
-  const VRFv2ConsumerFactory = await ethers.getContractFactory("VRFv2Consumer");
-  const VRFv2Consumer = await VRFv2ConsumerFactory.deploy(subscriptionId);
-  await VRFv2Consumer.deployed();
-  console.log("VRFv2Consumer deployed to:", VRFv2Consumer.address);
-
-  // Step 4: Add VRF Consumer contract to your VRF Subscription
-  await chainlink.addVrfConsumer(
-    vrfCoordinatorAddress,
-    VRFv2Consumer.address,
-    subscriptionId
-  );
-}
-
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
+Example of calling a subtask in a custom Hardhat task with arguments:
+```js
+task("myTask", "My custom task", async (taskArgs, hre) => {
+  await hre.run("chainlink:dataFeed:getLatestRoundAnswer", {
+    dataFeedAddress: "0xE62B71cf983019BFf55bC83B48601ce8419650CC",
+  });
 });
 ```
 
-Run the deployment script by typing:
+### 3. Methods in Hardhat Environment
 
-```console
-npx hardhat run scripts/deploy.ts --network goerli
+Directly access Chainlink services as methods in the Hardhat Environment using the following format:
+```
+hre.chainlink.{service}.{method}(...args);
+```
+This approach is ideal for seamless integration with your existing Hardhat project.
+You can use familiar JavaScript syntax to call the Chainlink services as methods within your scripts and tasks.
+
+Example of calling a subtask as a method in the Hardhat Environment:
+```js
+async function myFunction() {
+  const dataFeedAddress = "0xE62B71cf983019BFf55bC83B48601ce8419650CC";
+  const result = await hre.chainlink.dataFeed.getLatestRoundAnswer(dataFeedAddress);
+  console.log(result);
+}
+```
+---
+Choose the method that fits your project's requirements and coding style.
+All three approaches provide the same set of functionalities, allowing you to interact with Chainlink services efficiently and effectively.
+
+### Available Services
+The Hardhat Chainlink plugin supports the following Chainlink services:
+
+- `dataFeed` (Data Feeds)
+- `dataFeedProxy` (Data Feed Proxies)
+- `feedRegistry` (Feed Registries)
+- `l2Sequencer` (L2 Sequencers)
+- `ens` (ENS - Ethereum Name Service)
+- `automationRegistry` (Automation Registries)
+- `automationRegistrar` (Automation Registrars)
+- `vrf` (Verifiable Random Functions)
+
+For a more in-depth understanding of available services and methods, please explore their [tests](test).
+
+## Registries
+The Hardhat Chainlink plugin provides registries that contain information about smart contracts related
+to various Chainlink services and other data, such as the [denominations library](https://docs.chain.link/data-feeds/feed-registry#denominations-library),
+which is useful for interacting with the Feed Registry.
+
+In general, these registries help you access essential contract addresses deployed on different networks,
+making it easier to integrate Chainlink services into your projects.
+
+You can access the plugin registries using one of the following methods:
+
+### 1. CLI
+
+To interact with the registries through the CLI, use the following command:
+```
+npx hardhat chainlink:registries [method]
 ```
 
-### Example 3 - Run Chainlink node on Hardhat network
+This command allows you to query records available in the registries.
+The CLI will inquire about the necessary additional information, such as the preferable network, to retrieve the required record from the registry.
 
-To run a Chainlink Node on the Hardhat network, you will need to follow a couple of steps.
-
-**Step 1**
-
-Spin up the Hardhat network by running the following command:
-
-```console
-npx hardhat node
+To get a list of all available getter-method for a specific registry, you can use:
+```
+npx hardhat chainlink:registries:subtasks
 ```
 
-**Step 2**
+The CLI will also inquire about the registry getter-method interactively if not provided directly.
 
-Open, and if necessary, install [Docker Desktop](https://www.docker.com/get-started/).
-
-**Step 3**
-
-Spin up a Chainlink node using the following command, which will set up some env variables. Please do not start it from Docker Desktop.
-
-```console
-npx hardhat chainlink:run-node
+Example of getting a record from registry directly in the CLI:
+```shell
+npx hardhat chainlink:registries getDataFeed
+# The CLI will ask you to select a preferred network and subsequent parameters.
 ```
 
+### 2. Methods in Hardhat Environment
+
+Access the registries as methods directly in the Hardhat Environment:
+```
+const registry = hre.chainlink.registries.{registryName};
+```
+
+Replace {registryName} with the name of the registry (e.g., dataFeeds, feedRegistries, keeperRegistries).
+
+Example of getting data from registry in the Hardhat Environment:
+```js
+async function myFunction() {
+  const dataFeedAddress = hre.chainlink.registries.dataFeeds.ethereum.ETH.USD.contractAddress;
+  console.log(dataFeedAddress);
+  // 0xE62B71cf983019BFf55bC83B48601ce8419650CC
+}
+```
+
+### Available registries
+
+The Hardhat Chainlink plugin provides the following registries:
+- `dataFeeds`: Addresses of Data Feeds-related contracts: Aggregators and Proxies, and their parameters.
+- `feedRegistries`: Feed Registries' contract addresses.
+- `l2Sequencers`: L2 Sequencer Uptime Feeds' contract addresses.
+- `keeperRegistries`: Addresses of Automation-related contracts: Keeper Registry and Keeper Registrar.
+- `linkTokens`: Link Tokens' contract addresses.
+- `vrfCoordinators`: Addresses of VRF Coordinators and their parameters.
+- `denominations`: Records from Denominations library to interact with Feed Registries contracts.
+
+For a more in-depth understanding of the structure of these records, please explore their [interfaces](src%2Fregistries%2Finterfaces).
+
+## Sandbox
+
+In addition to the primary feature of interacting with Chainlink services, this plugin provides the ability to manage a local Chainlink node.
+The corresponding functionality is implemented in a special tasks module `sandbox`.
+This module implements methods for starting, restarting and stopping a Chainlink node, getting Chainlink node information,
+deploying and interacting with such contracts as [LinkToken](contracts%2FLinkToken.sol), [Operator](contracts%2FOperator.sol) and [ChainlinkDirectRequestConsumer](contracts%2FChainlinkDirectRequestConsumer.sol).
+
+### Configure, run and manage local Chainlink node
+
+This plugin allows you to run a local Chainlink node and then manage it using Docker.
+> **Note**  
+Install and run Docker Daemon, and Docker Desktop for convenience. Instructions: [docs.docker.com/get-docker](https://docs.docker.com/get-docker/).
+
+Before you start a Chainlink node, it's important to configure it. To achieve this, parameters have been included in the Hardhat configuration `chainlink` group:
+`hardhat.config.ts`:
+```ts
+module.exports = {
+  chainlink: {
+    node: {
+      chain_id, // Chain ID, default: "1337"
+      chain_name, // Chain name, default: "local"
+      http_url, // JSON RPC HTTP endpoint, default: "http://host.docker.internal:8545"
+      ws_url, // JSON RPC WebSocket endpoint, default: "ws://host.docker.internal:8545"
+      cl_keystore_password, // Password to encode Chainlink keys in database, default: "password1234567890"
+      cl_api_user, // Email of Chainlink API user/admin, default: "user@chain.link"
+      cl_api_password, // Password of Chainlink API user/admin, default: "password1234567890"
+      pg_user, // Postgres DB user name, default: "chainlink"
+      pg_password, // Postgres DB user password, default: "password1234567890"
+      pg_db, // Postgres DB name, default: "chainlink"
+    }
+  },
+  ...
+}
+```
 > **Note**
->
-> IMPORTANT!
->
-> Each time this command runs, it will remove all containers and re-create them (before running `docker compose up`, we first run `docker compose down`)
->
-> This behavior is analogous to the hardhat EVM node losing all previous history each time it is restarted.
->
-> If you want to restart, only pass an additional `true` parameter (`restartOnly`) like this `npx hardhat chainlink:run-node true`
+> Passwords must contain both letters and numbers and be at least 16 characters long.
 
-If you visit http://127.0.0.1:6688 in your browser, you should see the Chainlink node login page displayed.
+Once these parameters are specified, Chainlink node could be started/restarted/stopped and managed with plugin following the [documentation](DOCUMENTATION.md#service-alias-node).  
 
-You can use the following credentials to log in to your local Chainlink node:
+You can also manage a Chainlink node either with Chainlink CLI or Chainlink node GUI.
 
-- username - **user@hardhatchainlink.io**
-- password - **strongpassword777**
+#### Chainlink CLI
+Chainlink node CLI is available directly on a machine running Chainlink node, so first you have to connect with `bash` to a Docker container to be able to run commands.
 
-<img width="1014" alt="Chainlink Node Log In Page" src="https://user-images.githubusercontent.com/37881789/203107776-8f0fcd14-e35f-445a-becd-83a2448a73b3.png">
+Here are some of the things you can do with the CLI:
+* Create/Delete Chainlink Jobs
+* Manage Chainlink accounts' transactions
+* Manage Chainlink External Initiators
+* See/Create Chainlink node's keys: ETH, OCR, P2P
+* and more...
 
-To see the available tasks to interact with your node, run:
-
-```console
-npx hardhat
+Here is example command to get list of ETH keys that are used by the Chainlink node:
+```bash
+chainlink keys eth list 
 ```
+The most useful commands to manage Chainlink node with UI you can find here: https://docs.chain.link/chainlink-nodes/resources/miscellaneous.
+
+#### Chainlink GUI
+Chainlink node GUI is by default available on the port `6688`, this port is exposed with a docker-compose file to a host machine.
+
+Here are some of the things you can do with the GUI:
+* Create/Delete Chainlink Jobs
+* Create Chainlink Bridge
+* See Chainlink Jobs runs
+* See Chainlink node's keys: ETH, OCR, P2P
+* See Chainlink node's current configuration
+* and more...
+
+In order to login use credentials provided with `cl_api_user` and `cl_api_password`.
+
+### Set up a Direct Request job with plugin
+
+Once Chainlink node is started, Direct Request job could be set up. It can be used for testing, learning and other purposes.  
+The process of setting up a Direct Request job is as follows:
+1. [Deploy Link Token contract](DOCUMENTATION.md#deploy-contract)
+2. [Deploy Operator contract](DOCUMENTATION.md#deploy-contract-1)
+3. [Deploy Direct Request Consumer contract](DOCUMENTATION.md#deploy-contract-1)
+4. [Get Chainlink node ETH accounts](DOCUMENTATION.md#get-eth-keys) and choose one of them
+5. [Fund chosen Chainlink ETH account](DOCUMENTATION.md#transfer-eth) with reasonable amount of ETH
+6. [Fund Direct Request Consumer contract with Link tokens](DOCUMENTATION.md#transfer) (at least 1 token)
+7. [Set chosen Chainlink ETH account to Operator contract as Authorized Sender](DOCUMENTATION.md#set-authorized-sender)
+8. [Create Direct Request job](DOCUMENTATION.md#create-direct-request-job)
+9. [Request data with Direct Request job](DOCUMENTATION.md#request-data)
+10. [Check if answer in Direct Request consumer was updated](DOCUMENTATION.md#get-latest-answer)
+
+More on Direct Request job: https://docs.chain.link/chainlink-nodes/oracle-jobs/all-jobs#direct-request-jobs.
+
+## Documentation
+
+For detailed usage instructions and more information on each service and method, refer to the [DOCUMENTATION.md](DOCUMENTATION.md).
+
+## Contribution
+We welcome contributions from the community.
+
+If you find any issues, have suggestions for improvements, or want to add new features to the plugin,
+please don't hesitate to open an issue or submit a pull request.
+
+Your contributions help us improve the Hardhat Chainlink plugin and provide better tools for the entire community.

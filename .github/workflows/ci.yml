@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: main-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-hardhat-chainlink-plugin:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Setup environment
+        run: yarn && yarn build
+
+      - name: Prepare test environment
+        run: yarn test:prepare
+      
+      - name: Test chainlink:dataFeed module
+        run: yarn test:dataFeed
+      
+      - name: Test chainlink:dataFeedProxy module
+        run: yarn test:dataFeedProxy
+      
+      - name: Test chainlink:feedRegistry module
+        run: yarn test:feedRegistry
+      
+      - name: Test chainlink:vrf module
+        run: yarn test:vrfCoordinator
+      
+      - name: Test chainlink:automationRegistrar module
+        run: yarn test:automationRegistrar
+      
+      - name: Test chainlink:automationRegistry module
+        run: yarn test:automationRegistry
