@@ -1,3 +1,4 @@
+import * as functionsToolkit from "@chainlink/functions-toolkit";
 import { BigNumber, BigNumberish } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
@@ -55,4 +56,18 @@ export const transferETH = async (
   return {
     transactionHash: tx.hash,
   };
+};
+
+export const createGist = async (
+  githubApiToken: string,
+  content: string
+): Promise<string> => {
+  return functionsToolkit.createGist(githubApiToken, content);
+};
+
+export const deleteGist = async (
+  githubApiToken: string,
+  gistURL: string
+): Promise<boolean> => {
+  return functionsToolkit.deleteGist(githubApiToken, gistURL);
 };
