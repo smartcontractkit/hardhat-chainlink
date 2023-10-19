@@ -10,7 +10,7 @@ import * as functionsRouter from "../../functions/functionsRouter";
 export const createSubscription: ActionType<{
   linkTokenAddress: string;
   functionsRouterAddress: string;
-  consumerAddress: string;
+  consumerAddress?: string;
 }> = async (taskArgs, hre): Promise<number> => {
   return functionsRouter.createSubscription(
     hre,

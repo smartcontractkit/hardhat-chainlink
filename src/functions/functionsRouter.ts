@@ -16,7 +16,7 @@ export const createSubscription = async (
   hre: HardhatRuntimeEnvironment,
   linkTokenAddress: string,
   functionsRouterAddress: string,
-  consumerAddress: string
+  consumerAddress?: string
 ): Promise<number> => {
   const functionsRouter = await FunctionsSubscriptionManager.initialize(
     hre,
@@ -263,7 +263,7 @@ export class FunctionsSubscriptionManager {
     return functionsRouter;
   }
 
-  createSubscription(consumerAddress: string): Promise<number> {
+  createSubscription(consumerAddress?: string): Promise<number> {
     return this.subscriptionManager.createSubscription({
       consumerAddress,
       txOptions: {
