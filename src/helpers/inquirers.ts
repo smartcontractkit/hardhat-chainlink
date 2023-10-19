@@ -10,7 +10,7 @@ import {
   DataFeedsRegistry,
   DenominationsRegistry,
   FeedRegistriesRegistry,
-  FunctionOraclesRegistry,
+  FunctionRoutersRegistry,
   KeeperRegistriesRegistry,
   L2SequencersRegistry,
   LinkTokensRegistry,
@@ -44,8 +44,8 @@ export const inquire = async (
       return inquireKeeperRegistrarAddress(hre);
     case InquirableParameter.l2SequencerAddress:
       return inquireL2SequencerAddress(hre);
-    case InquirableParameter.functionOracleAddress:
-      return inquireFunctionOracleAddress(hre);
+    case InquirableParameter.functionRouterAddress:
+      return inquireFunctionRouterAddress(hre);
     case InquirableParameter.feedRegistryBaseTick:
       return inquireFeedRegistryBaseTick();
     case InquirableParameter.feedRegistryQuoteTick:
@@ -610,15 +610,15 @@ export const inquireL2SequencerAddress = async (
   return l2SequencerAddress;
 };
 
-export const inquireFunctionOracle = async (
+export const inquireFunctionRouter = async (
   hre: HardhatRuntimeEnvironment,
   useHardhatNetwork: boolean = true
 ) => {
   const networksRegistry: NetworksRegistry =
     registries.networksRegistry as NetworksRegistry;
 
-  const functionOraclesRegistry: FunctionOraclesRegistry =
-    registries.functionOraclesRegistry as FunctionOraclesRegistry;
+  const functionRoutersRegistry: FunctionRoutersRegistry =
+    registries.functionRoutersRegistry as FunctionRoutersRegistry;
 
   let chainSlug = "";
   if (useHardhatNetwork) {
@@ -634,7 +634,7 @@ export const inquireFunctionOracle = async (
   } else {
     chainSlug = await select({
       message: "Select a network",
-      choices: Object.values(Object.keys(functionOraclesRegistry)).reduce(
+      choices: Object.values(Object.keys(functionRoutersRegistry)).reduce(
         (agg, networkName) => {
           agg.push({
             name: networksRegistry[networkName].name,
@@ -648,40 +648,40 @@ export const inquireFunctionOracle = async (
     });
   }
 
-  if (!functionOraclesRegistry[chainSlug]) {
+  if (!functionRoutersRegistry[chainSlug]) {
     console.log(
-      `There is no Function Oracle in the plugin registry for the selected chain: ${hre.network.name}`
+      `There is no Function Router in the plugin registry for the selected chain: ${hre.network.name}`
     );
     return undefined;
   }
 
-  return functionOraclesRegistry[chainSlug];
+  return functionRoutersRegistry[chainSlug];
 };
 
-export const inquireFunctionOracleAddress = async (
+export const inquireFunctionRouterAddress = async (
   hre: HardhatRuntimeEnvironment,
   useHardhatNetwork: boolean = true
 ) => {
-  const functionOracle = await inquireFunctionOracle(hre, useHardhatNetwork);
-  if (!functionOracle) {
+  const functionRouter = await inquireFunctionRouter(hre, useHardhatNetwork);
+  if (!functionRouter) {
     return input({
-      message: "Provide a valid Function Oracle address",
+      message: "Provide a valid Function Router address",
     });
   }
 
-  const functionOracleAddress = functionOracle.contractAddress;
+  const functionRouterAddress = functionRouter.contractAddress;
 
   const answer: boolean = await confirm({
-    message: `Function Oracle found in the plugin registry: ${functionOracleAddress}. Do you want to proceed with it?`,
+    message: `Function Router found in the plugin registry: ${functionRouterAddress}. Do you want to proceed with it?`,
   });
 
   if (!answer) {
     return input({
-      message: "Provide a valid Function Oracle address",
+      message: "Provide a valid Function Router address",
     });
   }
 
-  return functionOracleAddress;
+  return functionRouterAddress;
 };
 
 export const inquireFeedRegistryBaseTick = async () => {
