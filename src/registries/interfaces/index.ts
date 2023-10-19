@@ -1,6 +1,6 @@
 export * from "./dataFeed.interface";
 export * from "./feedRegistry.interface";
-export * from "./functionOracle.interface";
+export * from "./functionRouter.interface";
 export * from "./keeperRegistry.interface";
 export * from "./linkToken.interface";
 export * from "./network.interface";

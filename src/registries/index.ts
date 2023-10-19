@@ -2,7 +2,7 @@ export * from "./networksRegistry";
 export * from "./dataFeedsRegistry";
 export * from "./feedRegistriesRegistry";
 export * from "./vrfCoordinatorsRegistry";
-export * from "./functionOraclesRegistry";
+export * from "./functionRoutersRegistry";
 export * from "./linkTokensRegistry";
 export * from "./keeperRegistriesRegistry";
 export * from "./l2SequencersRegistry";

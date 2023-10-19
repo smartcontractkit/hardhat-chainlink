@@ -4,7 +4,7 @@ import { kebabToCamelCase } from "../../helpers/utils";
 import {
   DataFeedsRegistry,
   FeedRegistriesRegistry,
-  FunctionOraclesRegistry,
+  FunctionRoutersRegistry,
   KeeperRegistriesRegistry,
   L2SequencersRegistry,
   LinkTokensRegistry,
@@ -14,7 +14,7 @@ import {
 import {
   DataFeed,
   FeedRegistry,
-  FunctionOracle,
+  FunctionRouter,
   KeeperRegistry,
   L2Sequencer,
   LinkToken,
@@ -23,7 +23,7 @@ import {
 } from "../interfaces";
 import dataFeedsJSON from "../json/DataFeeds.json";
 import feedRegistriesJSON from "../json/FeedRegistries.json";
-import functionOraclesJSON from "../json/FunctionOracles.json";
+import functionRoutersJSON from "../json/FunctionRouters.json";
 import keeperRegistriesJSON from "../json/KeeperRegistries.json";
 import l2SequencersJson from "../json/L2Sequencers.json";
 import linkTokensJSON from "../json/LinkTokens.json";
@@ -35,8 +35,8 @@ const feedRegistries: FeedRegistry[] = feedRegistriesJSON as FeedRegistry[];
 const networks: Network[] = networksJSON as Network[];
 const vrfCoordinators: VRFCoordinator[] =
   vrfCoordinatorsJSON as VRFCoordinator[];
-const functionOracles: FunctionOracle[] =
-  functionOraclesJSON as FunctionOracle[];
+const functionRouters: FunctionRouter[] =
+  functionRoutersJSON as FunctionRouter[];
 const linkTokens: LinkToken[] = linkTokensJSON as LinkToken[];
 const keeperRegistries: KeeperRegistry[] =
   keeperRegistriesJSON as KeeperRegistry[];
@@ -46,7 +46,7 @@ const networksMap: NetworksRegistry = {};
 const dataFeedsMap: DataFeedsRegistry = {};
 const feedRegistriesMap: FeedRegistriesRegistry = {};
 const vrfCoordinatorsMap: VRFCoordinatorsRegistry = {};
-const functionOraclesMap: FunctionOraclesRegistry = {};
+const functionRoutersMap: FunctionRoutersRegistry = {};
 const linkTokensMap: LinkTokensRegistry = {};
 const keeperRegistriesMap: KeeperRegistriesRegistry = {};
 const l2SequencersMap: L2SequencersRegistry = {};
@@ -78,9 +78,9 @@ vrfCoordinators.forEach((vrfCoordinator: VRFCoordinator) => {
   vrfCoordinatorsMap[kebabToCamelCase(chainSlug)] = vrfCoordinator;
 });
 
-functionOracles.forEach((functionOracle: FunctionOracle) => {
-  const chainSlug = networksMap[functionOracle.chainId].chainSlug;
-  functionOraclesMap[kebabToCamelCase(chainSlug)] = functionOracle;
+functionRouters.forEach((functionRouter: FunctionRouter) => {
+  const chainSlug = networksMap[functionRouter.chainId].chainSlug;
+  functionRoutersMap[kebabToCamelCase(chainSlug)] = functionRouter;
 });
 
 linkTokens.forEach((linkToken: LinkToken) => {
@@ -110,8 +110,8 @@ const tsCodeFeedRegistries = `export const feedRegistriesRegistry = ${JSON.strin
 const tsCodeVRFCoordinators = `export const vrfCoordinatorsRegistry = ${JSON.stringify(
   vrfCoordinatorsMap
 )};`;
-const tsCodeFunctionOracles = `export const functionOraclesRegistry = ${JSON.stringify(
-  functionOraclesMap
+const tsCodeFunctionRouters = `export const functionRoutersRegistry = ${JSON.stringify(
+  functionRoutersMap
 )};`;
 const tsCodeLinkTokens = `export const linkTokensRegistry = ${JSON.stringify(
   linkTokensMap
@@ -127,7 +127,7 @@ fs.writeFileSync("../networksRegistry.ts", tsCodeNetworks);
 fs.writeFileSync("../dataFeedsRegistry.ts", tsCodeDataFeeds);
 fs.writeFileSync("../feedRegistriesRegistry.ts", tsCodeFeedRegistries);
 fs.writeFileSync("../vrfCoordinatorsRegistry.ts", tsCodeVRFCoordinators);
-fs.writeFileSync("../functionOraclesRegistry.ts", tsCodeFunctionOracles);
+fs.writeFileSync("../functionRoutersRegistry.ts", tsCodeFunctionRouters);
 fs.writeFileSync("../linkTokensRegistry.ts", tsCodeLinkTokens);
 fs.writeFileSync("../keeperRegistriesRegistry.ts", tsCodeKeeperRegistries);
 fs.writeFileSync("../l2SequencersRegistry.ts", tsCodeL2Sequencers);
