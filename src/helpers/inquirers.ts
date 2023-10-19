@@ -10,7 +10,7 @@ import {
   DataFeedsRegistry,
   DenominationsRegistry,
   FeedRegistriesRegistry,
-  FunctionRoutersRegistry,
+  FunctionsRoutersRegistry,
   KeeperRegistriesRegistry,
   L2SequencersRegistry,
   LinkTokensRegistry,
@@ -44,8 +44,8 @@ export const inquire = async (
       return inquireKeeperRegistrarAddress(hre);
     case InquirableParameter.l2SequencerAddress:
       return inquireL2SequencerAddress(hre);
-    case InquirableParameter.functionRouterAddress:
-      return inquireFunctionRouterAddress(hre);
+    case InquirableParameter.functionsRouterAddress:
+      return inquireFunctionsRouterAddress(hre);
     case InquirableParameter.feedRegistryBaseTick:
       return inquireFeedRegistryBaseTick();
     case InquirableParameter.feedRegistryQuoteTick:
@@ -610,15 +610,15 @@ export const inquireL2SequencerAddress = async (
   return l2SequencerAddress;
 };
 
-export const inquireFunctionRouter = async (
+export const inquireFunctionsRouter = async (
   hre: HardhatRuntimeEnvironment,
   useHardhatNetwork: boolean = true
 ) => {
   const networksRegistry: NetworksRegistry =
     registries.networksRegistry as NetworksRegistry;
 
-  const functionRoutersRegistry: FunctionRoutersRegistry =
-    registries.functionRoutersRegistry as FunctionRoutersRegistry;
+  const functionsRoutersRegistry: FunctionsRoutersRegistry =
+    registries.functionsRoutersRegistry as FunctionsRoutersRegistry;
 
   let chainSlug = "";
   if (useHardhatNetwork) {
@@ -634,7 +634,7 @@ export const inquireFunctionRouter = async (
   } else {
     chainSlug = await select({
       message: "Select a network",
-      choices: Object.values(Object.keys(functionRoutersRegistry)).reduce(
+      choices: Object.values(Object.keys(functionsRoutersRegistry)).reduce(
         (agg, networkName) => {
           agg.push({
             name: networksRegistry[networkName].name,
@@ -648,40 +648,40 @@ export const inquireFunctionRouter = async (
     });
   }
 
-  if (!functionRoutersRegistry[chainSlug]) {
+  if (!functionsRoutersRegistry[chainSlug]) {
     console.log(
       `There is no Function Router in the plugin registry for the selected chain: ${hre.network.name}`
     );
     return undefined;
   }
 
-  return functionRoutersRegistry[chainSlug];
+  return functionsRoutersRegistry[chainSlug];
 };
 
-export const inquireFunctionRouterAddress = async (
+export const inquireFunctionsRouterAddress = async (
   hre: HardhatRuntimeEnvironment,
   useHardhatNetwork: boolean = true
 ) => {
-  const functionRouter = await inquireFunctionRouter(hre, useHardhatNetwork);
-  if (!functionRouter) {
+  const functionsRouter = await inquireFunctionsRouter(hre, useHardhatNetwork);
+  if (!functionsRouter) {
     return input({
-      message: "Provide a valid Function Router address",
+      message: "Provide a valid Functions Router address",
     });
   }
 
-  const functionRouterAddress = functionRouter.contractAddress;
+  const functionsRouterAddress = functionsRouter.contractAddress;
 
   const answer: boolean = await confirm({
-    message: `Function Router found in the plugin registry: ${functionRouterAddress}. Do you want to proceed with it?`,
+    message: `Functions Router found in the plugin registry: ${functionsRouterAddress}. Do you want to proceed with it?`,
   });
 
   if (!answer) {
     return input({
-      message: "Provide a valid Function Router address",
+      message: "Provide a valid Functions Router address",
     });
   }
 
-  return functionRouterAddress;
+  return functionsRouterAddress;
 };
 
 export const inquireFeedRegistryBaseTick = async () => {

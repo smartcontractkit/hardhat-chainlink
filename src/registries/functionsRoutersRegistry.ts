@@ -1,4 +1,4 @@
-export const functionRoutersRegistry = {
+export const functionsRoutersRegistry = {
   ethereum: {
     contractAddress: "0x65Dcc24F8ff9e51F10DCc7Ed1e4e2A61e6E14bd6",
     chainId: "1",

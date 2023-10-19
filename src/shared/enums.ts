@@ -172,8 +172,7 @@ export const enum InquirableParameter {
   keeperRegistryAddress = "keeperRegistryAddress",
   keeperRegistrarAddress = "keeperRegistrarAddress",
   l2SequencerAddress = "l2SequencerAddress",
-  functionOracleAddress = "functionOracleAddress",
-  functionRouterAddress = "functionRouterAddress",
+  functionsRouterAddress = "functionsRouterAddress",
   feedRegistryBaseTick = "feedRegistryBaseTick",
   feedRegistryQuoteTick = "feedRegistryQuoteTick",
 }

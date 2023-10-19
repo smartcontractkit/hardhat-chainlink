@@ -1,4 +1,4 @@
-export interface FunctionRouter {
+export interface FunctionsRouter {
   contractAddress: string;
   chainId: string;
 }

@@ -1,7 +1,7 @@
 import {
   DataFeed,
   FeedRegistry,
-  FunctionRouter,
+  FunctionsRouter,
   KeeperRegistry,
   L2Sequencer,
   LinkToken,
@@ -21,7 +21,7 @@ export type LinkTokensRegistry = Record<string, LinkToken>;
 export type KeeperRegistriesRegistry = Record<string, KeeperRegistry>;
 export type L2SequencersRegistry = Record<string, L2Sequencer>;
 export type DenominationsRegistry = Record<string, string>;
-export type FunctionRoutersRegistry = Record<string, FunctionRouter>;
+export type FunctionsRoutersRegistry = Record<string, FunctionsRouter>;
 
 export type Subtasks = Record<string, Record<string, SubtaskProperties>>;
 
