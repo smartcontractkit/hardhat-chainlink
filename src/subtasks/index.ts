@@ -1239,9 +1239,9 @@ export const subtasks: Subtasks = {
       description: camelToFlat(PluginRegistriesSubtask.getL2Sequencer),
       args: [],
     },
-    [PluginRegistriesSubtask.getFunctionOracle]: {
-      action: registriesActions.getFunctionOracle,
-      description: camelToFlat(PluginRegistriesSubtask.getFunctionOracle),
+    [PluginRegistriesSubtask.getFunctionRouter]: {
+      action: registriesActions.getFunctionRouter,
+      description: camelToFlat(PluginRegistriesSubtask.getFunctionRouter),
       args: [],
     },
     [PluginRegistriesSubtask.getDenomination]: {
