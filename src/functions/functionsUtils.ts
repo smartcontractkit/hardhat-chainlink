@@ -1,4 +1,5 @@
 import * as functionsToolkit from "@chainlink/functions-toolkit";
+import { DecodedResult } from "@chainlink/functions-toolkit/dist/decodeResult";
 import {
   FunctionsRequestParams,
   RequestCommitment,
@@ -33,6 +34,6 @@ export const fetchRequestCommitment = async (
 export const decodeResult = async (
   resultHexstring: string,
   expectedReturnType: ReturnType
-) => {
+): Promise<DecodedResult> => {
   return functionsToolkit.decodeResult(resultHexstring, expectedReturnType);
 };
