@@ -123,7 +123,7 @@ export enum PluginRegistriesSubtask {
   getLinkToken = "getLinkToken",
   getKeeperRegistry = "getKeeperRegistry",
   getL2Sequencer = "getL2Sequencer",
-  getFunctionOracle = "getFunctionOracle",
+  getFunctionRouter = "getFunctionRouter",
   getDenomination = "getDenomination",
 }
 
@@ -173,6 +173,7 @@ export const enum InquirableParameter {
   keeperRegistrarAddress = "keeperRegistrarAddress",
   l2SequencerAddress = "l2SequencerAddress",
   functionOracleAddress = "functionOracleAddress",
+  functionRouterAddress = "functionRouterAddress",
   feedRegistryBaseTick = "feedRegistryBaseTick",
   feedRegistryQuoteTick = "feedRegistryQuoteTick",
 }
