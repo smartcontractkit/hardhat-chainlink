@@ -197,31 +197,31 @@ export const listenForResponse = async (
   requestId: string,
   timeout?: number
 ): Promise<FunctionsResponse> => {
-  const functionsResponseListener = new FunctionsResponseListener(
+  const functionsResponseListener = await FunctionsResponseListener.initialize(
     hre,
     functionsRouterAddress
   );
   return functionsResponseListener.listenForResponse(requestId, timeout);
 };
 
-export const listenForResponses = (
+export const listenForResponses = async (
   hre: HardhatRuntimeEnvironment,
   functionsRouterAddress: string,
-  subscriptionId: number | string,
+  subscriptionId: string,
   callback: (functionsResponse: FunctionsResponse) => any
-): void => {
-  const functionsResponseListener = new FunctionsResponseListener(
+): Promise<void> => {
+  const functionsResponseListener = await FunctionsResponseListener.initialize(
     hre,
     functionsRouterAddress
   );
   return functionsResponseListener.listenForResponses(subscriptionId, callback);
 };
 
-export const stopListeningForResponses = (
+export const stopListeningForResponses = async (
   hre: HardhatRuntimeEnvironment,
   functionsRouterAddress: string
-): void => {
-  const functionsResponseListener = new FunctionsResponseListener(
+): Promise<void> => {
+  const functionsResponseListener = await FunctionsResponseListener.initialize(
     hre,
     functionsRouterAddress
   );
@@ -251,16 +251,16 @@ export class FunctionsSubscriptionManager {
     hre: HardhatRuntimeEnvironment,
     linkTokenAddress: string,
     functionsRouterAddress: string
-  ) {
+  ): Promise<FunctionsSubscriptionManager> {
     const [signer] = await hre.ethers.getSigners();
-    const functionsRouter = new FunctionsSubscriptionManager(
+    const functionsSubscriptionManager = new FunctionsSubscriptionManager(
       hre,
       signer,
       linkTokenAddress,
       functionsRouterAddress
     );
-    await functionsRouter.subscriptionManager.initialize();
-    return functionsRouter;
+    await functionsSubscriptionManager.subscriptionManager.initialize();
+    return functionsSubscriptionManager;
   }
 
   createSubscription(consumerAddress?: string): Promise<number> {
@@ -379,11 +379,21 @@ export class FunctionsSubscriptionManager {
 export class FunctionsResponseListener {
   private responseListener: ResponseListener;
 
-  constructor(hre: HardhatRuntimeEnvironment, functionsRouterAddress: string) {
+  private constructor(
+    hre: HardhatRuntimeEnvironment,
+    functionsRouterAddress: string
+  ) {
     this.responseListener = new ResponseListener({
       provider: hre.ethers.provider,
       functionsRouterAddress,
     });
+  }
+
+  static async initialize(
+    hre: HardhatRuntimeEnvironment,
+    functionsRouterAddress: string
+  ): Promise<FunctionsResponseListener> {
+    return new FunctionsResponseListener(hre, functionsRouterAddress);
   }
 
   listenForResponse(
