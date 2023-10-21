@@ -116,6 +116,19 @@ export enum AutomationRegistrarSubtask {
   getTypeAndVersion = "getTypeAndVersion",
 }
 
+export enum FunctionsRouterSubtasks {
+  createSubscription = "createSubscription",
+  fundSubscription = "fundSubscription",
+  getSubscriptionInfo = "getSubscriptionInfo",
+  cancelSubscription = "cancelSubscription",
+  requestSubscriptionTransfer = "requestSubscriptionTransfer",
+  acceptSubscriptionTransfer = "acceptSubscriptionTransfer",
+  addConsumer = "addConsumer",
+  removeConsumer = "removeConsumer",
+  timeoutRequests = "timeoutRequests",
+  estimateRequestCost = "estimateRequestCost",
+}
+
 export enum PluginRegistriesSubtask {
   getDataFeed = "getDataFeed",
   getFeedRegistry = "getFeedRegistry",
