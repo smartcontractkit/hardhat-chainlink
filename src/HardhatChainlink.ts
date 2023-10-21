@@ -1,3 +1,11 @@
+import { DecodedResult } from "@chainlink/functions-toolkit/dist/decodeResult";
+import {
+  FunctionsRequestParams,
+  FunctionsResponse,
+  RequestCommitment,
+  ReturnType,
+  SubscriptionInfo,
+} from "@chainlink/functions-toolkit/dist/types";
 import "@nomiclabs/hardhat-ethers";
 import { BigNumber, BigNumberish, BytesLike } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
@@ -9,6 +17,8 @@ import * as dataFeedProxy from "./feeds/dataFeedProxy";
 import * as ensFeedsResolver from "./feeds/ensFeedsResolver";
 import * as feedRegistry from "./feeds/feedRegistry";
 import * as l2FeedUptimeSequencer from "./feeds/l2FeedUptimeSequencer";
+import * as functionsRouter from "./functions/functionsRouter";
+import * as functionsUtils from "./functions/functionsUtils";
 import * as registries from "./registries";
 import * as drConsumer from "./sandbox/drConsumer";
 import * as linkToken from "./sandbox/linkToken";
@@ -24,7 +34,7 @@ export class HardhatChainlink {
     l2Sequencers: typeof registries.l2SequencersRegistry;
     vrfCoordinators: typeof registries.vrfCoordinatorsRegistry;
     keeperRegistries: typeof registries.keeperRegistriesRegistry;
-    functionOracles: typeof registries.functionOraclesRegistry;
+    functionsRouters: typeof registries.functionsRoutersRegistry;
     linkTokens: typeof registries.linkTokensRegistry;
     networks: typeof registries.networksRegistry;
     denominations: typeof registries.denominationsRegistry;
@@ -37,7 +47,8 @@ export class HardhatChainlink {
   public vrf: VRF;
   public automationRegistrar: AutomationRegistrar;
   public automationRegistry: AutomationRegistry;
-  public functionOracle: FunctionOracle;
+  public functionsRouter: FunctionsRouter;
+  public functionsUtils: FunctionsUtils;
   public utils: Utils;
   public sandbox: Sandbox;
   private hre: HardhatRuntimeEnvironment;
@@ -49,7 +60,7 @@ export class HardhatChainlink {
       l2Sequencers: registries.l2SequencersRegistry,
       vrfCoordinators: registries.vrfCoordinatorsRegistry,
       keeperRegistries: registries.keeperRegistriesRegistry,
-      functionOracles: registries.functionOraclesRegistry,
+      functionsRouters: registries.functionsRoutersRegistry,
       linkTokens: registries.linkTokensRegistry,
       networks: registries.networksRegistry,
       denominations: registries.denominationsRegistry,
@@ -62,7 +73,8 @@ export class HardhatChainlink {
     this.vrf = new VRF(this.hre);
     this.automationRegistrar = new AutomationRegistrar(this.hre);
     this.automationRegistry = new AutomationRegistry(this.hre);
-    this.functionOracle = new FunctionOracle(this.hre);
+    this.functionsRouter = new FunctionsRouter(this.hre);
+    this.functionsUtils = new FunctionsUtils(this.hre);
     this.utils = new Utils(this.hre);
     this.sandbox = new Sandbox(this.hre);
   }
@@ -1008,11 +1020,243 @@ class AutomationRegistry {
   }
 }
 
-class FunctionOracle {
+class FunctionsRouter {
   private hre: HardhatRuntimeEnvironment;
 
   constructor(hre: HardhatRuntimeEnvironment) {
     this.hre = hre;
+  }
+  
+  public initializeFunctionsSubscriptionManager(
+    linkTokenAddress: string,
+    functionsRouterAddress: string,
+  ): Promise<functionsRouter.FunctionsSubscriptionManager> {
+    return functionsRouter.FunctionsSubscriptionManager.initialize(this.hre, linkTokenAddress, functionsRouterAddress);
+  }
+  
+  public initializeFunctionsResponseListener(
+    functionsRouterAddress: string,
+  ): Promise<functionsRouter.FunctionsResponseListener> {
+    return functionsRouter.FunctionsResponseListener.initialize(this.hre, functionsRouterAddress);
+  }
+
+  public createSubscription(
+    linkTokenAddress: string,
+    functionsRouterAddress: string,
+    consumerAddress?: string
+  ): Promise<number> {
+    return functionsRouter.createSubscription(
+      this.hre,
+      linkTokenAddress,
+      functionsRouterAddress,
+      consumerAddress
+    );
+  }
+
+  public fundSubscription(
+    linkTokenAddress: string,
+    functionsRouterAddress: string,
+    juelsAmount: string,
+    subscriptionId: string
+  ): Promise<string> {
+    return functionsRouter.fundSubscription(
+      this.hre,
+      linkTokenAddress,
+      functionsRouterAddress,
+      juelsAmount,
+      subscriptionId
+    );
+  }
+
+  public getSubscriptionInfo(
+    linkTokenAddress: string,
+    functionsRouterAddress: string,
+    subscriptionId: string
+  ): Promise<SubscriptionInfo> {
+    return functionsRouter.getSubscriptionInfo(
+      this.hre,
+      linkTokenAddress,
+      functionsRouterAddress,
+      subscriptionId
+    );
+  }
+
+  public cancelSubscription(
+    linkTokenAddress: string,
+    functionsRouterAddress: string,
+    subscriptionId: string,
+    refundAddress: string
+  ): Promise<string> {
+    return functionsRouter.cancelSubscription(
+      this.hre,
+      linkTokenAddress,
+      functionsRouterAddress,
+      subscriptionId,
+      refundAddress
+    );
+  }
+
+  public requestSubscriptionTransfer(
+    linkTokenAddress: string,
+    functionsRouterAddress: string,
+    subscriptionId: string,
+    newOwner: string
+  ): Promise<string> {
+    return functionsRouter.requestSubscriptionTransfer(
+      this.hre,
+      linkTokenAddress,
+      functionsRouterAddress,
+      subscriptionId,
+      newOwner
+    );
+  }
+
+  public acceptSubscriptionTransfer(
+    linkTokenAddress: string,
+    functionsRouterAddress: string,
+    subscriptionId: string
+  ): Promise<string> {
+    return functionsRouter.acceptSubscriptionTransfer(
+      this.hre,
+      linkTokenAddress,
+      functionsRouterAddress,
+      subscriptionId
+    );
+  }
+
+  public addConsumer(
+    linkTokenAddress: string,
+    functionsRouterAddress: string,
+    subscriptionId: string,
+    consumerAddress: string
+  ): Promise<string> {
+    return functionsRouter.addConsumer(
+      this.hre,
+      linkTokenAddress,
+      functionsRouterAddress,
+      subscriptionId,
+      consumerAddress
+    );
+  }
+
+  public removeConsumer(
+    linkTokenAddress: string,
+    functionsRouterAddress: string,
+    subscriptionId: string,
+    consumerAddress: string
+  ): Promise<string> {
+    return functionsRouter.removeConsumer(
+      this.hre,
+      linkTokenAddress,
+      functionsRouterAddress,
+      subscriptionId,
+      consumerAddress
+    );
+  }
+
+  public timeoutRequests(
+    linkTokenAddress: string,
+    functionsRouterAddress: string,
+    requestCommitments: RequestCommitment[]
+  ): Promise<string> {
+    return functionsRouter.timeoutRequests(
+      this.hre,
+      linkTokenAddress,
+      functionsRouterAddress,
+      requestCommitments
+    );
+  }
+
+  public estimateRequestCost(
+    linkTokenAddress: string,
+    functionsRouterAddress: string,
+    donId: string,
+    subscriptionId: string,
+    callbackGasLimit: number,
+    gasPriceWei: string
+  ): Promise<BigInt> {
+    return functionsRouter.estimateRequestCost(
+      this.hre,
+      linkTokenAddress,
+      functionsRouterAddress,
+      donId,
+      subscriptionId,
+      callbackGasLimit,
+      gasPriceWei
+    );
+  }
+
+  public listenForResponse(
+    functionsRouterAddress: string,
+    requestId: string,
+    timeout?: number
+  ): Promise<FunctionsResponse> {
+    return functionsRouter.listenForResponse(
+      this.hre,
+      functionsRouterAddress,
+      requestId,
+      timeout
+    );
+  }
+
+  public listenForResponses(
+    functionsRouterAddress: string,
+    subscriptionId: string,
+    callback: (functionsResponse: FunctionsResponse) => any
+  ): Promise<void> {
+    return functionsRouter.listenForResponses(
+      this.hre,
+      functionsRouterAddress,
+      subscriptionId,
+      callback
+    );
+  }
+
+  public stopListeningForResponses(
+    functionsRouterAddress: string
+  ): Promise<void> {
+    return functionsRouter.stopListeningForResponses(
+      this.hre,
+      functionsRouterAddress
+    );
+  }
+}
+
+class FunctionsUtils {
+  private hre: HardhatRuntimeEnvironment;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
+  }
+
+  public buildRequestCBOR(
+    requestParams: FunctionsRequestParams
+  ): Promise<string> {
+    return functionsUtils.buildRequestCBOR(requestParams);
+  }
+
+  public fetchRequestCommitment(
+    functionsRouterAddress: string,
+    requestId: string,
+    donId: string,
+    toBlock?: number | "latest",
+    pastBlocksToSearch?: number
+  ): Promise<RequestCommitment> {
+    return functionsUtils.fetchRequestCommitment(
+      this.hre,
+      functionsRouterAddress,
+      requestId,
+      donId,
+      toBlock,
+      pastBlocksToSearch
+    );
+  }
+
+  public decodeResult(
+    resultHexstring: string,
+    expectedReturnType: ReturnType
+  ): Promise<DecodedResult> {
+    return functionsUtils.decodeResult(resultHexstring, expectedReturnType);
   }
 }
 
