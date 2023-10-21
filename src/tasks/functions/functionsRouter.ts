@@ -139,7 +139,7 @@ export const estimateRequestCost: ActionType<{
   functionsRouterAddress: string;
   donId: string;
   subscriptionId: string;
-  callbackGasLimit: number;
+  callbackGasLimit: string;
   gasPriceWei: string;
 }> = async (taskArgs, hre): Promise<BigInt> => {
   return functionsRouter.estimateRequestCost(
@@ -148,20 +148,7 @@ export const estimateRequestCost: ActionType<{
     taskArgs.functionsRouterAddress,
     taskArgs.donId,
     taskArgs.subscriptionId,
-    taskArgs.callbackGasLimit,
+    +taskArgs.callbackGasLimit,
     taskArgs.gasPriceWei
-  );
-};
-
-export const listenForResponse: ActionType<{
-  functionsRouterAddress: string;
-  requestId: string;
-  timeout?: number;
-}> = async (taskArgs, hre): Promise<FunctionsResponse> => {
-  return functionsRouter.listenForResponse(
-    hre,
-    taskArgs.functionsRouterAddress,
-    taskArgs.requestId,
-    taskArgs.timeout
   );
 };
