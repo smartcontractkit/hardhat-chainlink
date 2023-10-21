@@ -189,6 +189,21 @@ task(
   printSubtasks(Task.automationRegistry);
 });
 
+// FUNCTIONS
+task(`${PACKAGE_NAME}:${Task.functions}`, "Functions Module")
+  .addOptionalPositionalParam("subtask", "Subtask")
+  .addOptionalParam("args", "Subtask args")
+  .setAction(async (taskArgs, hre) => {
+    return resolveTask(hre, Task.functions, taskArgs);
+  });
+
+task(
+  `${PACKAGE_NAME}:${Task.functions}:subtasks`,
+  "Functions Module: Subtasks List"
+).setAction(async () => {
+  printSubtasks(Task.functions);
+});
+
 // REGISTRIES
 task(`${PACKAGE_NAME}:${Task.registries}`, "Plugin Registries Module")
   .addOptionalPositionalParam("subtask", "Subtask")
