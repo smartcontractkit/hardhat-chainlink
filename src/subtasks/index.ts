@@ -7,6 +7,7 @@ import {
   DRConsumerSubtask,
   ENSFeedsResolverSubtask,
   FeedRegistrySubtask,
+  FunctionsRouterSubtasks,
   L2SequencerSubtask,
   LinkTokenSubtask,
   NodeSubtask,
@@ -24,6 +25,7 @@ import * as dataFeedProxyActions from "../tasks/feeds/dataFeedProxy";
 import * as ensFeedsResolverActions from "../tasks/feeds/ensFeedsResolver";
 import * as feedRegistryActions from "../tasks/feeds/feedRegistry";
 import * as l2FeedUptimeSequencerActions from "../tasks/feeds/l2FeedUptimeSequencer";
+import * as functionsRouterActions from "../tasks/functions/functionsRouter";
 import * as registriesActions from "../tasks/registries";
 import * as drConsumerActions from "../tasks/sandbox/drConsumer";
 import * as linkTokenActions from "../tasks/sandbox/linkToken";
@@ -1207,7 +1209,222 @@ export const subtasks: Subtasks = {
       ],
     },
   },
-  [Task.functions]: {},
+  [Task.functions]: {
+    [FunctionsRouterSubtasks.createSubscription]: {
+      action: functionsRouterActions.createSubscription,
+      description: camelToFlat(FunctionsRouterSubtasks.createSubscription),
+      args: [
+        {
+          name: "linkTokenAddress",
+          description: "Address of Link Token",
+        },
+        {
+          name: "functionsRouterAddress",
+          description: "Address of Functions Router",
+        },
+        {
+          name: "consumerAddress",
+          description: "Address of Functions Consumer",
+          defaultValue: undefined,
+        },
+      ],
+    },
+    [FunctionsRouterSubtasks.fundSubscription]: {
+      action: functionsRouterActions.fundSubscription,
+      description: camelToFlat(FunctionsRouterSubtasks.fundSubscription),
+      args: [
+        {
+          name: "linkTokenAddress",
+          description: "Address of Link Token",
+        },
+        {
+          name: "functionsRouterAddress",
+          description: "Address of Functions Router",
+        },
+        {
+          name: "juelsAmount",
+          description: "Amount of Links in Juels",
+        },
+        {
+          name: "subscriptionId",
+          description: "Subscription ID",
+        },
+      ],
+    },
+    [FunctionsRouterSubtasks.getSubscriptionInfo]: {
+      action: functionsRouterActions.getSubscriptionInfo,
+      description: camelToFlat(FunctionsRouterSubtasks.getSubscriptionInfo),
+      args: [
+        {
+          name: "linkTokenAddress",
+          description: "Address of Link Token",
+        },
+        {
+          name: "functionsRouterAddress",
+          description: "Address of Functions Router",
+        },
+        {
+          name: "subscriptionId",
+          description: "Subscription ID",
+        },
+      ],
+    },
+    [FunctionsRouterSubtasks.cancelSubscription]: {
+      action: functionsRouterActions.cancelSubscription,
+      description: camelToFlat(FunctionsRouterSubtasks.cancelSubscription),
+      args: [
+        {
+          name: "linkTokenAddress",
+          description: "Address of Link Token",
+        },
+        {
+          name: "functionsRouterAddress",
+          description: "Address of Functions Router",
+        },
+        {
+          name: "subscriptionId",
+          description: "Subscription ID",
+        },
+        {
+          name: "refundAddress",
+          description: "Address to refund subscription balance",
+        },
+      ],
+    },
+    [FunctionsRouterSubtasks.requestSubscriptionTransfer]: {
+      action: functionsRouterActions.requestSubscriptionTransfer,
+      description: camelToFlat(
+        FunctionsRouterSubtasks.requestSubscriptionTransfer
+      ),
+      args: [
+        {
+          name: "linkTokenAddress",
+          description: "Address of Link Token",
+        },
+        {
+          name: "functionsRouterAddress",
+          description: "Address of Functions Router",
+        },
+        {
+          name: "subscriptionId",
+          description: "Subscription ID",
+        },
+        {
+          name: "newOwner",
+          description: "New owner of subscription",
+        },
+      ],
+    },
+    [FunctionsRouterSubtasks.acceptSubscriptionTransfer]: {
+      action: functionsRouterActions.acceptSubscriptionTransfer,
+      description: camelToFlat(
+        FunctionsRouterSubtasks.acceptSubscriptionTransfer
+      ),
+      args: [
+        {
+          name: "linkTokenAddress",
+          description: "Address of Link Token",
+        },
+        {
+          name: "functionsRouterAddress",
+          description: "Address of Functions Router",
+        },
+        {
+          name: "subscriptionId",
+          description: "Subscription ID",
+        },
+      ],
+    },
+    [FunctionsRouterSubtasks.addConsumer]: {
+      action: functionsRouterActions.addConsumer,
+      description: camelToFlat(FunctionsRouterSubtasks.addConsumer),
+      args: [
+        {
+          name: "linkTokenAddress",
+          description: "Address of Link Token",
+        },
+        {
+          name: "functionsRouterAddress",
+          description: "Address of Functions Router",
+        },
+        {
+          name: "subscriptionId",
+          description: "Subscription ID",
+        },
+        {
+          name: "consumerAddress",
+          description: "Address of Functions Consumer",
+        },
+      ],
+    },
+    [FunctionsRouterSubtasks.removeConsumer]: {
+      action: functionsRouterActions.removeConsumer,
+      description: camelToFlat(FunctionsRouterSubtasks.removeConsumer),
+      args: [
+        {
+          name: "linkTokenAddress",
+          description: "Address of Link Token",
+        },
+        {
+          name: "functionsRouterAddress",
+          description: "Address of Functions Router",
+        },
+        {
+          name: "subscriptionId",
+          description: "Subscription ID",
+        },
+        {
+          name: "consumerAddress",
+          description: "Address of Functions Consumer",
+        },
+      ],
+    },
+    [FunctionsRouterSubtasks.timeoutRequests]: {
+      action: functionsRouterActions.timeoutRequests,
+      description: camelToFlat(FunctionsRouterSubtasks.timeoutRequests),
+      args: [
+        {
+          name: "linkTokenAddress",
+          description: "Address of Link Token",
+        },
+        {
+          name: "functionsRouterAddress",
+          description: "Address of Functions Router",
+        },
+      ],
+    },
+    [FunctionsRouterSubtasks.estimateRequestCost]: {
+      action: functionsRouterActions.estimateRequestCost,
+      description: camelToFlat(FunctionsRouterSubtasks.estimateRequestCost),
+      args: [
+        {
+          name: "linkTokenAddress",
+          description: "Address of Link Token",
+        },
+        {
+          name: "functionsRouterAddress",
+          description: "Address of Functions Router",
+        },
+        {
+          name: "donId",
+          description:
+            "ID of the DON to which the Functions request will be sent",
+        },
+        {
+          name: "subscriptionId",
+          description: "Subscription ID",
+        },
+        {
+          name: "callbackGasLimit",
+          description: "Total gas used by the consumer contract's callback",
+        },
+        {
+          name: "gasPriceWei",
+          description: "Gas price in wei",
+        },
+      ],
+    },
+  },
   [Task.registries]: {
     [PluginRegistriesSubtask.getDataFeed]: {
       action: registriesActions.getDataFeed,
