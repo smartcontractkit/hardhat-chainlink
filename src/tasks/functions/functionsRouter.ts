@@ -1,11 +1,11 @@
 import {
-  FunctionsResponse,
   RequestCommitment,
   SubscriptionInfo,
 } from "@chainlink/functions-toolkit/dist/types";
 import { ActionType } from "hardhat/types";
 
 import * as functionsRouter from "../../functions/functionsRouter";
+import * as functionsUtils from "../../functions/functionsUtils";
 
 export const createSubscription: ActionType<{
   linkTokenAddress: string;
@@ -124,13 +124,32 @@ export const removeConsumer: ActionType<{
 export const timeoutRequests: ActionType<{
   linkTokenAddress: string;
   functionsRouterAddress: string;
-  requestCommitments: RequestCommitment[];
+  requestIdsString: string;
+  donId: string;
+  toBlock?: string;
+  pastBlocksToSearch: string;
 }> = async (taskArgs, hre): Promise<string> => {
+  const requestIds = taskArgs.requestIdsString.split(",");
+  const toBlock = taskArgs.toBlock ? +taskArgs.toBlock : "latest";
+  const pastBlocksToSearch = taskArgs.pastBlocksToSearch
+    ? +taskArgs.pastBlocksToSearch
+    : undefined;
+  const promises = requestIds.map((requestId: string) => {
+    return functionsUtils.fetchRequestCommitment(
+      hre,
+      taskArgs.functionsRouterAddress,
+      requestId,
+      taskArgs.donId,
+      toBlock,
+      pastBlocksToSearch
+    );
+  });
+  const requestCommitments: RequestCommitment[] = await Promise.all(promises);
   return functionsRouter.timeoutRequests(
     hre,
     taskArgs.linkTokenAddress,
     taskArgs.functionsRouterAddress,
-    taskArgs.requestCommitments
+    requestCommitments
   );
 };
 
