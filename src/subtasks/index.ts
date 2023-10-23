@@ -1391,6 +1391,24 @@ export const subtasks: Subtasks = {
           name: "functionsRouterAddress",
           description: "Address of Functions Router",
         },
+        {
+          name: "requestIdsString",
+          description: "Comma-separated IDs of requests",
+        },
+        {
+          name: "donId",
+          description: "ID of the DON where Functions requests has been sent",
+        },
+        {
+          name: "toBlock",
+          description: "End block in search range",
+          defaultValue: "latest",
+        },
+        {
+          name: "pastBlocksToSearch",
+          description: "Number of blocks to search (before toBlock)",
+          defaultValue: "1000",
+        },
       ],
     },
     [FunctionsRouterSubtasks.estimateRequestCost]: {
@@ -1504,6 +1522,34 @@ export const subtasks: Subtasks = {
           name: "amount",
           description: "Amount of ETH in wei",
           defaultValue: "1000000000000000000",
+        },
+      ],
+    },
+    [UtilsSubtask.createGist]: {
+      action: utilsActions.createGist,
+      description: "Create private GitHub gist",
+      args: [
+        {
+          name: "githubApiToken",
+          description: "GitHub Api Token",
+        },
+        {
+          name: "content",
+          description: "Gist content",
+        },
+      ],
+    },
+    [UtilsSubtask.deleteGist]: {
+      action: utilsActions.deleteGist,
+      description: "Delete private GitHub gist",
+      args: [
+        {
+          name: "githubApiToken",
+          description: "GitHub Api Token",
+        },
+        {
+          name: "content",
+          description: "Gist content",
         },
       ],
     },
