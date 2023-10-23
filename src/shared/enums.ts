@@ -174,6 +174,8 @@ export enum UtilsSubtask {
   getRoundId = "getRoundId",
   parseRoundId = "parseRoundId",
   transferETH = "transferETH",
+  createGist = "createGist",
+  deleteGist = "deleteGist",
 }
 
 export const enum InquirableParameter {
