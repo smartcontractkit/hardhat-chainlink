@@ -1,10 +1,10 @@
 import { DecodedResult } from "@chainlink/functions-toolkit/dist/decodeResult";
 import {
   FunctionsRequestParams,
-  FunctionsResponse,
+  FunctionsResponse, GatewayResponse,
   RequestCommitment,
   ReturnType,
-  SubscriptionInfo,
+  SubscriptionInfo, ThresholdPublicKey,
 } from "@chainlink/functions-toolkit/dist/types";
 import "@nomiclabs/hardhat-ethers";
 import { BigNumber, BigNumberish, BytesLike } from "ethers";
@@ -1039,7 +1039,15 @@ class FunctionsRouter {
   ): Promise<functionsRouter.FunctionsResponseListener> {
     return functionsRouter.FunctionsResponseListener.initialize(this.hre, functionsRouterAddress);
   }
+  
+  public initializeFunctionsSecretsManager(
+    functionsRouterAddress: string,
+    donId: string,
+  ): Promise<functionsRouter.FunctionsSecretsManager> {
+    return functionsRouter.FunctionsSecretsManager.initialize(this.hre, functionsRouterAddress, donId);
+  }
 
+  // Subscription Manager
   public createSubscription(
     linkTokenAddress: string,
     functionsRouterAddress: string,
@@ -1186,6 +1194,8 @@ class FunctionsRouter {
     );
   }
 
+  // Response Listener
+  
   public listenForResponse(
     functionsRouterAddress: string,
     requestId: string,
@@ -1218,6 +1228,116 @@ class FunctionsRouter {
     return functionsRouter.stopListeningForResponses(
       this.hre,
       functionsRouterAddress
+    );
+  }
+  
+  // Secrets Manager
+
+  public fetchKeys(
+    functionsRouterAddress: string,
+    donId: string
+  ): Promise<{
+    thresholdPublicKey: ThresholdPublicKey;
+    donPublicKey: string;
+  }> {
+    return functionsRouter.fetchKeys(
+      this.hre,
+      functionsRouterAddress,
+      donId
+    );
+  }
+
+  public encryptSecretsUrls(
+    functionsRouterAddress: string,
+    donId: string,
+    secretsUrls: string[]
+  ): Promise<string> {
+    return functionsRouter.encryptSecretsUrls(
+      this.hre,
+      functionsRouterAddress,
+      donId,
+      secretsUrls
+    );
+  }
+
+  public verifyOffchainSecrets(
+    functionsRouterAddress: string,
+    donId: string,
+    secretsUrls: string[]
+  ): Promise<boolean> {
+    return functionsRouter.verifyOffchainSecrets(
+      this.hre,
+      functionsRouterAddress,
+      donId,
+      secretsUrls
+    );
+  }
+
+  public encryptSecrets(
+    functionsRouterAddress: string,
+    donId: string,
+    secrets?: Record<string, string>
+  ): Promise<{
+    encryptedSecrets: string;
+  }> {
+    return functionsRouter.encryptSecrets(
+      this.hre,
+      functionsRouterAddress,
+      donId,
+      secrets
+    );
+  }
+
+  public uploadEncryptedSecretsToDON(
+    functionsRouterAddress: string,
+    donId: string,
+    encryptedSecretsHexstring: string,
+    gatewayUrls: string[],
+    slotId: number,
+    minutesUntilExpiration: number
+  ): Promise<{
+    version: number;
+    success: boolean;
+  }> {
+    return functionsRouter.uploadEncryptedSecretsToDON(
+      this.hre,
+      functionsRouterAddress,
+      donId,
+      encryptedSecretsHexstring,
+      gatewayUrls,
+      slotId,
+      minutesUntilExpiration,
+    );
+  }
+
+  public listDONHostedEncryptedSecrets(
+    functionsRouterAddress: string,
+    donId: string,
+    gatewayUrls: string[]
+  ): Promise<{
+    result: GatewayResponse;
+    error?: string;
+  }> {
+    return functionsRouter.listDONHostedEncryptedSecrets(
+      this.hre,
+      functionsRouterAddress,
+      donId,
+      gatewayUrls,
+    );
+  }
+
+  public buildDONHostedEncryptedSecretsReference(
+    functionsRouterAddress: string,
+    donId: string,
+    slotId: number,
+    version: number
+  ): Promise<string> {
+    return functionsRouter.buildDONHostedEncryptedSecretsReference(
+      this.hre,
+      functionsRouterAddress,
+      donId,
+      slotId,
+      version,
     );
   }
 }
@@ -1288,6 +1408,20 @@ class Utils {
     transactionHash: string;
   }> {
     return utils.transferETH(this.hre, recipient, amount);
+  }
+
+  public async createGist(
+    githubApiToken: string,
+    content: string
+  ): Promise<string> {
+    return utils.createGist(githubApiToken, content);
+  }
+
+  public async deleteGist(
+    githubApiToken: string,
+    content: string
+  ): Promise<boolean> {
+    return utils.deleteGist(githubApiToken, content);
   }
 }
 
