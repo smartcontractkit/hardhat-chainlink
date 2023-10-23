@@ -1,11 +1,14 @@
 import {
   ResponseListener,
+  SecretsManager,
   SubscriptionManager,
 } from "@chainlink/functions-toolkit";
 import {
   FunctionsResponse,
+  GatewayResponse,
   RequestCommitment,
   SubscriptionInfo,
+  ThresholdPublicKey,
 } from "@chainlink/functions-toolkit/dist/types";
 import { ContractReceipt, Signer } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
@@ -228,6 +231,126 @@ export const stopListeningForResponses = async (
   return functionsResponseListener.stopListeningForResponses();
 };
 
+export const fetchKeys = async (
+  hre: HardhatRuntimeEnvironment,
+  functionsRouterAddress: string,
+  donId: string
+): Promise<{
+  thresholdPublicKey: ThresholdPublicKey;
+  donPublicKey: string;
+}> => {
+  const functionsSecretsManager = await FunctionsSecretsManager.initialize(
+    hre,
+    functionsRouterAddress,
+    donId
+  );
+  return functionsSecretsManager.fetchKeys();
+};
+
+export const encryptSecretsUrls = async (
+  hre: HardhatRuntimeEnvironment,
+  functionsRouterAddress: string,
+  donId: string,
+  secretsUrls: string[]
+): Promise<string> => {
+  const functionsSecretsManager = await FunctionsSecretsManager.initialize(
+    hre,
+    functionsRouterAddress,
+    donId
+  );
+  return functionsSecretsManager.encryptSecretsUrls(secretsUrls);
+};
+
+export const verifyOffchainSecrets = async (
+  hre: HardhatRuntimeEnvironment,
+  functionsRouterAddress: string,
+  donId: string,
+  secretsUrls: string[]
+): Promise<boolean> => {
+  const functionsSecretsManager = await FunctionsSecretsManager.initialize(
+    hre,
+    functionsRouterAddress,
+    donId
+  );
+  return functionsSecretsManager.verifyOffchainSecrets(secretsUrls);
+};
+
+export const encryptSecrets = async (
+  hre: HardhatRuntimeEnvironment,
+  functionsRouterAddress: string,
+  donId: string,
+  secrets?: Record<string, string>
+): Promise<{
+  encryptedSecrets: string;
+}> => {
+  const functionsSecretsManager = await FunctionsSecretsManager.initialize(
+    hre,
+    functionsRouterAddress,
+    donId
+  );
+  return functionsSecretsManager.encryptSecrets(secrets);
+};
+
+export const uploadEncryptedSecretsToDON = async (
+  hre: HardhatRuntimeEnvironment,
+  functionsRouterAddress: string,
+  donId: string,
+  encryptedSecretsHexstring: string,
+  gatewayUrls: string[],
+  slotId: number,
+  minutesUntilExpiration: number
+): Promise<{
+  version: number;
+  success: boolean;
+}> => {
+  const functionsSecretsManager = await FunctionsSecretsManager.initialize(
+    hre,
+    functionsRouterAddress,
+    donId
+  );
+  return functionsSecretsManager.uploadEncryptedSecretsToDON(
+    encryptedSecretsHexstring,
+    gatewayUrls,
+    slotId,
+    minutesUntilExpiration
+  );
+};
+
+export const listDONHostedEncryptedSecrets = async (
+  hre: HardhatRuntimeEnvironment,
+  functionsRouterAddress: string,
+  donId: string,
+  gatewayUrls: string[]
+): Promise<{
+  result: GatewayResponse;
+  error?: string;
+}> => {
+  const functionsSecretsManager = await FunctionsSecretsManager.initialize(
+    hre,
+    functionsRouterAddress,
+    donId
+  );
+  return functionsSecretsManager.listDONHostedEncryptedSecrets(gatewayUrls);
+};
+
+export const buildDONHostedEncryptedSecretsReference = async (
+  hre: HardhatRuntimeEnvironment,
+  functionsRouterAddress: string,
+  donId: string,
+  slotId: number,
+  version: number
+): Promise<string> => {
+  const functionsSecretsManager = await FunctionsSecretsManager.initialize(
+    hre,
+    functionsRouterAddress,
+    donId
+  );
+  return functionsSecretsManager.buildDONHostedEncryptedSecretsReference(
+    slotId,
+    version
+  );
+};
+
 export class FunctionsSubscriptionManager {
   private hre: HardhatRuntimeEnvironment;
   private subscriptionManager: SubscriptionManager;
@@ -412,5 +535,97 @@ export class FunctionsResponseListener {
 
   stopListeningForResponses(): void {
     return this.responseListener.stopListeningForResponses();
+  }
+}
+
+export class FunctionsSecretsManager {
+  private secretsManager: SecretsManager;
+  private hre: HardhatRuntimeEnvironment;
+
+  private constructor(
+    hre: HardhatRuntimeEnvironment,
+    signer: Signer,
+    functionsRouterAddress: string,
+    donId: string
+  ) {
+    this.hre = hre;
+    this.secretsManager = new SecretsManager({
+      signer,
+      functionsRouterAddress,
+      donId,
+    });
+  }
+
+  static async initialize(
+    hre: HardhatRuntimeEnvironment,
+    functionsRouterAddress: string,
+    donId: string
+  ): Promise<FunctionsSecretsManager> {
+    const [signer] = await hre.ethers.getSigners();
+    const functionsSecretsManager = new FunctionsSecretsManager(
+      hre,
+      signer,
+      functionsRouterAddress,
+      donId
+    );
+
+    await functionsSecretsManager.secretsManager.initialize();
+
+    return functionsSecretsManager;
+  }
+
+  fetchKeys(): Promise<{
+    thresholdPublicKey: ThresholdPublicKey;
+    donPublicKey: string;
+  }> {
+    return this.secretsManager.fetchKeys();
+  }
+
+  encryptSecretsUrls(secretsUrls: string[]): Promise<string> {
+    return this.secretsManager.encryptSecretsUrls(secretsUrls);
+  }
+
+  verifyOffchainSecrets(secretsUrls: string[]): Promise<boolean> {
+    return this.secretsManager.verifyOffchainSecrets(secretsUrls);
+  }
+
+  encryptSecrets(secrets?: Record<string, string>): Promise<{
+    encryptedSecrets: string;
+  }> {
+    return this.secretsManager.encryptSecrets(secrets);
+  }
+
+  uploadEncryptedSecretsToDON(
+    encryptedSecretsHexstring: string,
+    gatewayUrls: string[],
+    slotId: number,
+    minutesUntilExpiration: number
+  ): Promise<{
+    version: number;
+    success: boolean;
+  }> {
+    return this.secretsManager.uploadEncryptedSecretsToDON({
+      encryptedSecretsHexstring,
+      gatewayUrls,
+      slotId,
+      minutesUntilExpiration,
+    });
+  }
+
+  listDONHostedEncryptedSecrets(gatewayUrls: string[]): Promise<{
+    result: GatewayResponse;
+    error?: string;
+  }> {
+    return this.secretsManager.listDONHostedEncryptedSecrets(gatewayUrls);
+  }
+
+  buildDONHostedEncryptedSecretsReference(
+    slotId: number,
+    version: number
+  ): string {
+    return this.secretsManager.buildDONHostedEncryptedSecretsReference({
+      slotId,
+      version,
+    });
   }
 }
