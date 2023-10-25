@@ -1,4 +1,4 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.6.6;
 
-import "@chainlink/contracts/src/v0.6/dev/BlockhashStore.sol";
+import "@chainlink/contracts/src/v0.6/BlockhashStore.sol";
