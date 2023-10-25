@@ -540,15 +540,12 @@ export class FunctionsResponseListener {
 
 export class FunctionsSecretsManager {
   private secretsManager: SecretsManager;
-  private hre: HardhatRuntimeEnvironment;
 
   private constructor(
-    hre: HardhatRuntimeEnvironment,
     signer: Signer,
     functionsRouterAddress: string,
     donId: string
   ) {
-    this.hre = hre;
     this.secretsManager = new SecretsManager({
       signer,
       functionsRouterAddress,
@@ -563,7 +560,6 @@ export class FunctionsSecretsManager {
   ): Promise<FunctionsSecretsManager> {
     const [signer] = await hre.ethers.getSigners();
     const functionsSecretsManager = new FunctionsSecretsManager(
-      hre,
       signer,
       functionsRouterAddress,
       donId
