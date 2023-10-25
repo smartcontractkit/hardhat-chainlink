@@ -23,11 +23,10 @@ const connectKeeperRegistrar = async (
   keeperRegistrarAddress: string
 ) => {
   const [signer] = await hre.ethers.getSigners();
-  const typeAndVersionInterface =
-    await TypeAndVersionInterface__factory.connect(
-      keeperRegistrarAddress,
-      signer
-    );
+  const typeAndVersionInterface = TypeAndVersionInterface__factory.connect(
+    keeperRegistrarAddress,
+    signer
+  );
   const typeAndVersion = await typeAndVersionInterface.typeAndVersion();
   switch (typeAndVersion) {
     case KeeperRegistrarVersion.registrar1_1:
@@ -219,11 +218,10 @@ export const registerUpkeep = async (
 }> => {
   const [signer] = await hre.ethers.getSigners();
 
-  const typeAndVersionInterface =
-    await TypeAndVersionInterface__factory.connect(
-      keeperRegistrarAddress,
-      signer
-    );
+  const typeAndVersionInterface = TypeAndVersionInterface__factory.connect(
+    keeperRegistrarAddress,
+    signer
+  );
   const typeAndVersion = await typeAndVersionInterface.typeAndVersion();
   switch (typeAndVersion) {
     case KeeperRegistrarVersion.registrar1_1:
@@ -326,10 +324,9 @@ export const getTypeAndVersion = async (
   keeperRegistrarAddress: string
 ): Promise<string> => {
   const [signer] = await hre.ethers.getSigners();
-  const typeAndVersionInterface =
-    await TypeAndVersionInterface__factory.connect(
-      keeperRegistrarAddress,
-      signer
-    );
+  const typeAndVersionInterface = TypeAndVersionInterface__factory.connect(
+    keeperRegistrarAddress,
+    signer
+  );
   return typeAndVersionInterface.typeAndVersion();
 };
