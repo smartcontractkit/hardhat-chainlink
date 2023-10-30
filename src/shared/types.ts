@@ -1,3 +1,5 @@
+import { BigNumber, providers, Signer } from "ethers";
+
 import {
   DataFeed,
   FeedRegistry,
@@ -36,4 +38,25 @@ export type Choice = {
 export type DockerOutput = {
   exitCode: number | null;
   err: string;
+};
+
+export type FunctionsSubscriptionDetails = {
+  balance: BigNumber;
+  owner: string;
+  blockedBalance: BigNumber;
+  proposedOwner: string;
+  consumers: string[];
+  flags: string;
+};
+
+export type VRFSubscriptionDetails = {
+  balance: BigNumber;
+  reqCount: BigNumber;
+  owner: string;
+  consumers: string[];
+};
+
+export type Overrides = {
+  signer?: Signer;
+  provider?: providers.JsonRpcProvider;
 };
