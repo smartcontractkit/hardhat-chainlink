@@ -4,13 +4,13 @@ import * as fs from "fs";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { join } from "path";
 
-import { CHAINLINK_NODE_CONTAINER } from "../../shared/constants";
+import * as constants from "../../shared/constants";
 import { NodeStartType } from "../../shared/enums";
 import { DockerOutput } from "../../shared/types";
 
-const login = async (hre: HardhatRuntimeEnvironment): Promise<void> => {
+const login = async (): Promise<void> => {
   await compose.exec(
-    CHAINLINK_NODE_CONTAINER,
+    constants.CHAINLINK_NODE_CONTAINER,
     ["chainlink", "admin", "login", "-f", "/clroot/api-credentials"],
     {
       cwd: join("./"),
@@ -39,10 +39,10 @@ const up = async (
 
   // Replace placeholders with values
   const config = configTemplate
-    .replace("{{CHAIN_ID}}", node.chain_id)
-    .replace("{{CHAIN_NAME}}", node.chain_name)
-    .replace("{{CHAIN_WSURL}}", node.ws_url)
-    .replace("{{CHAIN_HTTPURL}}", node.http_url);
+    .replace("{{CHAIN_ID}}", node?.chain_id || constants.DEFAULT_CHAIN_ID)
+    .replace("{{CHAIN_NAME}}", node?.chain_name || constants.DEFAULT_CHAIN_NAME)
+    .replace("{{CHAIN_WSURL}}", node?.ws_url || constants.DEFAULT_WS_URL)
+    .replace("{{CHAIN_HTTPURL}}", node?.http_url || constants.DEFAULT_HTTP_URL);
 
   // Write the replaced content to a new TOML file
   try {
@@ -59,18 +59,27 @@ const up = async (
 
   // Replace placeholders with values
   const dockerCompose = dockerComposeTemplate
-    .replace("{{PG_USER}}", node.pg_user)
-    .replace("{{PG_USER}}", node.pg_user)
-    .replace("{{PG_USER}}", node.pg_user)
-    .replace("{{PG_PASSWORD}}", node.pg_password)
-    .replace("{{PG_PASSWORD}}", node.pg_password)
-    .replace("{{PG_DB}}", node.pg_db)
-    .replace("{{PG_DB}}", node.pg_db)
-    .replace("{{CL_PASSWORD_KEYSTORE}}", node.cl_keystore_password);
+    .replace("{{PG_USER}}", node?.pg_user || constants.DEFAULT_PG_USER)
+    .replace("{{PG_USER}}", node?.pg_user || constants.DEFAULT_PG_USER)
+    .replace("{{PG_USER}}", node?.pg_user || constants.DEFAULT_PG_USER)
+    .replace(
+      "{{PG_PASSWORD}}",
+      node?.pg_password || constants.DEFAULT_PG_PASSWORD
+    )
+    .replace(
+      "{{PG_PASSWORD}}",
+      node?.pg_password || constants.DEFAULT_PG_PASSWORD
+    )
+    .replace("{{PG_DB}}", node?.pg_db || constants.DEFAULT_PG_DB)
+    .replace("{{PG_DB}}", node?.pg_db || constants.DEFAULT_PG_DB)
+    .replace(
+      "{{CL_PASSWORD_KEYSTORE}}",
+      node?.cl_keystore_password || constants.DEFAULT_CL_KEYSTORE_PASSWORD
+    );
 
   // Write the replaced content to a new YAML file
   try {
-    await fs.writeFileSync(
+    fs.writeFileSync(
       join("./docker-compose-chainlink-hardhat.yaml"),
       dockerCompose,
       "utf8"
@@ -80,15 +89,13 @@ const up = async (
   }
 
   // Combine the strings with a line break
-  const apiCredentials = `${node.cl_api_user}\n${node.cl_api_password}`;
+  const apiCredentials = `${
+    node?.cl_api_user || constants.DEFAULT_CL_API_USER
+  }\n${node?.cl_api_password || constants.DEFAULT_CL_API_PASSWORD}`;
 
   // Write the content to a file
   try {
-    await fs.writeFileSync(
-      join("./clroot/api-credentials"),
-      apiCredentials,
-      "utf8"
-    );
+    fs.writeFileSync(join("./clroot/api-credentials"), apiCredentials, "utf8");
   } catch (e: any) {
     throw new Error(e);
   }
@@ -153,9 +160,9 @@ export const stop = async (
 export const getETHKeys = async (
   hre: HardhatRuntimeEnvironment
 ): Promise<string> => {
-  await login(hre);
+  await login();
   const result = await compose.exec(
-    CHAINLINK_NODE_CONTAINER,
+    constants.CHAINLINK_NODE_CONTAINER,
     ["chainlink", "-j", "keys", "eth", "list"],
     {
       cwd: join("./"),
@@ -168,10 +175,25 @@ export const getETHKeys = async (
 export const getP2PKeys = async (
   hre: HardhatRuntimeEnvironment
 ): Promise<string> => {
-  await login(hre);
+  await login();
   const result = await compose.exec(
-    CHAINLINK_NODE_CONTAINER,
+    constants.CHAINLINK_NODE_CONTAINER,
     ["chainlink", "-j", "keys", "p2p", "list"],
+    {
+      cwd: join("./"),
+      composeOptions: ["-f", "docker-compose-chainlink-hardhat.yaml"],
+    }
+  );
+  return result.out;
+};
+
+export const getVRFKeys = async (
+  hre: HardhatRuntimeEnvironment
+): Promise<string> => {
+  await login();
+  const result = await compose.exec(
+    constants.CHAINLINK_NODE_CONTAINER,
+    ["chainlink", "-j", "keys", "vrf", "list"],
     {
       cwd: join("./"),
       composeOptions: ["-f", "docker-compose-chainlink-hardhat.yaml"],
@@ -183,9 +205,9 @@ export const getP2PKeys = async (
 export const getOCRKeys = async (
   hre: HardhatRuntimeEnvironment
 ): Promise<string> => {
-  await login(hre);
+  await login();
   const result = await compose.exec(
-    CHAINLINK_NODE_CONTAINER,
+    constants.CHAINLINK_NODE_CONTAINER,
     ["chainlink", "-j", "keys", "ocr", "list"],
     {
       cwd: join("./"),
@@ -198,9 +220,9 @@ export const getOCRKeys = async (
 export const getJobs = async (
   hre: HardhatRuntimeEnvironment
 ): Promise<string> => {
-  await login(hre);
+  await login();
   const result = await compose.exec(
-    CHAINLINK_NODE_CONTAINER,
+    constants.CHAINLINK_NODE_CONTAINER,
     ["chainlink", "-j", "jobs", "list"],
     {
       cwd: join("./"),
@@ -238,10 +260,10 @@ export const createDirectRequestJob = async (
     throw new Error(e);
   }
 
-  await login(hre);
+  await login();
 
   await compose.exec(
-    CHAINLINK_NODE_CONTAINER,
+    constants.CHAINLINK_NODE_CONTAINER,
     ["chainlink", "jobs", "create", "/clroot/jobs/direct-request-job.toml"],
     {
       cwd: join("./"),
