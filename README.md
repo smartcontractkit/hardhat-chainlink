@@ -144,7 +144,7 @@ The Hardhat Chainlink plugin supports the following Chainlink services:
 - `automationRegistry` (Automation Registries)
 - `automationRegistrar` (Automation Registrars)
 - `vrf` (Verifiable Random Functions)
-- `functions` (Functions Service)
+- `functionsRouter` (Functions Service)
 
 For a more in-depth understanding of available services and methods, please explore their [tests](test).
 
