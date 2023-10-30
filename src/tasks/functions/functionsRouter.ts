@@ -32,7 +32,7 @@ export const fundSubscription: ActionType<{
   );
 };
 
-export const getSubscriptionInfo: ActionType<{
+export const getSubscriptionDetails: ActionType<{
   functionsRouterAddress: string;
   subscriptionId: BigNumberish;
 }> = async (taskArgs, hre): Promise<FunctionsSubscriptionDetails> => {

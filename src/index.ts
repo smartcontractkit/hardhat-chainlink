@@ -216,18 +216,18 @@ task(
 });
 
 // FUNCTIONS
-task(`${PACKAGE_NAME}:${Task.functions}`, "Functions Module")
+task(`${PACKAGE_NAME}:${Task.functionsRouter}`, "Functions Module")
   .addOptionalPositionalParam("subtask", "Subtask")
   .addOptionalParam("args", "Subtask args")
   .setAction(async (taskArgs, hre) => {
-    return resolveTask(hre, Task.functions, taskArgs);
+    return resolveTask(hre, Task.functionsRouter, taskArgs);
   });
 
 task(
-  `${PACKAGE_NAME}:${Task.functions}:subtasks`,
+  `${PACKAGE_NAME}:${Task.functionsRouter}:subtasks`,
   "Functions Module: Subtasks List"
 ).setAction(async () => {
-  printSubtasks(Task.functions);
+  printSubtasks(Task.functionsRouter);
 });
 
 // REGISTRIES

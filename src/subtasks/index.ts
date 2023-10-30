@@ -1213,7 +1213,7 @@ export const subtasks: Subtasks = {
       ],
     },
   },
-  [Task.functions]: {
+  [Task.functionsRouter]: {
     [FunctionsRouterSubtask.createSubscription]: {
       action: functionsRouterActions.createSubscription,
       description: camelToFlat(FunctionsRouterSubtask.createSubscription),
@@ -1251,20 +1251,6 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [FunctionsRouterSubtask.getSubscriptionInfo]: {
-      action: functionsRouterActions.getSubscriptionInfo,
-      description: camelToFlat(FunctionsRouterSubtask.getSubscriptionInfo),
-      args: [
-        {
-          name: "functionsRouterAddress",
-          description: "Address of Functions Router",
-        },
-        {
-          name: "subscriptionId",
-          description: "Subscription ID",
-        },
-      ],
-    },
     [FunctionsRouterSubtask.cancelSubscription]: {
       action: functionsRouterActions.cancelSubscription,
       description: camelToFlat(FunctionsRouterSubtask.cancelSubscription),
@@ -1281,6 +1267,20 @@ export const subtasks: Subtasks = {
           name: "receivingAddress",
           description: "Address to receive the balance of Subscription",
           defaultValue: "",
+        },
+      ],
+    },
+    [FunctionsRouterSubtask.getSubscriptionDetails]: {
+      action: functionsRouterActions.getSubscriptionDetails,
+      description: camelToFlat(FunctionsRouterSubtask.getSubscriptionDetails),
+      args: [
+        {
+          name: "functionsRouterAddress",
+          description: "Address of Functions Router",
+        },
+        {
+          name: "subscriptionId",
+          description: "Subscription ID",
         },
       ],
     },
@@ -1500,7 +1500,7 @@ export const subtasks: Subtasks = {
       args: [
         {
           name: "githubApiToken",
-          description: "GitHub Api Token",
+          description: "GitHub API Token",
         },
         {
           name: "content",
@@ -1514,7 +1514,7 @@ export const subtasks: Subtasks = {
       args: [
         {
           name: "githubApiToken",
-          description: "GitHub Api Token",
+          description: "GitHub API Token",
         },
         {
           name: "content",
@@ -1747,7 +1747,7 @@ export const subtasks: Subtasks = {
     },
     [FunctionsConsumerSubtask.sendRequest]: {
       action: functionsConsumerActions.sendRequest,
-      description: "Send Functions Request",
+      description: "Send Functions request",
       args: [
         {
           name: "functionsRouterAddress",
@@ -1811,7 +1811,7 @@ export const subtasks: Subtasks = {
     },
     [FunctionsConsumerSubtask.setDonId]: {
       action: functionsConsumerActions.setDonId,
-      description: "Send DON ID",
+      description: "Set DON ID",
       args: [
         {
           name: "functionsRouterAddress",
@@ -1867,7 +1867,7 @@ export const subtasks: Subtasks = {
   [Task.functionsSimulation]: {
     [FunctionsSimulationSubtask.simulateRequest]: {
       action: functionsSimulationActions.simulateRequest,
-      description: "Simulate Functions Request",
+      description: "Simulate Functions request",
       args: [
         {
           name: "source",

@@ -1237,7 +1237,7 @@ class FunctionsRouter {
 
   public listenForResponseFromTransaction(
     functionsRouterAddress: string,
-    requestId: string,
+    transactionHash: string,
     timeout?: number,
     confirmations?: number,
     checkInterval?: number
@@ -1245,7 +1245,7 @@ class FunctionsRouter {
     return functionsRouter.listenForResponseFromTransaction(
       this.hre,
       functionsRouterAddress,
-      requestId,
+      transactionHash,
       timeout,
       confirmations,
       checkInterval

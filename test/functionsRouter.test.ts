@@ -230,7 +230,7 @@ describe("Test chainlink:functionsRouter module", function () {
 
     it("Create Subscription", async function () {
       const { subscriptionId } = await this.hre.run(
-        `${PACKAGE_NAME}:${Task.functions}:${FunctionsRouterSubtask.createSubscription}`,
+        `${PACKAGE_NAME}:${Task.functionsRouter}:${FunctionsRouterSubtask.createSubscription}`,
         {
           functionsRouterAddress: functionsRouterContract.address,
         }
@@ -245,7 +245,7 @@ describe("Test chainlink:functionsRouter module", function () {
           functionsRouterContract.address
         );
       await this.hre.run(
-        `${PACKAGE_NAME}:${Task.functions}:${FunctionsRouterSubtask.fundSubscription}`,
+        `${PACKAGE_NAME}:${Task.functionsRouter}:${FunctionsRouterSubtask.fundSubscription}`,
         {
           functionsRouterAddress: functionsRouterContract.address,
           linkTokenAddress: linkTokenContract.address,
@@ -278,7 +278,7 @@ describe("Test chainlink:functionsRouter module", function () {
         subscriptionId
       );
       await this.hre.run(
-        `${PACKAGE_NAME}:${Task.functions}:${FunctionsRouterSubtask.cancelSubscription}`,
+        `${PACKAGE_NAME}:${Task.functionsRouter}:${FunctionsRouterSubtask.cancelSubscription}`,
         {
           functionsRouterAddress: functionsRouterContract.address,
           subscriptionId: subscriptionId.toString(),
@@ -295,7 +295,7 @@ describe("Test chainlink:functionsRouter module", function () {
           functionsRouterContract.address
         );
       await this.hre.run(
-        `${PACKAGE_NAME}:${Task.functions}:${FunctionsRouterSubtask.addConsumer}`,
+        `${PACKAGE_NAME}:${Task.functionsRouter}:${FunctionsRouterSubtask.addConsumer}`,
         {
           functionsRouterAddress: functionsRouterContract.address,
           consumerAddress: functionsConsumerContract.address,
@@ -327,7 +327,7 @@ describe("Test chainlink:functionsRouter module", function () {
         subscriptionId
       );
       await this.hre.run(
-        `${PACKAGE_NAME}:${Task.functions}:${FunctionsRouterSubtask.removeConsumer}`,
+        `${PACKAGE_NAME}:${Task.functionsRouter}:${FunctionsRouterSubtask.removeConsumer}`,
         {
           functionsRouterAddress: functionsRouterContract.address,
           consumerAddress: functionsConsumerContract.address,
@@ -355,7 +355,7 @@ describe("Test chainlink:functionsRouter module", function () {
           functionsRouterContract.address
         );
       await this.hre.run(
-        `${PACKAGE_NAME}:${Task.functions}:${FunctionsRouterSubtask.requestSubscriptionOwnerTransfer}`,
+        `${PACKAGE_NAME}:${Task.functionsRouter}:${FunctionsRouterSubtask.requestSubscriptionOwnerTransfer}`,
         {
           functionsRouterAddress: functionsRouterContract.address,
           subscriptionId: subscriptionId.toString(),
@@ -398,7 +398,7 @@ describe("Test chainlink:functionsRouter module", function () {
         }
       );
       await this.hre.run(
-        `${PACKAGE_NAME}:${Task.functions}:${FunctionsRouterSubtask.acceptSubscriptionOwnerTransfer}`,
+        `${PACKAGE_NAME}:${Task.functionsRouter}:${FunctionsRouterSubtask.acceptSubscriptionOwnerTransfer}`,
         {
           functionsRouterAddress: functionsRouterContract.address,
           subscriptionId: subscriptionId.toString(),
@@ -422,7 +422,7 @@ describe("Test chainlink:functionsRouter module", function () {
 
     it("Create Subscription", async function () {
       const { subscriptionId } = await this.hre.run(
-        `${PACKAGE_NAME}:${Task.functions}`,
+        `${PACKAGE_NAME}:${Task.functionsRouter}`,
         {
           subtask: FunctionsRouterSubtask.createSubscription,
           args: JSON.stringify({
@@ -440,7 +440,7 @@ describe("Test chainlink:functionsRouter module", function () {
         await this.hre.chainlink.functionsRouter.createSubscription(
           functionsRouterContract.address
         );
-      await this.hre.run(`${PACKAGE_NAME}:${Task.functions}`, {
+      await this.hre.run(`${PACKAGE_NAME}:${Task.functionsRouter}`, {
         subtask: FunctionsRouterSubtask.fundSubscription,
         args: JSON.stringify({
           functionsRouterAddress: functionsRouterContract.address,
@@ -473,7 +473,7 @@ describe("Test chainlink:functionsRouter module", function () {
         LINK_AMOUNT_TO_FUND,
         subscriptionId
       );
-      await this.hre.run(`${PACKAGE_NAME}:${Task.functions}`, {
+      await this.hre.run(`${PACKAGE_NAME}:${Task.functionsRouter}`, {
         subtask: FunctionsRouterSubtask.cancelSubscription,
         args: JSON.stringify({
           functionsRouterAddress: functionsRouterContract.address,
@@ -491,7 +491,7 @@ describe("Test chainlink:functionsRouter module", function () {
         await this.hre.chainlink.functionsRouter.createSubscription(
           functionsRouterContract.address
         );
-      await this.hre.run(`${PACKAGE_NAME}:${Task.functions}`, {
+      await this.hre.run(`${PACKAGE_NAME}:${Task.functionsRouter}`, {
         subtask: FunctionsRouterSubtask.addConsumer,
         args: JSON.stringify({
           functionsRouterAddress: functionsRouterContract.address,
@@ -523,7 +523,7 @@ describe("Test chainlink:functionsRouter module", function () {
         functionsConsumerContract.address,
         subscriptionId
       );
-      await this.hre.run(`${PACKAGE_NAME}:${Task.functions}`, {
+      await this.hre.run(`${PACKAGE_NAME}:${Task.functionsRouter}`, {
         subtask: FunctionsRouterSubtask.removeConsumer,
         args: JSON.stringify({
           functionsRouterAddress: functionsRouterContract.address,
@@ -551,7 +551,7 @@ describe("Test chainlink:functionsRouter module", function () {
         await this.hre.chainlink.functionsRouter.createSubscription(
           functionsRouterContract.address
         );
-      await this.hre.run(`${PACKAGE_NAME}:${Task.functions}`, {
+      await this.hre.run(`${PACKAGE_NAME}:${Task.functionsRouter}`, {
         subtask: FunctionsRouterSubtask.requestSubscriptionOwnerTransfer,
         args: JSON.stringify({
           functionsRouterAddress: functionsRouterContract.address,
@@ -594,7 +594,7 @@ describe("Test chainlink:functionsRouter module", function () {
           signer: owner,
         }
       );
-      await this.hre.run(`${PACKAGE_NAME}:${Task.functions}`, {
+      await this.hre.run(`${PACKAGE_NAME}:${Task.functionsRouter}`, {
         subtask: FunctionsRouterSubtask.acceptSubscriptionOwnerTransfer,
         args: JSON.stringify({
           functionsRouterAddress: functionsRouterContract.address,

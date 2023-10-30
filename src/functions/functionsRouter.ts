@@ -188,7 +188,7 @@ export const listenForResponse = async (
 export const listenForResponseFromTransaction = async (
   hre: HardhatRuntimeEnvironment,
   functionsRouterAddress: string,
-  requestId: string,
+  transactionHash: string,
   timeout?: number,
   confirmations?: number,
   checkInterval?: number
@@ -198,7 +198,7 @@ export const listenForResponseFromTransaction = async (
     functionsRouterAddress,
   });
   return functionsResponseListener.listenForResponseFromTransaction(
-    requestId,
+    transactionHash,
     timeout,
     confirmations,
     checkInterval
@@ -572,13 +572,13 @@ export class FunctionsResponseListener {
   }
 
   listenForResponseFromTransaction(
-    requestId: string,
+    transactionHash: string,
     timeout?: number,
     confirmations?: number,
     checkInterval?: number
   ): Promise<FunctionsResponse> {
     return this.responseListener.listenForResponseFromTransaction(
-      requestId,
+      transactionHash,
       timeout,
       confirmations,
       checkInterval

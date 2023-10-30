@@ -5,7 +5,7 @@ import fs from "fs";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { join } from "path";
 
-const DEFAULT_PORT = 8546;
+import { DEFAULT_PORT } from "../../shared/constants";
 
 const writeSimulationConfigFile = async (
   hre: HardhatRuntimeEnvironment

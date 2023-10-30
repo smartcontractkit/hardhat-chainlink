@@ -2,6 +2,7 @@ export const PACKAGE_NAME = "chainlink";
 export const CHAINLINK_NODE_CONTAINER = "chainlink_node";
 export const SUBTASK_PADDING = 30;
 export const AGGREGATOR_PROXY_PHASE_OFFSET = 64;
+export const DEFAULT_PORT = 8546;
 export const DEFAULT_CHAIN_ID = "1337";
 export const DEFAULT_CHAIN_NAME = "local";
 export const DEFAULT_HTTP_URL = "http://host.docker.internal:8545";
