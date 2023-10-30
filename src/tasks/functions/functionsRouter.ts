@@ -1,20 +1,17 @@
-import {
-  RequestCommitment,
-  SubscriptionInfo,
-} from "@chainlink/functions-toolkit/dist/types";
+import { RequestCommitment } from "@chainlink/functions-toolkit/dist/types";
+import { BigNumber, BigNumberish } from "ethers";
 import { ActionType } from "hardhat/types";
 
 import * as functionsRouter from "../../functions/functionsRouter";
 import * as functionsUtils from "../../functions/functionsUtils";
+import { FunctionsSubscriptionDetails } from "../../shared/types";
 
 export const createSubscription: ActionType<{
-  linkTokenAddress: string;
   functionsRouterAddress: string;
   consumerAddress?: string;
-}> = async (taskArgs, hre): Promise<number> => {
+}> = async (taskArgs, hre): Promise<{ subscriptionId: BigNumber }> => {
   return functionsRouter.createSubscription(
     hre,
-    taskArgs.linkTokenAddress,
     taskArgs.functionsRouterAddress,
     taskArgs.consumerAddress
   );
@@ -23,113 +20,102 @@ export const createSubscription: ActionType<{
 export const fundSubscription: ActionType<{
   linkTokenAddress: string;
   functionsRouterAddress: string;
-  juelsAmount: string;
-  subscriptionId: string;
-}> = async (taskArgs, hre): Promise<string> => {
+  amountInJuels: BigNumberish;
+  subscriptionId: BigNumberish;
+}> = async (taskArgs, hre): Promise<{ transactionHash: string }> => {
   return functionsRouter.fundSubscription(
     hre,
-    taskArgs.linkTokenAddress,
     taskArgs.functionsRouterAddress,
-    taskArgs.juelsAmount,
+    taskArgs.linkTokenAddress,
+    taskArgs.amountInJuels,
     taskArgs.subscriptionId
   );
 };
 
 export const getSubscriptionInfo: ActionType<{
-  linkTokenAddress: string;
   functionsRouterAddress: string;
-  subscriptionId: string;
-}> = async (taskArgs, hre): Promise<SubscriptionInfo> => {
-  return functionsRouter.getSubscriptionInfo(
+  subscriptionId: BigNumberish;
+}> = async (taskArgs, hre): Promise<FunctionsSubscriptionDetails> => {
+  return functionsRouter.getSubscriptionDetails(
     hre,
-    taskArgs.linkTokenAddress,
     taskArgs.functionsRouterAddress,
     taskArgs.subscriptionId
   );
 };
 
 export const cancelSubscription: ActionType<{
-  linkTokenAddress: string;
   functionsRouterAddress: string;
-  subscriptionId: string;
-  refundAddress: string;
-}> = async (taskArgs, hre): Promise<string> => {
+  subscriptionId: BigNumberish;
+  receivingAddress: string | undefined;
+}> = async (taskArgs, hre): Promise<{ transactionHash: string }> => {
   return functionsRouter.cancelSubscription(
     hre,
-    taskArgs.linkTokenAddress,
     taskArgs.functionsRouterAddress,
     taskArgs.subscriptionId,
-    taskArgs.refundAddress
+    taskArgs.receivingAddress
   );
 };
 
-export const requestSubscriptionTransfer: ActionType<{
-  linkTokenAddress: string;
+export const requestSubscriptionOwnerTransfer: ActionType<{
   functionsRouterAddress: string;
-  subscriptionId: string;
-  newOwner: string;
-}> = async (taskArgs, hre): Promise<string> => {
-  return functionsRouter.requestSubscriptionTransfer(
+  subscriptionId: BigNumberish;
+  newOwnerAddress: string;
+}> = async (taskArgs, hre): Promise<{ transactionHash: string }> => {
+  return functionsRouter.requestSubscriptionOwnerTransfer(
     hre,
-    taskArgs.linkTokenAddress,
     taskArgs.functionsRouterAddress,
     taskArgs.subscriptionId,
-    taskArgs.newOwner
+    taskArgs.newOwnerAddress
   );
 };
 
-export const acceptSubscriptionTransfer: ActionType<{
-  linkTokenAddress: string;
+export const acceptSubscriptionOwnerTransfer: ActionType<{
   functionsRouterAddress: string;
   subscriptionId: string;
-}> = async (taskArgs, hre): Promise<string> => {
-  return functionsRouter.acceptSubscriptionTransfer(
+}> = async (taskArgs, hre): Promise<{ transactionHash: string }> => {
+  return functionsRouter.acceptSubscriptionOwnerTransfer(
     hre,
-    taskArgs.linkTokenAddress,
     taskArgs.functionsRouterAddress,
     taskArgs.subscriptionId
   );
 };
 
 export const addConsumer: ActionType<{
-  linkTokenAddress: string;
   functionsRouterAddress: string;
-  subscriptionId: string;
   consumerAddress: string;
-}> = async (taskArgs, hre): Promise<string> => {
+  subscriptionId: BigNumberish;
+}> = async (taskArgs, hre): Promise<{ transactionHash: string }> => {
   return functionsRouter.addConsumer(
     hre,
-    taskArgs.linkTokenAddress,
     taskArgs.functionsRouterAddress,
-    taskArgs.subscriptionId,
-    taskArgs.consumerAddress
+    taskArgs.consumerAddress,
+    taskArgs.subscriptionId
   );
 };
 
 export const removeConsumer: ActionType<{
-  linkTokenAddress: string;
   functionsRouterAddress: string;
-  subscriptionId: string;
   consumerAddress: string;
-}> = async (taskArgs, hre): Promise<string> => {
+  subscriptionId: BigNumberish;
+}> = async (taskArgs, hre): Promise<{ transactionHash: string }> => {
   return functionsRouter.removeConsumer(
     hre,
-    taskArgs.linkTokenAddress,
     taskArgs.functionsRouterAddress,
-    taskArgs.subscriptionId,
-    taskArgs.consumerAddress
+    taskArgs.consumerAddress,
+    taskArgs.subscriptionId
   );
 };
 
 export const timeoutRequests: ActionType<{
-  linkTokenAddress: string;
   functionsRouterAddress: string;
   requestIdsString: string;
   donId: string;
   toBlock?: string;
-  pastBlocksToSearch: string;
-}> = async (taskArgs, hre): Promise<string> => {
-  const requestIds = taskArgs.requestIdsString.split(",");
+  pastBlocksToSearch?: string;
+}> = async (taskArgs, hre): Promise<{ transactionHash: string }> => {
+  const requestIds = taskArgs.requestIdsString
+    .split(",")
+    .map((value) => value.trim());
   const toBlock = taskArgs.toBlock ? +taskArgs.toBlock : "latest";
   const pastBlocksToSearch = taskArgs.pastBlocksToSearch
     ? +taskArgs.pastBlocksToSearch
@@ -147,23 +133,20 @@ export const timeoutRequests: ActionType<{
   const requestCommitments: RequestCommitment[] = await Promise.all(promises);
   return functionsRouter.timeoutRequests(
     hre,
-    taskArgs.linkTokenAddress,
     taskArgs.functionsRouterAddress,
     requestCommitments
   );
 };
 
 export const estimateRequestCost: ActionType<{
-  linkTokenAddress: string;
   functionsRouterAddress: string;
   donId: string;
-  subscriptionId: string;
+  subscriptionId: BigNumberish;
   callbackGasLimit: string;
-  gasPriceWei: string;
+  gasPriceWei: BigNumberish;
 }> = async (taskArgs, hre): Promise<BigInt> => {
   return functionsRouter.estimateRequestCost(
     hre,
-    taskArgs.linkTokenAddress,
     taskArgs.functionsRouterAddress,
     taskArgs.donId,
     taskArgs.subscriptionId,
