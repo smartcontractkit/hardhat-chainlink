@@ -1,3 +1,7 @@
+import {
+  CodeLanguage,
+  Location,
+} from "@chainlink/functions-toolkit/dist/types";
 import confirm from "@inquirer/confirm";
 import input from "@inquirer/input";
 import select from "@inquirer/select";
@@ -46,6 +50,13 @@ export const inquire = async (
       return inquireL2SequencerAddress(hre);
     case InquirableParameter.functionsRouterAddress:
       return inquireFunctionsRouterAddress(hre);
+    case InquirableParameter.donId:
+      return inquireDonId(hre);
+    case InquirableParameter.codeLocation:
+    case InquirableParameter.secretsLocation:
+      return inquireLocation();
+    case InquirableParameter.codeLanguage:
+      return inquireCodeLanguage();
     case InquirableParameter.feedRegistryBaseTick:
       return inquireFeedRegistryBaseTick();
     case InquirableParameter.feedRegistryQuoteTick:
@@ -684,6 +695,32 @@ export const inquireFunctionsRouterAddress = async (
   return functionsRouterAddress;
 };
 
+export const inquireDonId = async (
+  hre: HardhatRuntimeEnvironment,
+  useHardhatNetwork: boolean = true
+) => {
+  const functionsRouter = await inquireFunctionsRouter(hre, useHardhatNetwork);
+  if (!functionsRouter) {
+    return input({
+      message: "Provide a valid Functions Router address",
+    });
+  }
+
+  const donId = functionsRouter.donId;
+
+  const answer: boolean = await confirm({
+    message: `DON ID found in the plugin registry: ${donId}. Do you want to proceed with it?`,
+  });
+
+  if (!answer) {
+    return input({
+      message: "Provide a valid DON ID",
+    });
+  }
+
+  return donId;
+};
+
 export const inquireFeedRegistryBaseTick = async () => {
   const answer: boolean = await confirm({
     message:
@@ -729,6 +766,38 @@ export const inquireDenomination = async () => {
     }, [] as Choice[]),
   });
   return denomination;
+};
+
+export const inquireLocation = async () => {
+  const keys = Object.keys(Location);
+  const values = Object.values(Location);
+  return select({
+    message: "Select a location",
+    choices: keys.reduce((agg, _, currentIndex) => {
+      agg.push({
+        name: keys[currentIndex],
+        value: values[currentIndex].toString(),
+        description: keys[currentIndex],
+      });
+      return agg;
+    }, [] as Choice[]),
+  });
+};
+
+export const inquireCodeLanguage = async () => {
+  const keys = Object.keys(CodeLanguage);
+  const values = Object.values(CodeLanguage);
+  return select({
+    message: "Select a code language",
+    choices: keys.reduce((agg, _, currentIndex) => {
+      agg.push({
+        name: keys[currentIndex],
+        value: values[currentIndex].toString(),
+        description: keys[currentIndex],
+      });
+      return agg;
+    }, [] as Choice[]),
+  });
 };
 
 export const inquireSubtaskProperties = async (
