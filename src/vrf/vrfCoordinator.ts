@@ -11,6 +11,7 @@ import {
   LinkTokenInterface__factory,
   VRFCoordinatorV2__factory,
 } from "../../types";
+import { VRFSubscriptionDetails } from "../shared/types";
 
 export const createSubscription = async (
   hre: HardhatRuntimeEnvironment,
@@ -152,12 +153,7 @@ export const getSubscriptionDetails = async (
   hre: HardhatRuntimeEnvironment,
   vrfCoordinatorAddress: string,
   subscriptionId: BigNumberish
-): Promise<{
-  balance: BigNumber;
-  reqCount: BigNumber;
-  owner: string;
-  consumers: string[];
-}> => {
+): Promise<VRFSubscriptionDetails> => {
   const [signer] = await hre.ethers.getSigners();
   const vrfCoordinatorV2 = VRFCoordinatorV2__factory.connect(
     vrfCoordinatorAddress,

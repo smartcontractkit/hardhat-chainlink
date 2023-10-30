@@ -15,7 +15,7 @@ export const registerSubtasks = () => {
         `${PACKAGE_NAME}:${taskName}:${subtaskName}`
       );
       subtaskProperties.args.forEach((subtaskArg) => {
-        if (subtaskArg.defaultValue) {
+        if (subtaskArg.defaultValue !== undefined) {
           subtaskDefinition.addOptionalParam(
             subtaskArg.name,
             subtaskArg.description,
