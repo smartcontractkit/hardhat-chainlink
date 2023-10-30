@@ -99,15 +99,50 @@ This document provides detailed information about each service module and its re
       * [Get Keeper Info](#get-keeper-info)
       * [Get Type And Version](#get-type-and-version-2)
       * [Get Upkeep Transcoder Version](#get-upkeep-transcoder-version)
+  * [Functions Services](#functions-services)
+    * [Service alias: `functionsRouter`](#service-alias-functionsrouter)
+    * [Methods](#methods-8)
+      * [Create subscription](#create-subscription-1)
+      * [Fund subscription](#fund-subscription-1)
+      * [Cancel subscription](#cancel-subscription-1)
+      * [Get subscription details](#get-subscription-details-1)
+      * [Request subscription owner transfer](#request-subscription-owner-transfer-1)
+      * [Accept subscription owner transfer](#accept-subscription-owner-transfer-1)
+      * [Add subscription consumer](#add-subscription-consumer)
+      * [Remove subscription consumer](#remove-subscription-consumer)
+      * [Timeout requests](#timeout-requests)
+        * [Task/Subtask](#tasksubtask)
+        * [HRE](#hre)
+      * [Estimate the cost of a request](#estimate-the-cost-of-a-request)
+      * [Initialize SubscriptionManager class](#initialize-subscriptionmanager-class)
+      * [Initialize ResponseListener class](#initialize-responselistener-class)
+      * [Initialize SecretsManager class](#initialize-secretsmanager-class)
+      * [Listen for a response for single Functions request](#listen-for-a-response-for-single-functions-request)
+      * [Listen for a response for single Functions request (from transaction)](#listen-for-a-response-for-single-functions-request-from-transaction)
+      * [Listen for responses](#listen-for-responses)
+      * [Stop responses listener](#stop-responses-listener)
+      * [Stop responses listener](#stop-responses-listener-1)
+      * [Fetch DON public keys](#fetch-don-public-keys)
+      * [Encrypt Gist URLs](#encrypt-gist-urls)
+      * [Verify Gists secret URLs](#verify-gists-secret-urls)
+      * [Encrypt secrets](#encrypt-secrets)
+      * [Upload encrypted secrets to DON](#upload-encrypted-secrets-to-don)
+      * [List DON hosted encrypted secrets](#list-don-hosted-encrypted-secrets)
+      * [Build DON hosted encrypted secrets reference](#build-don-hosted-encrypted-secrets-reference)
   * [Utilities](#utilities)
     * [Service alias: `utils`](#service-alias-utils)
-    * [Methods](#methods-8)
+    * [Methods](#methods-9)
       * [Get Data Feed Proxy/Registry Round ID](#get-data-feed-proxyregistry-round-id)
       * [Parse Data Feed Proxy/Registry Round ID](#parse-data-feed-proxyregistry-round-id)
       * [Transfer ETH](#transfer-eth)
+      * [Create GitHub gist](#create-github-gist)
+      * [Delete GitHub gist](#delete-github-gist)
   * [Sandbox `sandbox`](#sandbox-sandbox)
+    * [Service alias: `functionsSimulation`](#service-alias-functionssimulation)
+    * [Methods](#methods-10)
+      * [Simulate Functions Request](#simulate-functions-request)
     * [Service alias: `node`](#service-alias-node)
-    * [Methods](#methods-9)
+    * [Methods](#methods-11)
       * [Run Chainlink node](#run-chainlink-node)
       * [Restart Chainlink node](#restart-chainlink-node)
       * [Stop Chainlink node](#stop-chainlink-node)
@@ -117,21 +152,31 @@ This document provides detailed information about each service module and its re
       * [Get jobs](#get-jobs)
       * [Create Direct Request job](#create-direct-request-job)
     * [Service alias: `linkToken`](#service-alias-linktoken)
-    * [Methods](#methods-10)
+    * [Methods](#methods-12)
       * [Deploy contract](#deploy-contract)
       * [Transfer](#transfer)
       * [Get allowance](#get-allowance)
       * [Increase approval](#increase-approval)
       * [Decrease approval](#decrease-approval)
     * [Service alias: `operator`](#service-alias-operator)
-    * [Methods](#methods-11)
+    * [Methods](#methods-13)
       * [Deploy contract](#deploy-contract-1)
       * [Set authorized sender](#set-authorized-sender)
     * [Service alias: `drConsumer`](#service-alias-drconsumer)
-    * [Methods](#methods-12)
+    * [Methods](#methods-14)
       * [Deploy contract](#deploy-contract-2)
       * [Request data](#request-data)
       * [Get latest answer](#get-latest-answer)
+    * [Service alias: `functionsConsumer`](#service-alias-functionsconsumer)
+    * [Methods](#methods-15)
+      * [Deploy contract](#deploy-contract-3)
+      * [Send Functions request](#send-functions-request)
+      * [Send Encoded Functions request](#send-encoded-functions-request)
+      * [Set DON ID](#set-don-id)
+      * [Get DON ID](#get-don-id)
+      * [Get last request ID](#get-last-request-id)
+      * [Get last response](#get-last-response)
+      * [Get last error](#get-last-error)
 <!-- TOC -->
 
 ## Data Feed Services
@@ -677,10 +722,9 @@ which serves as the intermediary between smart contracts on the blockchain and t
 - **Arguments:**
   - `vrfCoordinatorAddress`: Address of VRF Coordinator contract
 
-
 ## Automation Services
 
-Chainlink [Automation](https://docs.chain.link/vrf/v2/introduction) service that enables conditional execution 
+Chainlink [Automation](https://docs.chain.link/vrf/v2/introduction) service enables conditional execution 
 of your smart contracts functions through a hyper-reliable and decentralized automation platform.
 
 ### Service alias: `automationRegistrar`
@@ -849,6 +893,239 @@ which serves to add tasks for Chainlink Keepers to perform on client contracts.
 - **Arguments:**
   - `keeperRegistryAddress`: Address of Keeper Registry
 
+## Functions Services
+
+Chainlink [Functions](https://docs.chain.link/chainlink-functions) service provides your smart contracts access to 
+trust-minimized compute infrastructure, allowing you to fetch data from APIs and perform custom computation.
+
+> **Note**  
+> Most of the methods under this section are thin wrappers for the methods provided by 
+> the [functions-toolkit](https://github.com/smartcontractkit/functions-toolkit) NPM package.
+
+### Service alias: `functionsRouter`
+
+This section provides methods and functionalities designed to interact with the Functions Router smart contract.
+
+### Methods
+
+#### Create subscription
+
+- **Method:** createSubscription
+- **Description:** Create Functions subscription
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `consumerAddress`: Address of Functions Consumer (Default: "")
+
+#### Fund subscription
+
+- **Method:** fundSubscription
+- **Description:** Fund Functions subscription
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `linkTokenAddress`: Address of Link Token
+  - `amountInJuels`: Amount of LINK in Juels to fund Subscription
+  - `subscriptionId`: Subscription ID
+
+#### Cancel subscription
+
+- **Method:** cancelSubscription
+- **Description:** Cancel Functions subscription
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `subscriptionId`: Subscription ID
+  - `receivingAddress`: Address to receive the balance of Subscription (Default: "")
+
+#### Get subscription details
+
+- **Method:** getSubscriptionDetails
+- **Description:** Get subscription details
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `subscriptionId`: Subscription ID
+
+#### Request subscription owner transfer
+
+- **Method:** requestSubscriptionOwnerTransfer
+- **Description:** Request subscription owner transfer
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `subscriptionId`: Subscription ID
+  - `newOwnerAddress`: Address of new owner of Subscription
+
+#### Accept subscription owner transfer
+
+- **Method:** acceptSubscriptionOwnerTransfer
+- **Description:** Accept subscription owner transfer
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `subscriptionId`: Subscription ID
+
+#### Add subscription consumer
+
+- **Method:** addConsumer
+- **Description:** Add subscription consumer
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `consumerAddress`: Address of Functions Consumer
+  - `subscriptionId`: Subscription ID
+
+#### Remove subscription consumer
+
+- **Method:** removeConsumer
+- **Description:** Remove subscription consumer
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `consumerAddress`: Address of Functions Consumer
+  - `subscriptionId`: Subscription ID
+
+#### Timeout requests
+
+##### Task/Subtask
+- **Method:** timeoutRequests
+- **Description:** Timeout pending Functions request
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `requestIdsString`: Comma-separated requests IDs
+  - `donId`: ID of the DON where Functions requests has been sent
+  - `toBlock`: End block in search range (Default: "latest")
+  - `pastBlocksToSearch`: Number of blocks to search (before toBlock) (Default: "1000")
+
+##### HRE
+- **Method:** timeoutRequests
+- **Description:** Timeout pending Functions request
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `requestCommitments`: Array of RequestCommitment objects
+
+#### Estimate the cost of a request
+- **Method:** estimateRequestCost
+- **Description:** Estimate the cost of a request
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `donId`: ID of the DON to which the Functions request will be sent
+  - `subscriptionId`: Subscription ID
+  - `callbackGasLimit`: Total gas used by the consumer contract's callback
+  - `gasPriceWei`: Gas price in wei
+
+> **Note**
+> The following are methods that are available only in HRE
+
+#### Initialize SubscriptionManager class
+- **Method:** initializeFunctionsSubscriptionManager
+- **Description:** Initialize [SubscriptionManager class](https://github.com/smartcontractkit/functions-toolkit#functions-billing-subscription-management)
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `linkTokenAddress`: Address of Link Token
+
+#### Initialize ResponseListener class
+- **Method:** initializeFunctionsResponseListener
+- **Description:** Initialize [ResponseListener class](https://github.com/smartcontractkit/functions-toolkit#functions-response-listener)
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+
+#### Initialize SecretsManager class
+- **Method:** initializeFunctionsSecretsManager
+- **Description:** Initialize [SecretsManager class](https://github.com/smartcontractkit/functions-toolkit#functions-encrypted-secrets-management)
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `donId`: ID of the DON to work with
+
+#### Listen for a response for single Functions request
+- **Method:** listenForResponse
+- **Description:** Listen for a response for single Functions request
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `requestId`: ID of the DON to which the Functions request will be sent
+  - `timeout`: Subscription ID (Default: 300_000)
+
+#### Listen for a response for single Functions request (from transaction)
+- **Method:** listenForResponseFromTransaction
+- **Description:** Listen for a response for single Functions request (from transaction)
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `transactionHash`: Transaction hash to start listen from
+  - `timeout`: Listener timeout (Default: 300000)
+  - `confirmations`: Number of block confirmations (Default: 2)
+  - `checkInterval`: Frequency of checking for a response to appear on-chain (Default: 2000)
+
+#### Listen for responses
+- **Method:** listenForResponses
+- **Description:** Listen for multiple Functions responses
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `subscriptionId`: Subscription ID
+  - `callback`: Callback to be called when responses are fulfilled
+
+#### Stop responses listener
+- **Method:** stopListeningForResponses
+- **Description:** Stop responses listener
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+
+#### Stop responses listener
+- **Method:** stopListeningForResponses
+- **Description:** Stop responses listener
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+
+#### Fetch DON public keys
+- **Method:** fetchKeys
+- **Description:** Fetch DON public keys
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `donId`: ID of the DON to fetch keys from
+
+#### Encrypt Gist URLs
+- **Method:** encryptSecretsUrls
+- **Description:** Encrypt Gists URLs with DON public key to produce encryptedSecretsReference
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `donId`: ID of the DON to fetch keys from
+
+#### Verify Gists secret URLs
+- **Method:** verifyOffchainSecrets
+- **Description:** Verify if provided Gists secret URLs are valid
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `donId`: ID of the DON to fetch keys from
+  - `secretsUrls`: URLs of secrets
+
+#### Encrypt secrets
+- **Method:** encryptSecrets
+- **Description:** Encrypt secrets for Functions
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `donId`: ID of the DON to work with
+  - `secrets`: String key/value pairs of secrets
+
+#### Upload encrypted secrets to DON
+- **Method:** uploadEncryptedSecretsToDON
+- **Description:** Upload encrypted secrets to DON
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `donId`: ID of the DON to work with
+  - `encryptedSecretsHexstring`: HEX string of encrypted secrets. Result of encryptSecrets() method
+  - `gatewayUrls`: DON gateway URLs
+  - `slotId`: Storage slot ID, can be any integer value of zero or greater
+  - `minutesUntilExpiration`: Minutes after secrets will be deleted from all DON nodes
+
+#### List DON hosted encrypted secrets
+- **Method:** listDONHostedEncryptedSecrets
+- **Description:** Get list of DON hosted encrypted secrets
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `donId`: ID of the DON to work with
+  - `gatewayUrls`: DON gateway URLs
+
+#### Build DON hosted encrypted secrets reference
+- **Method:** buildDONHostedEncryptedSecretsReference
+- **Description:** Build DON hosted encrypted secrets reference (encryptedSecretsReference)
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `donId`: ID of the DON to work with
+  - `slotId`: Storage slot ID, can be any integer value of zero or greater
+  - `version`: Reference version, any integer value of zero or greater
+
 ## Utilities
 
 The plugin utility methods.
@@ -880,9 +1157,40 @@ The plugin utility methods.
   - `recipient`: Recipient address
   - `amount`: Amount of ETH in wei
 
+#### Create GitHub gist
+
+- **Method:** createGist
+- **Description:** Create private GitHub gist
+- **Arguments:**
+  - `githubApiToken`: GitHub API token
+  - `content`: Gist content
+
+#### Delete GitHub gist
+
+- **Method:** deleteGist
+- **Description:** Delete private GitHub gist
+- **Arguments:**
+  - `githubApiToken`: GitHub API token
+  - `content`: Gist content
+
 ## Sandbox `sandbox`
 
 This module contains a group of services for starting and managing a Chainlink node and setting up Chainlink jobs.
+
+### Service alias: `functionsSimulation`
+
+This section provides methods and functionalities designed to run Functions request simulations.
+
+### Methods
+
+#### Simulate Functions Request
+
+- **Method:** simulateRequest
+- **Description:** Simulate Functions request
+- **Arguments:**
+  - `source`: Source code to execute
+  - `args`: Comma-separated request args
+  - `bytesArgs`: Comma-separated request bytes args
 
 ### Service alias: `node`
 
@@ -1034,3 +1342,70 @@ This section provides methods and functionalities designed to interact with the 
 - **Arguments:**
   - `directRequestConsumerAddress`: Direct Request Consumer address
 
+
+
+### Service alias: `functionsConsumer`
+
+This section provides methods and functionalities designed to interact with the [FunctionsConsumer.sol](contracts%2FFunctionsConsumer.sol).
+
+### Methods
+
+#### Deploy contract
+
+- **Method:** deploy
+- **Description:** Deploy Functions Consumer contract
+- **Arguments:**
+  - `functionsRouterAddress`: Functions Router address
+  - `donId`: ID of the DON where Functions requests will be sent
+
+#### Send Functions request
+
+- **Method:** sendRequest
+- **Description:** Send Functions Request
+- **Arguments:**
+  - `functionsRouterAddress`: Functions Router address
+  - `subscriptionId`: Subscription ID
+  - `source`: Source code to execute
+  - `secretsLocation`: Location of secrets
+  - `encryptedSecretsReference`: Encrypted secrets reference
+  - `args`: Comma-separated request args (Default: "")
+  - `bytesArgs`: Comma-separated request bytes args (Default: "")
+  - `callbackGasLimit`: Callback gas limit (Default: "100000")
+
+#### Send Encoded Functions request
+
+- **Method:** sendEncodedRequest
+- **Description:** Send Encoded Functions Request
+- **Arguments:**
+  - `functionsRouterAddress`: Functions Router address
+  - `subscriptionId`: Subscription ID
+  - `encodedRequest`: Encoded Functions request
+  - `callbackGasLimit`: Callback gas limit (Default: "100000")
+
+#### Set DON ID
+
+- **Method:** setDonId
+- **Description:** Set ID of the DON where Functions requests will be sent
+- **Arguments:**
+  - `functionsRouterAddress`: Functions Router address
+  - `donId`: ID of the DON where Functions requests will be sent
+
+#### Get DON ID
+
+- **Method:** getDonId
+- **Description:** Get current DON ID
+
+#### Get last request ID
+
+- **Method:** getLastRequestId
+- **Description:** Get ID of the last request
+
+#### Get last response
+
+- **Method:** getLastResponse
+- **Description:** Get last response
+
+#### Get last error
+
+- **Method:** getLastError
+- **Description:** Get last error

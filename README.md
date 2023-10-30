@@ -144,6 +144,7 @@ The Hardhat Chainlink plugin supports the following Chainlink services:
 - `automationRegistry` (Automation Registries)
 - `automationRegistrar` (Automation Registrars)
 - `vrf` (Verifiable Random Functions)
+- `functions` (Functions Service)
 
 For a more in-depth understanding of available services and methods, please explore their [tests](test).
 
@@ -207,6 +208,7 @@ The Hardhat Chainlink plugin provides the following registries:
 - `keeperRegistries`: Addresses of Automation-related contracts: Keeper Registry and Keeper Registrar.
 - `linkTokens`: Link Tokens' contract addresses.
 - `vrfCoordinators`: Addresses of VRF Coordinators and their parameters.
+- `functionsRouters`: Addresses of Functions Routers and their parameters.
 - `denominations`: Records from Denominations library to interact with Feed Registries contracts.
 
 For a more in-depth understanding of the structure of these records, please explore their [interfaces](src%2Fregistries%2Finterfaces).
@@ -216,7 +218,37 @@ For a more in-depth understanding of the structure of these records, please expl
 In addition to the primary feature of interacting with Chainlink services, this plugin provides the ability to manage a local Chainlink node.
 The corresponding functionality is implemented in a special tasks module `sandbox`.
 This module implements methods for starting, restarting and stopping a Chainlink node, getting Chainlink node information,
-deploying and interacting with such contracts as [LinkToken](contracts%2FLinkToken.sol), [Operator](contracts%2FOperator.sol) and [ChainlinkDirectRequestConsumer](contracts%2FChainlinkDirectRequestConsumer.sol).
+deploying and interacting with such contracts as [LinkToken](contracts%2FLinkToken.sol), [Operator](contracts%2FOperator.sol), [FunctionsConsumer.sol](contracts%2FFunctionsConsumer.sol) and [ChainlinkDirectRequestConsumer](contracts%2FChainlinkDirectRequestConsumer.sol).
+
+### Configure and run Functions requests simulations
+
+This plugin allows you to run local Functions requests simulations.
+> **Note**  
+Install [Deno](https://deno.com/) and add it to PATH, run ```deno --version``` to verify installation. Instructions: [deno.land/#installation](deno.land/#installation).
+
+Before you run Functions requests simulations, you can configure it. To achieve this, parameters have been included in the Hardhat configuration `chainlink` group:
+`hardhat.config.ts`:
+```ts
+module.exports = {
+  chainlink: {
+    functions_simulation: {
+      port, // Ganache local blockchain port, default: "8546"
+      secrets, // Secrets in the format of "string" key/value to be passed to Functions, , e.g. { test: "hello world" }, default: {}
+      max_on_chain_response_bytes, // Max on-chain response, bytes, default: 256
+      max_execution_time_ms, // Max execution time, ms, default: 10_000
+      max_memory_usage_mb, // Max memory usage, MB, default: 128
+      num_allowed_queries, // Max HTTP requests, default: 5
+      max_query_duration_ms, // Max HTTP request duration, ms, default: 9_000
+      max_query_url_length, // Max HTTP request URL length, bytes, default: 2048
+      max_query_request_bytes, // Max HTTP request, bytes, default: 2048
+      max_query_response_bytes, // Max HTTP response, bytes, default: 2_097_152
+    }
+  },
+  ...
+}
+```
+
+Once these parameters are specified, Functions requests simulations could be performed following the [documentation](DOCUMENTATION.md#service-alias-functionssimulation).
 
 ### Configure, run and manage local Chainlink node
 
@@ -275,7 +307,7 @@ Here are some of the things you can do with the GUI:
 * Create/Delete Chainlink Jobs
 * Create Chainlink Bridge
 * See Chainlink Jobs runs
-* See Chainlink node's keys: ETH, OCR, P2P
+* See Chainlink node's keys: ETH, OCR, P2P, VRF
 * See Chainlink node's current configuration
 * and more...
 
