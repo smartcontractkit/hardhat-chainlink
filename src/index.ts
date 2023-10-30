@@ -15,17 +15,29 @@ import "./type-extensions";
 
 export interface ChainlinkUserConfig {
   confirmations?: number;
-  node: {
-    chain_id: string;
-    chain_name: string;
-    http_url: string;
-    ws_url: string;
-    cl_keystore_password: string;
-    cl_api_user: string;
-    cl_api_password: string;
-    pg_user: string;
-    pg_password: string;
-    pg_db: string;
+  node?: {
+    chain_id?: string;
+    chain_name?: string;
+    http_url?: string;
+    ws_url?: string;
+    cl_keystore_password?: string;
+    cl_api_user?: string;
+    cl_api_password?: string;
+    pg_user?: string;
+    pg_password?: string;
+    pg_db?: string;
+  };
+  functions_simulation: {
+    port?: number;
+    secrets?: Record<string, string>;
+    max_on_chain_response_bytes?: number;
+    max_execution_time_ms?: number;
+    max_memory_usage_mb?: number;
+    num_allowed_queries?: number;
+    max_query_duration_ms?: number;
+    max_query_url_length?: number;
+    max_query_request_bytes?: number;
+    max_query_response_bytes?: number;
   };
 }
 
@@ -42,21 +54,35 @@ declare module "hardhat/types/config" {
 
 extendConfig(
   (config: HardhatConfig, userConfig: Readonly<HardhatUserConfig>) => {
-    const { confirmations, node } = userConfig.chainlink ?? {};
+    const { confirmations, node, functions_simulation } =
+      userConfig.chainlink ?? {};
     config.chainlink = {
       confirmations: confirmations || 1,
       node: {
-        chain_id: node?.chain_id || "1337",
-        chain_name: node?.chain_name || "local",
-        http_url: node?.http_url || "http://host.docker.internal:8545",
-        ws_url: node?.ws_url || "ws://host.docker.internal:8545",
-        cl_keystore_password:
-          node?.cl_keystore_password || "password1234567890",
-        cl_api_user: node?.cl_api_user || "user@chain.link",
-        cl_api_password: node?.cl_api_password || "password1234567890",
-        pg_user: node?.pg_user || "chainlink",
-        pg_password: node?.pg_password || "password1234567890",
-        pg_db: node?.pg_db || "chainlink",
+        chain_id: node?.chain_id,
+        chain_name: node?.chain_name,
+        http_url: node?.http_url,
+        ws_url: node?.ws_url,
+        cl_keystore_password: node?.cl_keystore_password,
+        cl_api_user: node?.cl_api_user,
+        cl_api_password: node?.cl_api_password,
+        pg_user: node?.pg_user,
+        pg_password: node?.pg_password,
+        pg_db: node?.pg_db,
+      },
+      functions_simulation: {
+        port: functions_simulation?.port,
+        secrets: functions_simulation?.secrets,
+        max_on_chain_response_bytes:
+          functions_simulation?.max_on_chain_response_bytes,
+        max_execution_time_ms: functions_simulation?.max_execution_time_ms,
+        max_memory_usage_mb: functions_simulation?.max_memory_usage_mb,
+        num_allowed_queries: functions_simulation?.num_allowed_queries,
+        max_query_duration_ms: functions_simulation?.max_query_duration_ms,
+        max_query_url_length: functions_simulation?.max_query_url_length,
+        max_query_request_bytes: functions_simulation?.max_query_request_bytes,
+        max_query_response_bytes:
+          functions_simulation?.max_query_response_bytes,
       },
     };
   }
@@ -277,6 +303,39 @@ task(
   "Link Token Module: Subtasks List"
 ).setAction(async () => {
   printSubtasks(Task.linkToken);
+});
+
+// FUNCTIONS CONSUMER
+task(`${PACKAGE_NAME}:${Task.functionsConsumer}`, "Functions Consumer Module")
+  .addOptionalPositionalParam("subtask", "Subtask")
+  .addOptionalParam("args", "Subtask args")
+  .setAction(async (taskArgs, hre) => {
+    return resolveTask(hre, Task.functionsConsumer, taskArgs);
+  });
+
+task(
+  `${PACKAGE_NAME}:${Task.functionsConsumer}:subtasks`,
+  "Functions Consumer Module: Subtasks List"
+).setAction(async () => {
+  printSubtasks(Task.functionsConsumer);
+});
+
+// FUNCTIONS SIMULATION
+task(
+  `${PACKAGE_NAME}:${Task.functionsSimulation}`,
+  "Functions Simulation Module"
+)
+  .addOptionalPositionalParam("subtask", "Subtask")
+  .addOptionalParam("args", "Subtask args")
+  .setAction(async (taskArgs, hre) => {
+    return resolveTask(hre, Task.functionsSimulation, taskArgs);
+  });
+
+task(
+  `${PACKAGE_NAME}:${Task.functionsSimulation}:subtasks`,
+  "Functions Simulation Module: Subtasks List"
+).setAction(async () => {
+  printSubtasks(Task.functionsSimulation);
 });
 
 // UTILS

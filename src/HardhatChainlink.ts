@@ -1,10 +1,12 @@
 import { DecodedResult } from "@chainlink/functions-toolkit/dist/decodeResult";
 import {
-  FunctionsRequestParams,
-  FunctionsResponse, GatewayResponse,
+  CodeLanguage,
+  FunctionsResponse,
+  GatewayResponse,
+  Location,
   RequestCommitment,
   ReturnType,
-  SubscriptionInfo, ThresholdPublicKey,
+  ThresholdPublicKey,
 } from "@chainlink/functions-toolkit/dist/types";
 import "@nomiclabs/hardhat-ethers";
 import { BigNumber, BigNumberish, BytesLike } from "ethers";
@@ -21,10 +23,17 @@ import * as functionsRouter from "./functions/functionsRouter";
 import * as functionsUtils from "./functions/functionsUtils";
 import * as registries from "./registries";
 import * as drConsumer from "./sandbox/drConsumer";
+import * as functionsConsumer from "./sandbox/functionsConsumer";
+import * as functionsSimulations from "./sandbox/functionsSimulations";
 import * as linkToken from "./sandbox/linkToken";
 import * as node from "./sandbox/node";
 import * as operator from "./sandbox/operator";
-import { DockerOutput } from "./shared/types";
+import {
+  DockerOutput,
+  FunctionsSubscriptionDetails,
+  Overrides,
+  VRFSubscriptionDetails,
+} from "./shared/types";
 import * as utils from "./utils";
 import * as vrf from "./vrf";
 
@@ -85,12 +94,16 @@ class Sandbox {
   public operator: Operator;
   public drConsumer: DRConsumer;
   public linkToken: LinkToken;
+  public functionsConsumer: FunctionsConsumer;
+  public functionsSimulation: FunctionsSimulation;
 
   constructor(hre: HardhatRuntimeEnvironment) {
     this.node = new Node(hre);
     this.operator = new Operator(hre);
     this.drConsumer = new DRConsumer(hre);
     this.linkToken = new LinkToken(hre);
+    this.functionsConsumer = new FunctionsConsumer(hre);
+    this.functionsSimulation = new FunctionsSimulation(hre);
   }
 }
 
@@ -605,13 +618,13 @@ class VRF {
   public async cancelSubscription(
     vrfCoordinatorAddress: string,
     subscriptionId: BigNumberish,
-    receivingWallet: string
+    receivingAddress: string
   ): Promise<{ transactionHash: string }> {
     return vrf.cancelSubscription(
       this.hre,
       vrfCoordinatorAddress,
       subscriptionId,
-      receivingWallet
+      receivingAddress
     );
   }
 
@@ -663,12 +676,7 @@ class VRF {
   public async getSubscriptionDetails(
     vrfCoordinatorAddress: string,
     subscriptionId: BigNumberish
-  ): Promise<{
-    balance: BigNumber;
-    reqCount: BigNumber;
-    owner: string;
-    consumers: string[];
-  }> {
+  ): Promise<VRFSubscriptionDetails> {
     return vrf.getSubscriptionDetails(
       this.hre,
       vrfCoordinatorAddress,
@@ -1026,176 +1034,194 @@ class FunctionsRouter {
   constructor(hre: HardhatRuntimeEnvironment) {
     this.hre = hre;
   }
-  
+
   public initializeFunctionsSubscriptionManager(
-    linkTokenAddress: string,
     functionsRouterAddress: string,
+    linkTokenAddress: string,
+    overrides?: Overrides
   ): Promise<functionsRouter.FunctionsSubscriptionManager> {
-    return functionsRouter.FunctionsSubscriptionManager.initialize(this.hre, linkTokenAddress, functionsRouterAddress);
+    return functionsRouter.FunctionsSubscriptionManager.initialize({
+      hre: this.hre,
+      functionsRouterAddress,
+      linkTokenAddress,
+      overrides,
+    });
   }
-  
+
   public initializeFunctionsResponseListener(
     functionsRouterAddress: string,
+    overrides?: Overrides
   ): Promise<functionsRouter.FunctionsResponseListener> {
-    return functionsRouter.FunctionsResponseListener.initialize(this.hre, functionsRouterAddress);
+    return functionsRouter.FunctionsResponseListener.initialize({
+      hre: this.hre,
+      functionsRouterAddress,
+      overrides,
+    });
   }
-  
+
   public initializeFunctionsSecretsManager(
     functionsRouterAddress: string,
     donId: string,
+    overrides?: Overrides
   ): Promise<functionsRouter.FunctionsSecretsManager> {
-    return functionsRouter.FunctionsSecretsManager.initialize(this.hre, functionsRouterAddress, donId);
+    return functionsRouter.FunctionsSecretsManager.initialize({
+      hre: this.hre,
+      functionsRouterAddress,
+      donId,
+      overrides,
+    });
   }
 
   // Subscription Manager
+
   public createSubscription(
-    linkTokenAddress: string,
     functionsRouterAddress: string,
-    consumerAddress?: string
-  ): Promise<number> {
+    consumerAddress?: string,
+    overrides?: Overrides
+  ): Promise<{ subscriptionId: BigNumber }> {
     return functionsRouter.createSubscription(
       this.hre,
-      linkTokenAddress,
       functionsRouterAddress,
-      consumerAddress
+      consumerAddress,
+      overrides
     );
   }
 
   public fundSubscription(
-    linkTokenAddress: string,
     functionsRouterAddress: string,
-    juelsAmount: string,
-    subscriptionId: string
-  ): Promise<string> {
+    linkTokenAddress: string,
+    amountInJuels: BigNumberish,
+    subscriptionId: BigNumberish,
+    overrides?: Overrides
+  ): Promise<{ transactionHash: string }> {
     return functionsRouter.fundSubscription(
       this.hre,
-      linkTokenAddress,
       functionsRouterAddress,
-      juelsAmount,
-      subscriptionId
-    );
-  }
-
-  public getSubscriptionInfo(
-    linkTokenAddress: string,
-    functionsRouterAddress: string,
-    subscriptionId: string
-  ): Promise<SubscriptionInfo> {
-    return functionsRouter.getSubscriptionInfo(
-      this.hre,
       linkTokenAddress,
-      functionsRouterAddress,
-      subscriptionId
+      amountInJuels,
+      subscriptionId,
+      overrides
     );
   }
 
   public cancelSubscription(
-    linkTokenAddress: string,
     functionsRouterAddress: string,
-    subscriptionId: string,
-    refundAddress: string
-  ): Promise<string> {
+    subscriptionId: BigNumberish,
+    receivingAddress?: string,
+    overrides?: Overrides
+  ): Promise<{ transactionHash: string }> {
     return functionsRouter.cancelSubscription(
       this.hre,
-      linkTokenAddress,
       functionsRouterAddress,
       subscriptionId,
-      refundAddress
+      receivingAddress,
+      overrides
     );
   }
 
-  public requestSubscriptionTransfer(
-    linkTokenAddress: string,
+  public requestSubscriptionOwnerTransfer(
     functionsRouterAddress: string,
-    subscriptionId: string,
-    newOwner: string
-  ): Promise<string> {
-    return functionsRouter.requestSubscriptionTransfer(
+    subscriptionId: BigNumberish,
+    newOwnerAddress: string,
+    overrides?: Overrides
+  ): Promise<{ transactionHash: string }> {
+    return functionsRouter.requestSubscriptionOwnerTransfer(
       this.hre,
-      linkTokenAddress,
       functionsRouterAddress,
       subscriptionId,
-      newOwner
+      newOwnerAddress,
+      overrides
     );
   }
 
-  public acceptSubscriptionTransfer(
-    linkTokenAddress: string,
+  public acceptSubscriptionOwnerTransfer(
     functionsRouterAddress: string,
-    subscriptionId: string
-  ): Promise<string> {
-    return functionsRouter.acceptSubscriptionTransfer(
+    subscriptionId: BigNumberish,
+    overrides?: Overrides
+  ): Promise<{ transactionHash: string }> {
+    return functionsRouter.acceptSubscriptionOwnerTransfer(
       this.hre,
-      linkTokenAddress,
+      functionsRouterAddress,
+      subscriptionId,
+      overrides
+    );
+  }
+
+  public getSubscriptionDetails(
+    functionsRouterAddress: string,
+    subscriptionId: BigNumberish
+  ): Promise<FunctionsSubscriptionDetails> {
+    return functionsRouter.getSubscriptionDetails(
+      this.hre,
       functionsRouterAddress,
       subscriptionId
     );
   }
 
   public addConsumer(
-    linkTokenAddress: string,
     functionsRouterAddress: string,
-    subscriptionId: string,
-    consumerAddress: string
-  ): Promise<string> {
+    consumerAddress: string,
+    subscriptionId: BigNumberish,
+    overrides?: Overrides
+  ): Promise<{ transactionHash: string }> {
     return functionsRouter.addConsumer(
       this.hre,
-      linkTokenAddress,
       functionsRouterAddress,
+      consumerAddress,
       subscriptionId,
-      consumerAddress
+      overrides
     );
   }
 
   public removeConsumer(
-    linkTokenAddress: string,
     functionsRouterAddress: string,
-    subscriptionId: string,
-    consumerAddress: string
-  ): Promise<string> {
+    consumerAddress: string,
+    subscriptionId: BigNumberish,
+    overrides?: Overrides
+  ): Promise<{ transactionHash: string }> {
     return functionsRouter.removeConsumer(
       this.hre,
-      linkTokenAddress,
       functionsRouterAddress,
+      consumerAddress,
       subscriptionId,
-      consumerAddress
+      overrides
     );
   }
 
   public timeoutRequests(
-    linkTokenAddress: string,
     functionsRouterAddress: string,
-    requestCommitments: RequestCommitment[]
-  ): Promise<string> {
+    requestCommitments: RequestCommitment[],
+    overrides?: Overrides
+  ): Promise<{ transactionHash: string }> {
     return functionsRouter.timeoutRequests(
       this.hre,
-      linkTokenAddress,
       functionsRouterAddress,
-      requestCommitments
+      requestCommitments,
+      overrides
     );
   }
 
   public estimateRequestCost(
-    linkTokenAddress: string,
     functionsRouterAddress: string,
     donId: string,
-    subscriptionId: string,
+    subscriptionId: BigNumberish,
     callbackGasLimit: number,
-    gasPriceWei: string
+    gasPriceWei: BigNumberish,
+    overrides?: Overrides
   ): Promise<BigInt> {
     return functionsRouter.estimateRequestCost(
       this.hre,
-      linkTokenAddress,
       functionsRouterAddress,
       donId,
       subscriptionId,
       callbackGasLimit,
-      gasPriceWei
+      gasPriceWei,
+      overrides
     );
   }
 
   // Response Listener
-  
+
   public listenForResponse(
     functionsRouterAddress: string,
     requestId: string,
@@ -1206,6 +1232,23 @@ class FunctionsRouter {
       functionsRouterAddress,
       requestId,
       timeout
+    );
+  }
+
+  public listenForResponseFromTransaction(
+    functionsRouterAddress: string,
+    requestId: string,
+    timeout?: number,
+    confirmations?: number,
+    checkInterval?: number
+  ): Promise<FunctionsResponse> {
+    return functionsRouter.listenForResponseFromTransaction(
+      this.hre,
+      functionsRouterAddress,
+      requestId,
+      timeout,
+      confirmations,
+      checkInterval
     );
   }
 
@@ -1230,7 +1273,7 @@ class FunctionsRouter {
       functionsRouterAddress
     );
   }
-  
+
   // Secrets Manager
 
   public fetchKeys(
@@ -1240,11 +1283,7 @@ class FunctionsRouter {
     thresholdPublicKey: ThresholdPublicKey;
     donPublicKey: string;
   }> {
-    return functionsRouter.fetchKeys(
-      this.hre,
-      functionsRouterAddress,
-      donId
-    );
+    return functionsRouter.fetchKeys(this.hre, functionsRouterAddress, donId);
   }
 
   public encryptSecretsUrls(
@@ -1306,7 +1345,7 @@ class FunctionsRouter {
       encryptedSecretsHexstring,
       gatewayUrls,
       slotId,
-      minutesUntilExpiration,
+      minutesUntilExpiration
     );
   }
 
@@ -1322,7 +1361,7 @@ class FunctionsRouter {
       this.hre,
       functionsRouterAddress,
       donId,
-      gatewayUrls,
+      gatewayUrls
     );
   }
 
@@ -1337,7 +1376,7 @@ class FunctionsRouter {
       functionsRouterAddress,
       donId,
       slotId,
-      version,
+      version
     );
   }
 }
@@ -1350,9 +1389,23 @@ class FunctionsUtils {
   }
 
   public buildRequestCBOR(
-    requestParams: FunctionsRequestParams
+    codeLocation: Location,
+    codeLanguage: CodeLanguage,
+    source: string,
+    secretsLocation?: Location,
+    encryptedSecretsReference?: string,
+    args?: string[],
+    bytesArgs?: string[]
   ): Promise<string> {
-    return functionsUtils.buildRequestCBOR(requestParams);
+    return functionsUtils.buildRequestCBOR({
+      codeLocation,
+      codeLanguage,
+      source,
+      secretsLocation,
+      encryptedSecretsReference,
+      args,
+      bytesArgs,
+    });
   }
 
   public fetchRequestCommitment(
@@ -1452,6 +1505,10 @@ class Node {
 
   public async getP2PKeys(): Promise<string> {
     return node.getP2PKeys(this.hre);
+  }
+
+  public async getVRFKeys(): Promise<string> {
+    return node.getVRFKeys(this.hre);
   }
 
   public async getJobs(): Promise<string> {
@@ -1574,6 +1631,140 @@ class LinkToken {
       linkTokenAddress,
       spender,
       subtractedValue
+    );
+  }
+}
+
+class FunctionsConsumer {
+  private hre: HardhatRuntimeEnvironment;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
+  }
+
+  public async deploy(
+    functionsRouterAddress: string,
+    donId: string,
+    overrides?: Overrides
+  ): Promise<string> {
+    return functionsConsumer.deploy(
+      this.hre,
+      functionsRouterAddress,
+      donId,
+      overrides
+    );
+  }
+
+  public async initializeFunctionsConsumer(
+    functionsConsumerAddress: string,
+    overrides?: Overrides
+  ): Promise<functionsConsumer.FunctionsConsumer> {
+    return functionsConsumer.FunctionsConsumer.initialize({
+      hre: this.hre,
+      functionsConsumerAddress,
+      overrides,
+    });
+  }
+
+  public async sendRequest(
+    functionsConsumerAddress: string,
+    subscriptionId: BigNumberish,
+    source: string,
+    encryptedSecretsReference: string,
+    secretsLocation: Location,
+    args?: string[],
+    bytesArgs?: string[],
+    callbackGasLimit?: BigNumberish,
+    overrides?: Overrides
+  ): Promise<{ transactionHash: string }> {
+    return functionsConsumer.sendRequest(
+      this.hre,
+      functionsConsumerAddress,
+      subscriptionId,
+      source,
+      encryptedSecretsReference,
+      secretsLocation,
+      args,
+      bytesArgs,
+      callbackGasLimit,
+      overrides
+    );
+  }
+
+  public async sendEncodedRequest(
+    functionsConsumerAddress: string,
+    subscriptionId: BigNumberish,
+    encodedRequest: string,
+    callbackGasLimit: BigNumberish,
+    overrides?: Overrides
+  ): Promise<{ transactionHash: string }> {
+    return functionsConsumer.sendEncodedRequest(
+      this.hre,
+      functionsConsumerAddress,
+      subscriptionId,
+      encodedRequest,
+      callbackGasLimit,
+      overrides
+    );
+  }
+
+  public async setDonId(
+    functionsConsumerAddress: string,
+    donId: string,
+    overrides?: Overrides
+  ): Promise<{ transactionHash: string }> {
+    return functionsConsumer.setDonId(
+      this.hre,
+      functionsConsumerAddress,
+      donId,
+      overrides
+    );
+  }
+
+  public async getDonId(functionsConsumerAddress: string): Promise<string> {
+    return functionsConsumer.getDonId(this.hre, functionsConsumerAddress);
+  }
+
+  public async getLastRequestId(
+    functionsConsumerAddress: string
+  ): Promise<string> {
+    return functionsConsumer.getLastRequestId(
+      this.hre,
+      functionsConsumerAddress
+    );
+  }
+
+  public async getLastResponse(
+    functionsConsumerAddress: string
+  ): Promise<string> {
+    return functionsConsumer.getLastResponse(
+      this.hre,
+      functionsConsumerAddress
+    );
+  }
+
+  public async getLastError(functionsConsumerAddress: string): Promise<string> {
+    return functionsConsumer.getLastError(this.hre, functionsConsumerAddress);
+  }
+}
+
+class FunctionsSimulation {
+  private hre: HardhatRuntimeEnvironment;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
+  }
+
+  public async simulateRequest(
+    source: string,
+    args?: string[],
+    bytesArgs?: string[]
+  ): Promise<DecodedResult> {
+    return functionsSimulations.simulateRequest(
+      this.hre,
+      source,
+      args,
+      bytesArgs
     );
   }
 }
