@@ -7,185 +7,163 @@ import {
   FunctionsResponse,
   GatewayResponse,
   RequestCommitment,
-  SubscriptionInfo,
   ThresholdPublicKey,
 } from "@chainlink/functions-toolkit/dist/types";
-import { ContractReceipt, Signer } from "ethers";
+import { BigNumber, BigNumberish, providers, Signer } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+
+import { FunctionsSubscriptionDetails, Overrides } from "../shared/types";
 
 // DIRECT METHOD CALLS
 
 export const createSubscription = async (
   hre: HardhatRuntimeEnvironment,
-  linkTokenAddress: string,
   functionsRouterAddress: string,
-  consumerAddress?: string
-): Promise<number> => {
-  const functionsRouter = await FunctionsSubscriptionManager.initialize(
+  consumerAddress?: string,
+  overrides?: Overrides
+): Promise<{ subscriptionId: BigNumber }> => {
+  const functionsRouter = await FunctionsSubscriptionManager.initialize({
     hre,
-    linkTokenAddress,
-    functionsRouterAddress
-  );
+    functionsRouterAddress,
+    overrides,
+  });
   return functionsRouter.createSubscription(consumerAddress);
 };
 
 export const fundSubscription = async (
   hre: HardhatRuntimeEnvironment,
-  linkTokenAddress: string,
   functionsRouterAddress: string,
-  juelsAmount: string,
-  subscriptionId: string
-): Promise<string> => {
-  const functionsRouter = await FunctionsSubscriptionManager.initialize(
-    hre,
-    linkTokenAddress,
-    functionsRouterAddress
-  );
-  const tx = await functionsRouter.fundSubscription(
-    juelsAmount,
-    subscriptionId
-  );
-
-  return tx.transactionHash;
-};
-
-export const getSubscriptionInfo = async (
-  hre: HardhatRuntimeEnvironment,
   linkTokenAddress: string,
-  functionsRouterAddress: string,
-  subscriptionId: string
-): Promise<SubscriptionInfo> => {
-  const functionsRouter = await FunctionsSubscriptionManager.initialize(
+  amountInJuels: BigNumberish,
+  subscriptionId: BigNumberish,
+  overrides?: Overrides
+): Promise<{ transactionHash: string }> => {
+  const functionsRouter = await FunctionsSubscriptionManager.initialize({
     hre,
+    functionsRouterAddress,
     linkTokenAddress,
-    functionsRouterAddress
-  );
-  return functionsRouter.getSubscriptionInfo(subscriptionId);
+    overrides,
+  });
+  return functionsRouter.fundSubscription(amountInJuels, subscriptionId);
 };
 
 export const cancelSubscription = async (
   hre: HardhatRuntimeEnvironment,
-  linkTokenAddress: string,
   functionsRouterAddress: string,
-  subscriptionId: string,
-  refundAddress: string
-): Promise<string> => {
-  const functionsRouter = await FunctionsSubscriptionManager.initialize(
+  subscriptionId: BigNumberish,
+  receivingAddress?: string,
+  overrides?: Overrides
+): Promise<{ transactionHash: string }> => {
+  const functionsRouter = await FunctionsSubscriptionManager.initialize({
     hre,
-    linkTokenAddress,
-    functionsRouterAddress
-  );
-  const tx = await functionsRouter.cancelSubscription(
-    subscriptionId,
-    refundAddress
-  );
-
-  return tx.transactionHash;
+    functionsRouterAddress,
+    overrides,
+  });
+  return functionsRouter.cancelSubscription(subscriptionId, receivingAddress);
 };
 
-export const requestSubscriptionTransfer = async (
+export const requestSubscriptionOwnerTransfer = async (
   hre: HardhatRuntimeEnvironment,
-  linkTokenAddress: string,
   functionsRouterAddress: string,
-  subscriptionId: string,
-  newOwner: string
-): Promise<string> => {
-  const functionsRouter = await FunctionsSubscriptionManager.initialize(
+  subscriptionId: BigNumberish,
+  newOwnerAddress: string,
+  overrides?: Overrides
+): Promise<{ transactionHash: string }> => {
+  const functionsRouter = await FunctionsSubscriptionManager.initialize({
     hre,
-    linkTokenAddress,
-    functionsRouterAddress
-  );
-  const tx = await functionsRouter.requestSubscriptionTransfer(
+    functionsRouterAddress,
+    overrides,
+  });
+  return functionsRouter.requestSubscriptionOwnerTransfer(
     subscriptionId,
-    newOwner
+    newOwnerAddress
   );
-
-  return tx.transactionHash;
 };
 
-export const acceptSubscriptionTransfer = async (
+export const acceptSubscriptionOwnerTransfer = async (
   hre: HardhatRuntimeEnvironment,
-  linkTokenAddress: string,
   functionsRouterAddress: string,
-  subscriptionId: string
-): Promise<string> => {
-  const functionsRouter = await FunctionsSubscriptionManager.initialize(
+  subscriptionId: BigNumberish,
+  overrides?: Overrides
+): Promise<{ transactionHash: string }> => {
+  const functionsRouter = await FunctionsSubscriptionManager.initialize({
     hre,
-    linkTokenAddress,
-    functionsRouterAddress
-  );
-  const tx = await functionsRouter.acceptSubscriptionTransfer(subscriptionId);
+    functionsRouterAddress,
+    overrides,
+  });
+  return functionsRouter.acceptSubscriptionOwnerTransfer(subscriptionId);
+};
 
-  return tx.transactionHash;
+export const getSubscriptionDetails = async (
+  hre: HardhatRuntimeEnvironment,
+  functionsRouterAddress: string,
+  subscriptionId: BigNumberish
+): Promise<FunctionsSubscriptionDetails> => {
+  const functionsRouter = await FunctionsSubscriptionManager.initialize({
+    hre,
+    functionsRouterAddress,
+  });
+  return functionsRouter.getSubscriptionDetails(subscriptionId);
 };
 
 export const addConsumer = async (
   hre: HardhatRuntimeEnvironment,
-  linkTokenAddress: string,
   functionsRouterAddress: string,
-  subscriptionId: string,
-  consumerAddress: string
-): Promise<string> => {
-  const functionsRouter = await FunctionsSubscriptionManager.initialize(
+  consumerAddress: string,
+  subscriptionId: BigNumberish,
+  overrides?: Overrides
+): Promise<{ transactionHash: string }> => {
+  const functionsRouter = await FunctionsSubscriptionManager.initialize({
     hre,
-    linkTokenAddress,
-    functionsRouterAddress
-  );
-  const tx = await functionsRouter.addConsumer(subscriptionId, consumerAddress);
-
-  return tx.transactionHash;
+    functionsRouterAddress,
+    overrides,
+  });
+  return functionsRouter.addConsumer(subscriptionId, consumerAddress);
 };
 
 export const removeConsumer = async (
   hre: HardhatRuntimeEnvironment,
-  linkTokenAddress: string,
   functionsRouterAddress: string,
-  subscriptionId: string,
-  consumerAddress: string
-): Promise<string> => {
-  const functionsRouter = await FunctionsSubscriptionManager.initialize(
+  consumerAddress: string,
+  subscriptionId: BigNumberish,
+  overrides?: Overrides
+): Promise<{ transactionHash: string }> => {
+  const functionsRouter = await FunctionsSubscriptionManager.initialize({
     hre,
-    linkTokenAddress,
-    functionsRouterAddress
-  );
-  const tx = await functionsRouter.removeConsumer(
-    subscriptionId,
-    consumerAddress
-  );
-
-  return tx.transactionHash;
+    functionsRouterAddress,
+    overrides,
+  });
+  return functionsRouter.removeConsumer(subscriptionId, consumerAddress);
 };
 
 export const timeoutRequests = async (
   hre: HardhatRuntimeEnvironment,
-  linkTokenAddress: string,
   functionsRouterAddress: string,
-  requestCommitments: RequestCommitment[]
-): Promise<string> => {
-  const functionsRouter = await FunctionsSubscriptionManager.initialize(
+  requestCommitments: RequestCommitment[],
+  overrides?: Overrides
+): Promise<{ transactionHash: string }> => {
+  const functionsRouter = await FunctionsSubscriptionManager.initialize({
     hre,
-    linkTokenAddress,
-    functionsRouterAddress
-  );
-  const tx = await functionsRouter.timeoutRequests(requestCommitments);
-
-  return tx.transactionHash;
+    functionsRouterAddress,
+    overrides,
+  });
+  return functionsRouter.timeoutRequests(requestCommitments);
 };
 
 export const estimateRequestCost = async (
   hre: HardhatRuntimeEnvironment,
-  linkTokenAddress: string,
   functionsRouterAddress: string,
   donId: string,
-  subscriptionId: string,
+  subscriptionId: BigNumberish,
   callbackGasLimit: number,
-  gasPriceWei: string
+  gasPriceWei: BigNumberish,
+  overrides?: Overrides
 ): Promise<BigInt> => {
-  const functionsRouter = await FunctionsSubscriptionManager.initialize(
+  const functionsRouter = await FunctionsSubscriptionManager.initialize({
     hre,
-    linkTokenAddress,
-    functionsRouterAddress
-  );
+    functionsRouterAddress,
+    overrides,
+  });
   return functionsRouter.estimateRequestCost(
     donId,
     subscriptionId,
@@ -200,11 +178,31 @@ export const listenForResponse = async (
   requestId: string,
   timeout?: number
 ): Promise<FunctionsResponse> => {
-  const functionsResponseListener = await FunctionsResponseListener.initialize(
+  const functionsResponseListener = await FunctionsResponseListener.initialize({
     hre,
-    functionsRouterAddress
-  );
+    functionsRouterAddress,
+  });
   return functionsResponseListener.listenForResponse(requestId, timeout);
+};
+
+export const listenForResponseFromTransaction = async (
+  hre: HardhatRuntimeEnvironment,
+  functionsRouterAddress: string,
+  requestId: string,
+  timeout?: number,
+  confirmations?: number,
+  checkInterval?: number
+): Promise<FunctionsResponse> => {
+  const functionsResponseListener = await FunctionsResponseListener.initialize({
+    hre,
+    functionsRouterAddress,
+  });
+  return functionsResponseListener.listenForResponseFromTransaction(
+    requestId,
+    timeout,
+    confirmations,
+    checkInterval
+  );
 };
 
 export const listenForResponses = async (
@@ -213,10 +211,10 @@ export const listenForResponses = async (
   subscriptionId: string,
   callback: (functionsResponse: FunctionsResponse) => any
 ): Promise<void> => {
-  const functionsResponseListener = await FunctionsResponseListener.initialize(
+  const functionsResponseListener = await FunctionsResponseListener.initialize({
     hre,
-    functionsRouterAddress
-  );
+    functionsRouterAddress,
+  });
   return functionsResponseListener.listenForResponses(subscriptionId, callback);
 };
 
@@ -224,10 +222,10 @@ export const stopListeningForResponses = async (
   hre: HardhatRuntimeEnvironment,
   functionsRouterAddress: string
 ): Promise<void> => {
-  const functionsResponseListener = await FunctionsResponseListener.initialize(
+  const functionsResponseListener = await FunctionsResponseListener.initialize({
     hre,
-    functionsRouterAddress
-  );
+    functionsRouterAddress,
+  });
   return functionsResponseListener.stopListeningForResponses();
 };
 
@@ -239,11 +237,11 @@ export const fetchKeys = async (
   thresholdPublicKey: ThresholdPublicKey;
   donPublicKey: string;
 }> => {
-  const functionsSecretsManager = await FunctionsSecretsManager.initialize(
+  const functionsSecretsManager = await FunctionsSecretsManager.initialize({
     hre,
     functionsRouterAddress,
-    donId
-  );
+    donId,
+  });
   return functionsSecretsManager.fetchKeys();
 };
 
@@ -253,11 +251,11 @@ export const encryptSecretsUrls = async (
   donId: string,
   secretsUrls: string[]
 ): Promise<string> => {
-  const functionsSecretsManager = await FunctionsSecretsManager.initialize(
+  const functionsSecretsManager = await FunctionsSecretsManager.initialize({
     hre,
     functionsRouterAddress,
-    donId
-  );
+    donId,
+  });
   return functionsSecretsManager.encryptSecretsUrls(secretsUrls);
 };
 
@@ -267,11 +265,11 @@ export const verifyOffchainSecrets = async (
   donId: string,
   secretsUrls: string[]
 ): Promise<boolean> => {
-  const functionsSecretsManager = await FunctionsSecretsManager.initialize(
+  const functionsSecretsManager = await FunctionsSecretsManager.initialize({
     hre,
     functionsRouterAddress,
-    donId
-  );
+    donId,
+  });
   return functionsSecretsManager.verifyOffchainSecrets(secretsUrls);
 };
 
@@ -283,11 +281,11 @@ export const encryptSecrets = async (
 ): Promise<{
   encryptedSecrets: string;
 }> => {
-  const functionsSecretsManager = await FunctionsSecretsManager.initialize(
+  const functionsSecretsManager = await FunctionsSecretsManager.initialize({
     hre,
     functionsRouterAddress,
-    donId
-  );
+    donId,
+  });
   return functionsSecretsManager.encryptSecrets(secrets);
 };
 
@@ -303,11 +301,11 @@ export const uploadEncryptedSecretsToDON = async (
   version: number;
   success: boolean;
 }> => {
-  const functionsSecretsManager = await FunctionsSecretsManager.initialize(
+  const functionsSecretsManager = await FunctionsSecretsManager.initialize({
     hre,
     functionsRouterAddress,
-    donId
-  );
+    donId,
+  });
   return functionsSecretsManager.uploadEncryptedSecretsToDON(
     encryptedSecretsHexstring,
     gatewayUrls,
@@ -325,11 +323,11 @@ export const listDONHostedEncryptedSecrets = async (
   result: GatewayResponse;
   error?: string;
 }> => {
-  const functionsSecretsManager = await FunctionsSecretsManager.initialize(
+  const functionsSecretsManager = await FunctionsSecretsManager.initialize({
     hre,
     functionsRouterAddress,
-    donId
-  );
+    donId,
+  });
   return functionsSecretsManager.listDONHostedEncryptedSecrets(gatewayUrls);
 };
 
@@ -340,11 +338,11 @@ export const buildDONHostedEncryptedSecretsReference = async (
   slotId: number,
   version: number
 ): Promise<string> => {
-  const functionsSecretsManager = await FunctionsSecretsManager.initialize(
+  const functionsSecretsManager = await FunctionsSecretsManager.initialize({
     hre,
     functionsRouterAddress,
-    donId
-  );
+    donId,
+  });
   return functionsSecretsManager.buildDONHostedEncryptedSecretsReference(
     slotId,
     version
@@ -358,143 +356,186 @@ export class FunctionsSubscriptionManager {
   private constructor(
     hre: HardhatRuntimeEnvironment,
     signer: Signer,
-    linkTokenAddress: string,
-    functionsRouterAddress: string
+    functionsRouterAddress: string,
+    linkTokenAddress?: string
   ) {
     this.hre = hre;
     this.subscriptionManager = new SubscriptionManager({
       signer,
-      linkTokenAddress,
       functionsRouterAddress,
+      linkTokenAddress: linkTokenAddress || "",
     });
   }
 
   // static async class factory
-  static async initialize(
-    hre: HardhatRuntimeEnvironment,
-    linkTokenAddress: string,
-    functionsRouterAddress: string
-  ): Promise<FunctionsSubscriptionManager> {
-    const [signer] = await hre.ethers.getSigners();
+  static async initialize(args: {
+    hre: HardhatRuntimeEnvironment;
+    functionsRouterAddress: string;
+    linkTokenAddress?: string;
+    overrides?: Overrides;
+  }): Promise<FunctionsSubscriptionManager> {
+    const { hre, functionsRouterAddress, linkTokenAddress, overrides } = args;
+    const accounts = await hre.ethers.getSigners();
     const functionsSubscriptionManager = new FunctionsSubscriptionManager(
       hre,
-      signer,
-      linkTokenAddress,
-      functionsRouterAddress
+      overrides?.signer || accounts[0],
+      functionsRouterAddress,
+      linkTokenAddress
     );
     await functionsSubscriptionManager.subscriptionManager.initialize();
     return functionsSubscriptionManager;
   }
 
-  createSubscription(consumerAddress?: string): Promise<number> {
-    return this.subscriptionManager.createSubscription({
+  async createSubscription(
+    consumerAddress?: string
+  ): Promise<{ subscriptionId: BigNumber }> {
+    const subscriptionId = await this.subscriptionManager.createSubscription({
       consumerAddress,
       txOptions: {
         confirmations: this.hre.config.chainlink.confirmations,
       },
     });
+    return {
+      subscriptionId: BigNumber.from(subscriptionId),
+    };
   }
 
-  fundSubscription(
-    juelsAmount: string,
-    subscriptionId: string
-  ): Promise<ContractReceipt> {
-    return this.subscriptionManager.fundSubscription({
-      juelsAmount,
-      subscriptionId,
+  async fundSubscription(
+    amountInJuels: BigNumberish,
+    subscriptionId: BigNumberish
+  ): Promise<{ transactionHash: string }> {
+    const tx = await this.subscriptionManager.fundSubscription({
+      juelsAmount: amountInJuels.toString(),
+      subscriptionId: subscriptionId.toString(),
       txOptions: {
         confirmations: this.hre.config.chainlink.confirmations,
       },
     });
+
+    return {
+      transactionHash: tx.transactionHash,
+    };
   }
 
-  getSubscriptionInfo(subscriptionId: string): Promise<SubscriptionInfo> {
-    return this.subscriptionManager.getSubscriptionInfo(subscriptionId);
+  async getSubscriptionDetails(
+    subscriptionId: BigNumberish
+  ): Promise<FunctionsSubscriptionDetails> {
+    const result = await this.subscriptionManager.getSubscriptionInfo(
+      subscriptionId.toString()
+    );
+    return {
+      balance: BigNumber.from(result.balance),
+      owner: result.owner,
+      blockedBalance: BigNumber.from(result.blockedBalance),
+      proposedOwner: result.proposedOwner,
+      consumers: result.consumers,
+      flags: result.flags,
+    };
   }
 
-  cancelSubscription(
-    subscriptionId: string,
-    refundAddress: string
-  ): Promise<ContractReceipt> {
-    return this.subscriptionManager.cancelSubscription({
-      subscriptionId,
-      refundAddress,
+  async cancelSubscription(
+    subscriptionId: BigNumberish,
+    receivingAddress?: string
+  ): Promise<{ transactionHash: string }> {
+    const tx = await this.subscriptionManager.cancelSubscription({
+      subscriptionId: subscriptionId.toString(),
+      refundAddress: receivingAddress,
       txOptions: {
         confirmations: this.hre.config.chainlink.confirmations,
       },
     });
+
+    return {
+      transactionHash: tx.transactionHash,
+    };
   }
 
-  requestSubscriptionTransfer(
-    subscriptionId: string,
-    newOwner: string
-  ): Promise<ContractReceipt> {
-    return this.subscriptionManager.requestSubscriptionTransfer({
-      subscriptionId,
-      newOwner,
+  async requestSubscriptionOwnerTransfer(
+    subscriptionId: BigNumberish,
+    newOwnerAddress: string
+  ): Promise<{ transactionHash: string }> {
+    const tx = await this.subscriptionManager.requestSubscriptionTransfer({
+      subscriptionId: subscriptionId.toString(),
+      newOwner: newOwnerAddress,
       txOptions: {
         confirmations: this.hre.config.chainlink.confirmations,
       },
     });
+    return {
+      transactionHash: tx.transactionHash,
+    };
   }
 
-  acceptSubscriptionTransfer(subscriptionId: string): Promise<ContractReceipt> {
-    return this.subscriptionManager.acceptSubTransfer({
-      subscriptionId,
+  async acceptSubscriptionOwnerTransfer(
+    subscriptionId: BigNumberish
+  ): Promise<{ transactionHash: string }> {
+    const tx = await this.subscriptionManager.acceptSubTransfer({
+      subscriptionId: subscriptionId.toString(),
       txOptions: {
         confirmations: this.hre.config.chainlink.confirmations,
       },
     });
+    return {
+      transactionHash: tx.transactionHash,
+    };
   }
 
-  addConsumer(
-    subscriptionId: string,
+  async addConsumer(
+    subscriptionId: BigNumberish,
     consumerAddress: string
-  ): Promise<ContractReceipt> {
-    return this.subscriptionManager.addConsumer({
-      subscriptionId,
+  ): Promise<{ transactionHash: string }> {
+    const tx = await this.subscriptionManager.addConsumer({
+      subscriptionId: subscriptionId.toString(),
       consumerAddress,
       txOptions: {
         confirmations: this.hre.config.chainlink.confirmations,
       },
     });
+    return {
+      transactionHash: tx.transactionHash,
+    };
   }
 
-  removeConsumer(
-    subscriptionId: string,
+  async removeConsumer(
+    subscriptionId: BigNumberish,
     consumerAddress: string
-  ): Promise<ContractReceipt> {
-    return this.subscriptionManager.removeConsumer({
-      subscriptionId,
+  ): Promise<{ transactionHash: string }> {
+    const tx = await this.subscriptionManager.removeConsumer({
+      subscriptionId: subscriptionId.toString(),
       consumerAddress,
       txOptions: {
         confirmations: this.hre.config.chainlink.confirmations,
       },
     });
+    return {
+      transactionHash: tx.transactionHash,
+    };
   }
-
-  timeoutRequests(
+  async timeoutRequests(
     requestCommitments: RequestCommitment[]
-  ): Promise<ContractReceipt> {
-    return this.subscriptionManager.timeoutRequests({
+  ): Promise<{ transactionHash: string }> {
+    const tx = await this.subscriptionManager.timeoutRequests({
       requestCommitments,
       txOptions: {
         confirmations: this.hre.config.chainlink.confirmations,
       },
     });
+    return {
+      transactionHash: tx.transactionHash,
+    };
   }
 
   estimateRequestCost(
     donId: string,
-    subscriptionId: string,
+    subscriptionId: BigNumberish,
     callbackGasLimit: number,
-    gasPriceWei: string
+    gasPriceWei: BigNumberish
   ): Promise<BigInt> {
     return this.subscriptionManager.estimateFunctionsRequestCost({
       donId,
-      subscriptionId,
+      subscriptionId: subscriptionId.toString(),
       callbackGasLimit,
-      gasPriceWei: BigInt(gasPriceWei),
+      gasPriceWei: BigInt(gasPriceWei.toString()),
     });
   }
 }
@@ -503,20 +544,24 @@ export class FunctionsResponseListener {
   private responseListener: ResponseListener;
 
   private constructor(
-    hre: HardhatRuntimeEnvironment,
-    functionsRouterAddress: string
+    functionsRouterAddress: string,
+    provider: providers.JsonRpcProvider
   ) {
     this.responseListener = new ResponseListener({
-      provider: hre.ethers.provider,
+      provider,
       functionsRouterAddress,
     });
   }
 
-  static async initialize(
-    hre: HardhatRuntimeEnvironment,
-    functionsRouterAddress: string
-  ): Promise<FunctionsResponseListener> {
-    return new FunctionsResponseListener(hre, functionsRouterAddress);
+  // static async class factory
+  static async initialize(args: {
+    hre: HardhatRuntimeEnvironment;
+    functionsRouterAddress: string;
+    overrides?: Overrides;
+  }): Promise<FunctionsResponseListener> {
+    const { hre, functionsRouterAddress, overrides } = args;
+    const provider = overrides?.provider || hre.ethers.provider;
+    return new FunctionsResponseListener(functionsRouterAddress, provider);
   }
 
   listenForResponse(
@@ -524,6 +569,20 @@ export class FunctionsResponseListener {
     timeout?: number
   ): Promise<FunctionsResponse> {
     return this.responseListener.listenForResponse(requestId, timeout);
+  }
+
+  listenForResponseFromTransaction(
+    requestId: string,
+    timeout?: number,
+    confirmations?: number,
+    checkInterval?: number
+  ): Promise<FunctionsResponse> {
+    return this.responseListener.listenForResponseFromTransaction(
+      requestId,
+      timeout,
+      confirmations,
+      checkInterval
+    );
   }
 
   listenForResponses(
@@ -553,18 +612,21 @@ export class FunctionsSecretsManager {
     });
   }
 
-  static async initialize(
-    hre: HardhatRuntimeEnvironment,
-    functionsRouterAddress: string,
-    donId: string
-  ): Promise<FunctionsSecretsManager> {
-    const [signer] = await hre.ethers.getSigners();
+  // static async class factory
+  static async initialize(args: {
+    hre: HardhatRuntimeEnvironment;
+    functionsRouterAddress: string;
+    donId: string;
+    overrides?: Overrides;
+  }): Promise<FunctionsSecretsManager> {
+    const { hre, functionsRouterAddress, donId, overrides } = args;
+    const account = await hre.ethers.getSigners();
+    const signer = overrides?.signer || account[0];
     const functionsSecretsManager = new FunctionsSecretsManager(
       signer,
       functionsRouterAddress,
       donId
     );
-
     await functionsSecretsManager.secretsManager.initialize();
 
     return functionsSecretsManager;
