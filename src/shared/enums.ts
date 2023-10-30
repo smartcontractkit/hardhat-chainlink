@@ -14,6 +14,8 @@ export enum Task {
   operator = "sandbox:operator",
   drConsumer = "sandbox:drConsumer",
   linkToken = "sandbox:linkToken",
+  functionsConsumer = "sandbox:functionsConsumer",
+  functionsSimulation = "sandbox:functionsSimulation",
 }
 
 export enum DataFeedSubtask {
@@ -116,13 +118,13 @@ export enum AutomationRegistrarSubtask {
   getTypeAndVersion = "getTypeAndVersion",
 }
 
-export enum FunctionsRouterSubtasks {
+export enum FunctionsRouterSubtask {
   createSubscription = "createSubscription",
   fundSubscription = "fundSubscription",
   getSubscriptionInfo = "getSubscriptionInfo",
   cancelSubscription = "cancelSubscription",
-  requestSubscriptionTransfer = "requestSubscriptionTransfer",
-  acceptSubscriptionTransfer = "acceptSubscriptionTransfer",
+  requestSubscriptionOwnerTransfer = "requestSubscriptionOwnerTransfer",
+  acceptSubscriptionOwnerTransfer = "acceptSubscriptionOwnerTransfer",
   addConsumer = "addConsumer",
   removeConsumer = "removeConsumer",
   timeoutRequests = "timeoutRequests",
@@ -170,6 +172,21 @@ export enum LinkTokenSubtask {
   decreaseApproval = "decreaseApproval",
 }
 
+export enum FunctionsConsumerSubtask {
+  deploy = "deploy",
+  sendRequest = "sendRequest",
+  sendEncodedRequest = "sendEncodedRequest",
+  setDonId = "setDonId",
+  getDonId = "getDonId",
+  getLastRequestId = "getLastRequestId",
+  getLastResponse = "getLastResponse",
+  getLastError = "getLastError",
+}
+
+export enum FunctionsSimulationSubtask {
+  simulateRequest = "simulateRequest",
+}
+
 export enum UtilsSubtask {
   getRoundId = "getRoundId",
   parseRoundId = "parseRoundId",
@@ -188,6 +205,10 @@ export const enum InquirableParameter {
   keeperRegistrarAddress = "keeperRegistrarAddress",
   l2SequencerAddress = "l2SequencerAddress",
   functionsRouterAddress = "functionsRouterAddress",
+  donId = "donId",
+  secretsLocation = "secretsLocation",
+  codeLocation = "codeLocation",
+  codeLanguage = "codeLanguage",
   feedRegistryBaseTick = "feedRegistryBaseTick",
   feedRegistryQuoteTick = "feedRegistryQuoteTick",
 }
