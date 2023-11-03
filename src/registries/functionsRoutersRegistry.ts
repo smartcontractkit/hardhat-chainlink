@@ -4,7 +4,7 @@ export const functionsRoutersRegistry = {
     donId: "fun-ethereum-mainnet-1",
     donIdBytes32:
       "0x66756e2d657468657265756d2d6d61696e6e65742d3100000000000000000000",
-    encryptedSecretsUploadEndpoints: [
+    gatewayUrls: [
       "https://01.functions-gateway.chain.link/",
       "https://02.functions-gateway.chain.link/",
     ],
@@ -15,7 +15,7 @@ export const functionsRoutersRegistry = {
     donId: "fun-ethereum-mainnet-1",
     donIdBytes32:
       "0x66756e2d657468657265756d2d6d61696e6e65742d3100000000000000000000",
-    encryptedSecretsUploadEndpoints: [
+    gatewayUrls: [
       "https://01.functions-gateway.chain.link/",
       "https://02.functions-gateway.chain.link/",
     ],
@@ -26,7 +26,7 @@ export const functionsRoutersRegistry = {
     donId: "fun-polygon-mainnet-1",
     donIdBytes32:
       "0x66756e2d706f6c79676f6e2d6d61696e6e65742d310000000000000000000000",
-    encryptedSecretsUploadEndpoints: [
+    gatewayUrls: [
       "https://01.functions-gateway.chain.link/",
       "https://02.functions-gateway.chain.link/",
     ],
@@ -37,7 +37,7 @@ export const functionsRoutersRegistry = {
     donId: "fun-polygon-mumbai-1",
     donIdBytes32:
       "0x66756e2d706f6c79676f6e2d6d756d6261692d31000000000000000000000000",
-    encryptedSecretsUploadEndpoints: [
+    gatewayUrls: [
       "https://01.functions-gateway.testnet.chain.link/",
       "https://02.functions-gateway.testnet.chain.link/",
     ],
@@ -48,7 +48,7 @@ export const functionsRoutersRegistry = {
     donId: "fun-avalanche-mainnet-1",
     donIdBytes32:
       "0x66756e2d6176616c616e6368652d6d61696e6e65742d31000000000000000000",
-    encryptedSecretsUploadEndpoints: [
+    gatewayUrls: [
       "https://01.functions-gateway.chain.link/",
       "https://02.functions-gateway.chain.link/",
     ],
@@ -59,7 +59,7 @@ export const functionsRoutersRegistry = {
     donId: "fun-avalanche-fuji-1",
     donIdBytes32:
       "0x66756e2d6176616c616e6368652d66756a692d31000000000000000000000000",
-    encryptedSecretsUploadEndpoints: [
+    gatewayUrls: [
       "https://01.functions-gateway.testnet.chain.link/",
       "https://02.functions-gateway.testnet.chain.link/",
     ],
