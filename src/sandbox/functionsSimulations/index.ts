@@ -95,7 +95,7 @@ export const simulateRequest = async (
     );
 
   const subscriptionManager =
-    await hre.chainlink.functionsRouter.initializeFunctionsSubscriptionManager(
+    await hre.chainlink.functions.initializeFunctionsSubscriptionManager(
       simulationDeployment.functionsRouterContract.address,
       simulationDeployment.linkTokenContract.address,
       {
@@ -105,7 +105,7 @@ export const simulateRequest = async (
     );
 
   const responseListener =
-    await hre.chainlink.functionsRouter.initializeFunctionsResponseListener(
+    await hre.chainlink.functions.initializeFunctionsResponseListener(
       simulationDeployment.functionsRouterContract.address,
       {
         signer: admin,
@@ -136,7 +136,7 @@ export const simulateRequest = async (
 
   await fs.promises.unlink(pathToConfigFile);
 
-  return hre.chainlink.functionsUtils.decodeResult(
+  return hre.chainlink.utils.decodeResult(
     response.responseBytesHexstring,
     ReturnType.string
   );

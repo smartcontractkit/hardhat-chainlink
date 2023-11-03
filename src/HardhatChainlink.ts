@@ -19,8 +19,7 @@ import * as dataFeedProxy from "./feeds/dataFeedProxy";
 import * as ensFeedsResolver from "./feeds/ensFeedsResolver";
 import * as feedRegistry from "./feeds/feedRegistry";
 import * as l2FeedUptimeSequencer from "./feeds/l2FeedUptimeSequencer";
-import * as functionsRouter from "./functions/functionsRouter";
-import * as functionsUtils from "./functions/functionsUtils";
+import * as functions from "./functions";
 import * as registries from "./registries";
 import * as drConsumer from "./sandbox/drConsumer";
 import * as functionsConsumer from "./sandbox/functionsConsumer";
@@ -56,8 +55,7 @@ export class HardhatChainlink {
   public vrf: VRF;
   public automationRegistrar: AutomationRegistrar;
   public automationRegistry: AutomationRegistry;
-  public functionsRouter: FunctionsRouter;
-  public functionsUtils: FunctionsUtils;
+  public functions: Functions;
   public utils: Utils;
   public sandbox: Sandbox;
   private hre: HardhatRuntimeEnvironment;
@@ -82,8 +80,7 @@ export class HardhatChainlink {
     this.vrf = new VRF(this.hre);
     this.automationRegistrar = new AutomationRegistrar(this.hre);
     this.automationRegistry = new AutomationRegistry(this.hre);
-    this.functionsRouter = new FunctionsRouter(this.hre);
-    this.functionsUtils = new FunctionsUtils(this.hre);
+    this.functions = new Functions(this.hre);
     this.utils = new Utils(this.hre);
     this.sandbox = new Sandbox(this.hre);
   }
@@ -1028,7 +1025,7 @@ class AutomationRegistry {
   }
 }
 
-class FunctionsRouter {
+class Functions {
   private hre: HardhatRuntimeEnvironment;
 
   constructor(hre: HardhatRuntimeEnvironment) {
@@ -1039,8 +1036,8 @@ class FunctionsRouter {
     functionsRouterAddress: string,
     linkTokenAddress: string,
     overrides?: Overrides
-  ): Promise<functionsRouter.FunctionsSubscriptionManager> {
-    return functionsRouter.FunctionsSubscriptionManager.initialize({
+  ): Promise<functions.FunctionsSubscriptionManager> {
+    return functions.FunctionsSubscriptionManager.initialize({
       hre: this.hre,
       functionsRouterAddress,
       linkTokenAddress,
@@ -1051,8 +1048,8 @@ class FunctionsRouter {
   public initializeFunctionsResponseListener(
     functionsRouterAddress: string,
     overrides?: Overrides
-  ): Promise<functionsRouter.FunctionsResponseListener> {
-    return functionsRouter.FunctionsResponseListener.initialize({
+  ): Promise<functions.FunctionsResponseListener> {
+    return functions.FunctionsResponseListener.initialize({
       hre: this.hre,
       functionsRouterAddress,
       overrides,
@@ -1063,8 +1060,8 @@ class FunctionsRouter {
     functionsRouterAddress: string,
     donId: string,
     overrides?: Overrides
-  ): Promise<functionsRouter.FunctionsSecretsManager> {
-    return functionsRouter.FunctionsSecretsManager.initialize({
+  ): Promise<functions.FunctionsSecretsManager> {
+    return functions.FunctionsSecretsManager.initialize({
       hre: this.hre,
       functionsRouterAddress,
       donId,
@@ -1079,7 +1076,7 @@ class FunctionsRouter {
     consumerAddress?: string,
     overrides?: Overrides
   ): Promise<{ subscriptionId: BigNumber }> {
-    return functionsRouter.createSubscription(
+    return functions.createSubscription(
       this.hre,
       functionsRouterAddress,
       consumerAddress,
@@ -1094,7 +1091,7 @@ class FunctionsRouter {
     subscriptionId: BigNumberish,
     overrides?: Overrides
   ): Promise<{ transactionHash: string }> {
-    return functionsRouter.fundSubscription(
+    return functions.fundSubscription(
       this.hre,
       functionsRouterAddress,
       linkTokenAddress,
@@ -1110,7 +1107,7 @@ class FunctionsRouter {
     receivingAddress?: string,
     overrides?: Overrides
   ): Promise<{ transactionHash: string }> {
-    return functionsRouter.cancelSubscription(
+    return functions.cancelSubscription(
       this.hre,
       functionsRouterAddress,
       subscriptionId,
@@ -1125,7 +1122,7 @@ class FunctionsRouter {
     newOwnerAddress: string,
     overrides?: Overrides
   ): Promise<{ transactionHash: string }> {
-    return functionsRouter.requestSubscriptionOwnerTransfer(
+    return functions.requestSubscriptionOwnerTransfer(
       this.hre,
       functionsRouterAddress,
       subscriptionId,
@@ -1139,7 +1136,7 @@ class FunctionsRouter {
     subscriptionId: BigNumberish,
     overrides?: Overrides
   ): Promise<{ transactionHash: string }> {
-    return functionsRouter.acceptSubscriptionOwnerTransfer(
+    return functions.acceptSubscriptionOwnerTransfer(
       this.hre,
       functionsRouterAddress,
       subscriptionId,
@@ -1151,7 +1148,7 @@ class FunctionsRouter {
     functionsRouterAddress: string,
     subscriptionId: BigNumberish
   ): Promise<FunctionsSubscriptionDetails> {
-    return functionsRouter.getSubscriptionDetails(
+    return functions.getSubscriptionDetails(
       this.hre,
       functionsRouterAddress,
       subscriptionId
@@ -1164,7 +1161,7 @@ class FunctionsRouter {
     subscriptionId: BigNumberish,
     overrides?: Overrides
   ): Promise<{ transactionHash: string }> {
-    return functionsRouter.addConsumer(
+    return functions.addConsumer(
       this.hre,
       functionsRouterAddress,
       consumerAddress,
@@ -1179,7 +1176,7 @@ class FunctionsRouter {
     subscriptionId: BigNumberish,
     overrides?: Overrides
   ): Promise<{ transactionHash: string }> {
-    return functionsRouter.removeConsumer(
+    return functions.removeConsumer(
       this.hre,
       functionsRouterAddress,
       consumerAddress,
@@ -1193,7 +1190,7 @@ class FunctionsRouter {
     requestCommitments: RequestCommitment[],
     overrides?: Overrides
   ): Promise<{ transactionHash: string }> {
-    return functionsRouter.timeoutRequests(
+    return functions.timeoutRequests(
       this.hre,
       functionsRouterAddress,
       requestCommitments,
@@ -1209,7 +1206,7 @@ class FunctionsRouter {
     gasPriceWei: BigNumberish,
     overrides?: Overrides
   ): Promise<BigInt> {
-    return functionsRouter.estimateRequestCost(
+    return functions.estimateRequestCost(
       this.hre,
       functionsRouterAddress,
       donId,
@@ -1227,7 +1224,7 @@ class FunctionsRouter {
     requestId: string,
     timeout?: number
   ): Promise<FunctionsResponse> {
-    return functionsRouter.listenForResponse(
+    return functions.listenForResponse(
       this.hre,
       functionsRouterAddress,
       requestId,
@@ -1242,7 +1239,7 @@ class FunctionsRouter {
     confirmations?: number,
     checkInterval?: number
   ): Promise<FunctionsResponse> {
-    return functionsRouter.listenForResponseFromTransaction(
+    return functions.listenForResponseFromTransaction(
       this.hre,
       functionsRouterAddress,
       transactionHash,
@@ -1257,7 +1254,7 @@ class FunctionsRouter {
     subscriptionId: string,
     callback: (functionsResponse: FunctionsResponse) => any
   ): Promise<void> {
-    return functionsRouter.listenForResponses(
+    return functions.listenForResponses(
       this.hre,
       functionsRouterAddress,
       subscriptionId,
@@ -1268,7 +1265,7 @@ class FunctionsRouter {
   public stopListeningForResponses(
     functionsRouterAddress: string
   ): Promise<void> {
-    return functionsRouter.stopListeningForResponses(
+    return functions.stopListeningForResponses(
       this.hre,
       functionsRouterAddress
     );
@@ -1283,7 +1280,7 @@ class FunctionsRouter {
     thresholdPublicKey: ThresholdPublicKey;
     donPublicKey: string;
   }> {
-    return functionsRouter.fetchKeys(this.hre, functionsRouterAddress, donId);
+    return functions.fetchKeys(this.hre, functionsRouterAddress, donId);
   }
 
   public encryptSecretsUrls(
@@ -1291,7 +1288,7 @@ class FunctionsRouter {
     donId: string,
     secretsUrls: string[]
   ): Promise<string> {
-    return functionsRouter.encryptSecretsUrls(
+    return functions.encryptSecretsUrls(
       this.hre,
       functionsRouterAddress,
       donId,
@@ -1304,7 +1301,7 @@ class FunctionsRouter {
     donId: string,
     secretsUrls: string[]
   ): Promise<boolean> {
-    return functionsRouter.verifyOffchainSecrets(
+    return functions.verifyOffchainSecrets(
       this.hre,
       functionsRouterAddress,
       donId,
@@ -1319,7 +1316,7 @@ class FunctionsRouter {
   ): Promise<{
     encryptedSecrets: string;
   }> {
-    return functionsRouter.encryptSecrets(
+    return functions.encryptSecrets(
       this.hre,
       functionsRouterAddress,
       donId,
@@ -1338,7 +1335,7 @@ class FunctionsRouter {
     version: number;
     success: boolean;
   }> {
-    return functionsRouter.uploadEncryptedSecretsToDON(
+    return functions.uploadEncryptedSecretsToDON(
       this.hre,
       functionsRouterAddress,
       donId,
@@ -1357,7 +1354,7 @@ class FunctionsRouter {
     result: GatewayResponse;
     error?: string;
   }> {
-    return functionsRouter.listDONHostedEncryptedSecrets(
+    return functions.listDONHostedEncryptedSecrets(
       this.hre,
       functionsRouterAddress,
       donId,
@@ -1371,7 +1368,7 @@ class FunctionsRouter {
     slotId: number,
     version: number
   ): Promise<string> {
-    return functionsRouter.buildDONHostedEncryptedSecretsReference(
+    return functions.buildDONHostedEncryptedSecretsReference(
       this.hre,
       functionsRouterAddress,
       donId,
@@ -1379,57 +1376,25 @@ class FunctionsRouter {
       version
     );
   }
-}
-
-class FunctionsUtils {
-  private hre: HardhatRuntimeEnvironment;
-
-  constructor(hre: HardhatRuntimeEnvironment) {
-    this.hre = hre;
-  }
-
-  public buildRequestCBOR(
-    codeLocation: Location,
-    codeLanguage: CodeLanguage,
-    source: string,
-    secretsLocation?: Location,
-    encryptedSecretsReference?: string,
-    args?: string[],
-    bytesArgs?: string[]
-  ): Promise<string> {
-    return functionsUtils.buildRequestCBOR({
-      codeLocation,
-      codeLanguage,
-      source,
-      secretsLocation,
-      encryptedSecretsReference,
-      args,
-      bytesArgs,
-    });
-  }
-
+  
+  // utils
   public fetchRequestCommitment(
     functionsRouterAddress: string,
-    requestId: string,
     donId: string,
+    requestId: string,
     toBlock?: number | "latest",
-    pastBlocksToSearch?: number
+    pastBlocksToSearch?: number,
+    overrides?: Overrides
   ): Promise<RequestCommitment> {
-    return functionsUtils.fetchRequestCommitment(
+    return functions.fetchRequestCommitment(
       this.hre,
       functionsRouterAddress,
-      requestId,
       donId,
+      requestId,
       toBlock,
-      pastBlocksToSearch
+      pastBlocksToSearch,
+      overrides
     );
-  }
-
-  public decodeResult(
-    resultHexstring: string,
-    expectedReturnType: ReturnType
-  ): Promise<DecodedResult> {
-    return functionsUtils.decodeResult(resultHexstring, expectedReturnType);
   }
 }
 
@@ -1475,6 +1440,33 @@ class Utils {
     content: string
   ): Promise<boolean> {
     return utils.deleteGist(githubApiToken, content);
+  }
+  
+  public async buildRequestCBOR(
+    codeLocation: Location,
+    codeLanguage: CodeLanguage,
+    source: string,
+    secretsLocation?: Location,
+    encryptedSecretsReference?: string,
+    args?: string[],
+    bytesArgs?: string[]
+  ): Promise<string> {
+    return utils.buildRequestCBOR({
+      codeLocation,
+      codeLanguage,
+      source,
+      secretsLocation,
+      encryptedSecretsReference,
+      args,
+      bytesArgs,
+    });
+  }
+
+  public async decodeResult(
+    resultHexstring: string,
+    expectedReturnType: ReturnType
+  ): Promise<DecodedResult> {
+    return utils.decodeResult(resultHexstring, expectedReturnType);
   }
 }
 

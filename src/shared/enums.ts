@@ -7,7 +7,7 @@ export enum Task {
   automationRegistry = "automationRegistry",
   automationRegistrar = "automationRegistrar",
   vrf = "vrf",
-  functionsRouter = "functionsRouter",
+  functions = "functions",
   registries = "registries",
   utils = "utils",
   node = "sandbox:node",
@@ -118,7 +118,7 @@ export enum AutomationRegistrarSubtask {
   getTypeAndVersion = "getTypeAndVersion",
 }
 
-export enum FunctionsRouterSubtask {
+export enum FunctionsSubtask {
   createSubscription = "createSubscription",
   fundSubscription = "fundSubscription",
   getSubscriptionDetails = "getSubscriptionDetails",

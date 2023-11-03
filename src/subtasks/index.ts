@@ -8,8 +8,8 @@ import {
   ENSFeedsResolverSubtask,
   FeedRegistrySubtask,
   FunctionsConsumerSubtask,
-  FunctionsRouterSubtask,
   FunctionsSimulationSubtask,
+  FunctionsSubtask,
   L2SequencerSubtask,
   LinkTokenSubtask,
   NodeSubtask,
@@ -27,7 +27,7 @@ import * as dataFeedProxyActions from "../tasks/feeds/dataFeedProxy";
 import * as ensFeedsResolverActions from "../tasks/feeds/ensFeedsResolver";
 import * as feedRegistryActions from "../tasks/feeds/feedRegistry";
 import * as l2FeedUptimeSequencerActions from "../tasks/feeds/l2FeedUptimeSequencer";
-import * as functionsRouterActions from "../tasks/functions/functionsRouter";
+import * as functionsActions from "../tasks/functions";
 import * as registriesActions from "../tasks/registries";
 import * as drConsumerActions from "../tasks/sandbox/drConsumer";
 import * as functionsConsumerActions from "../tasks/sandbox/functionsConsumer";
@@ -1213,10 +1213,10 @@ export const subtasks: Subtasks = {
       ],
     },
   },
-  [Task.functionsRouter]: {
-    [FunctionsRouterSubtask.createSubscription]: {
-      action: functionsRouterActions.createSubscription,
-      description: camelToFlat(FunctionsRouterSubtask.createSubscription),
+  [Task.functions]: {
+    [FunctionsSubtask.createSubscription]: {
+      action: functionsActions.createSubscription,
+      description: camelToFlat(FunctionsSubtask.createSubscription),
       args: [
         {
           name: "functionsRouterAddress",
@@ -1229,9 +1229,9 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [FunctionsRouterSubtask.fundSubscription]: {
-      action: functionsRouterActions.fundSubscription,
-      description: camelToFlat(FunctionsRouterSubtask.fundSubscription),
+    [FunctionsSubtask.fundSubscription]: {
+      action: functionsActions.fundSubscription,
+      description: camelToFlat(FunctionsSubtask.fundSubscription),
       args: [
         {
           name: "functionsRouterAddress",
@@ -1251,9 +1251,9 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [FunctionsRouterSubtask.cancelSubscription]: {
-      action: functionsRouterActions.cancelSubscription,
-      description: camelToFlat(FunctionsRouterSubtask.cancelSubscription),
+    [FunctionsSubtask.cancelSubscription]: {
+      action: functionsActions.cancelSubscription,
+      description: camelToFlat(FunctionsSubtask.cancelSubscription),
       args: [
         {
           name: "functionsRouterAddress",
@@ -1270,9 +1270,9 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [FunctionsRouterSubtask.getSubscriptionDetails]: {
-      action: functionsRouterActions.getSubscriptionDetails,
-      description: camelToFlat(FunctionsRouterSubtask.getSubscriptionDetails),
+    [FunctionsSubtask.getSubscriptionDetails]: {
+      action: functionsActions.getSubscriptionDetails,
+      description: camelToFlat(FunctionsSubtask.getSubscriptionDetails),
       args: [
         {
           name: "functionsRouterAddress",
@@ -1284,10 +1284,10 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [FunctionsRouterSubtask.requestSubscriptionOwnerTransfer]: {
-      action: functionsRouterActions.requestSubscriptionOwnerTransfer,
+    [FunctionsSubtask.requestSubscriptionOwnerTransfer]: {
+      action: functionsActions.requestSubscriptionOwnerTransfer,
       description: camelToFlat(
-        FunctionsRouterSubtask.requestSubscriptionOwnerTransfer
+        FunctionsSubtask.requestSubscriptionOwnerTransfer
       ),
       args: [
         {
@@ -1304,10 +1304,10 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [FunctionsRouterSubtask.acceptSubscriptionOwnerTransfer]: {
-      action: functionsRouterActions.acceptSubscriptionOwnerTransfer,
+    [FunctionsSubtask.acceptSubscriptionOwnerTransfer]: {
+      action: functionsActions.acceptSubscriptionOwnerTransfer,
       description: camelToFlat(
-        FunctionsRouterSubtask.acceptSubscriptionOwnerTransfer
+        FunctionsSubtask.acceptSubscriptionOwnerTransfer
       ),
       args: [
         {
@@ -1320,9 +1320,9 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [FunctionsRouterSubtask.addConsumer]: {
-      action: functionsRouterActions.addConsumer,
-      description: camelToFlat(FunctionsRouterSubtask.addConsumer),
+    [FunctionsSubtask.addConsumer]: {
+      action: functionsActions.addConsumer,
+      description: camelToFlat(FunctionsSubtask.addConsumer),
       args: [
         {
           name: "functionsRouterAddress",
@@ -1338,9 +1338,9 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [FunctionsRouterSubtask.removeConsumer]: {
-      action: functionsRouterActions.removeConsumer,
-      description: camelToFlat(FunctionsRouterSubtask.removeConsumer),
+    [FunctionsSubtask.removeConsumer]: {
+      action: functionsActions.removeConsumer,
+      description: camelToFlat(FunctionsSubtask.removeConsumer),
       args: [
         {
           name: "functionsRouterAddress",
@@ -1356,9 +1356,9 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [FunctionsRouterSubtask.timeoutRequests]: {
-      action: functionsRouterActions.timeoutRequests,
-      description: camelToFlat(FunctionsRouterSubtask.timeoutRequests),
+    [FunctionsSubtask.timeoutRequests]: {
+      action: functionsActions.timeoutRequests,
+      description: camelToFlat(FunctionsSubtask.timeoutRequests),
       args: [
         {
           name: "functionsRouterAddress",
@@ -1384,9 +1384,9 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [FunctionsRouterSubtask.estimateRequestCost]: {
-      action: functionsRouterActions.estimateRequestCost,
-      description: camelToFlat(FunctionsRouterSubtask.estimateRequestCost),
+    [FunctionsSubtask.estimateRequestCost]: {
+      action: functionsActions.estimateRequestCost,
+      description: camelToFlat(FunctionsSubtask.estimateRequestCost),
       args: [
         {
           name: "functionsRouterAddress",

@@ -1,8 +1,4 @@
-import {
-  ResponseListener,
-  SecretsManager,
-  SubscriptionManager,
-} from "@chainlink/functions-toolkit";
+import * as functionsToolkit from "@chainlink/functions-toolkit";
 import {
   FunctionsResponse,
   GatewayResponse,
@@ -349,9 +345,29 @@ export const buildDONHostedEncryptedSecretsReference = async (
   );
 };
 
+export const fetchRequestCommitment = async (
+  hre: HardhatRuntimeEnvironment,
+  functionsRouterAddress: string,
+  donId: string,
+  requestId: string,
+  toBlock?: number | "latest",
+  pastBlocksToSearch?: number,
+  overrides?: Overrides
+): Promise<RequestCommitment> => {
+  const provider = overrides?.provider || hre.ethers.provider;
+  return functionsToolkit.fetchRequestCommitment({
+    requestId,
+    provider,
+    functionsRouterAddress,
+    donId,
+    toBlock,
+    pastBlocksToSearch,
+  });
+};
+
 export class FunctionsSubscriptionManager {
   private hre: HardhatRuntimeEnvironment;
-  private subscriptionManager: SubscriptionManager;
+  private subscriptionManager: functionsToolkit.SubscriptionManager;
 
   private constructor(
     hre: HardhatRuntimeEnvironment,
@@ -360,7 +376,7 @@ export class FunctionsSubscriptionManager {
     linkTokenAddress?: string
   ) {
     this.hre = hre;
-    this.subscriptionManager = new SubscriptionManager({
+    this.subscriptionManager = new functionsToolkit.SubscriptionManager({
       signer,
       functionsRouterAddress,
       linkTokenAddress: linkTokenAddress || "",
@@ -541,13 +557,13 @@ export class FunctionsSubscriptionManager {
 }
 
 export class FunctionsResponseListener {
-  private responseListener: ResponseListener;
+  private responseListener: functionsToolkit.ResponseListener;
 
   private constructor(
     functionsRouterAddress: string,
     provider: providers.JsonRpcProvider
   ) {
-    this.responseListener = new ResponseListener({
+    this.responseListener = new functionsToolkit.ResponseListener({
       provider,
       functionsRouterAddress,
     });
@@ -598,14 +614,14 @@ export class FunctionsResponseListener {
 }
 
 export class FunctionsSecretsManager {
-  private secretsManager: SecretsManager;
+  private secretsManager: functionsToolkit.SecretsManager;
 
   private constructor(
     signer: Signer,
     functionsRouterAddress: string,
     donId: string
   ) {
-    this.secretsManager = new SecretsManager({
+    this.secretsManager = new functionsToolkit.SecretsManager({
       signer,
       functionsRouterAddress,
       donId,
