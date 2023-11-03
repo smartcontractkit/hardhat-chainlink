@@ -99,8 +99,8 @@ This document provides detailed information about each service module and its re
       * [Get Keeper Info](#get-keeper-info)
       * [Get Type And Version](#get-type-and-version-2)
       * [Get Upkeep Transcoder Version](#get-upkeep-transcoder-version)
-  * [Functions Services](#functions-services)
-    * [Service alias: `functionsRouter`](#service-alias-functionsrouter)
+  * [Functions Service](#functions-service)
+    * [Service alias: `functions`](#service-alias-functions)
     * [Methods](#methods-8)
       * [Create subscription](#create-subscription-1)
       * [Fund subscription](#fund-subscription-1)
@@ -893,7 +893,7 @@ which serves to add tasks for Chainlink Keepers to perform on client contracts.
 - **Arguments:**
   - `keeperRegistryAddress`: Address of Keeper Registry
 
-## Functions Services
+## Functions Service
 
 Chainlink [Functions](https://docs.chain.link/chainlink-functions) service provides your smart contracts access to 
 trust-minimized compute infrastructure, allowing you to fetch data from APIs and perform custom computation.
@@ -902,7 +902,7 @@ trust-minimized compute infrastructure, allowing you to fetch data from APIs and
 > Most of the methods under this section are thin wrappers for the methods provided by 
 > the [functions-toolkit](https://github.com/smartcontractkit/functions-toolkit) NPM package.
 
-### Service alias: `functionsRouter`
+### Service alias: `functions`
 
 This section provides methods and functionalities designed to interact with the Functions Router smart contract.
 
