@@ -223,6 +223,9 @@ deploying and interacting with such contracts as [LinkToken](contracts%2FLinkTok
 ### Configure and run Functions requests simulations
 
 This plugin allows you to run local Functions requests simulations.
+A simulation is an execution of your custom JavaScript code in a locally spun up Deno sandbox environment.
+It is useful for debugging and for checking whether the source code you supply to Chainlink Functions can reasonably be expected to work when passed on-chain.
+
 > **Note**  
 Install [Deno](https://deno.com/) and add it to PATH, run ```deno --version``` to verify installation. Instructions: [deno.land/#installation](deno.land/#installation).
 
