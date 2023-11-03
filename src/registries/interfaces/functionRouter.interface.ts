@@ -1,7 +1,7 @@
 export interface FunctionsRouter {
   contractAddress: string;
   donId: string;
-  donIdHex: string;
+  donIdBytes32: string;
   encryptedSecretsUploadEndpoints: string[];
   chainId: string;
 }
