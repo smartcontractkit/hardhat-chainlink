@@ -57,6 +57,21 @@ module.exports = {
 }
 ```
 
+## Available Services
+The Hardhat Chainlink plugin supports the following Chainlink services:
+
+- `dataFeed` (Data Feeds)
+- `dataFeedProxy` (Data Feed Proxies)
+- `feedRegistry` (Feed Registries)
+- `l2Sequencer` (L2 Sequencers)
+- `ens` (ENS - Ethereum Name Service)
+- `automationRegistry` (Automation Registries)
+- `automationRegistrar` (Automation Registrars)
+- `vrf` (Verifiable Random Functions)
+- `functionsRouter` (Functions Service)
+
+For a more in-depth understanding of available services and methods, please explore their [tests](test).
+
 ## Usage
 
 The Hardhat Chainlink plugin offers multiple ways to interact with Chainlink services,
@@ -132,21 +147,6 @@ async function myFunction() {
 ---
 Choose the method that fits your project's requirements and coding style.
 All three approaches provide the same set of functionalities, allowing you to interact with Chainlink services efficiently and effectively.
-
-### Available Services
-The Hardhat Chainlink plugin supports the following Chainlink services:
-
-- `dataFeed` (Data Feeds)
-- `dataFeedProxy` (Data Feed Proxies)
-- `feedRegistry` (Feed Registries)
-- `l2Sequencer` (L2 Sequencers)
-- `ens` (ENS - Ethereum Name Service)
-- `automationRegistry` (Automation Registries)
-- `automationRegistrar` (Automation Registrars)
-- `vrf` (Verifiable Random Functions)
-- `functionsRouter` (Functions Service)
-
-For a more in-depth understanding of available services and methods, please explore their [tests](test).
 
 ## Registries
 The Hardhat Chainlink plugin provides registries that contain information about smart contracts related
