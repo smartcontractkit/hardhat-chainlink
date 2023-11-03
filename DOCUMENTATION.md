@@ -120,8 +120,7 @@ This document provides detailed information about each service module and its re
       * [Listen for a response for single Functions request](#listen-for-a-response-for-single-functions-request)
       * [Listen for a response for single Functions request (from transaction)](#listen-for-a-response-for-single-functions-request-from-transaction)
       * [Listen for responses](#listen-for-responses)
-      * [Stop responses listener](#stop-responses-listener)
-      * [Stop responses listener](#stop-responses-listener-1)
+      * [Stop response listener](#stop-response-listener)
       * [Fetch DON public keys](#fetch-don-public-keys)
       * [Encrypt Gist URLs](#encrypt-gist-urls)
       * [Verify Gists secret URLs](#verify-gists-secret-urls)
@@ -129,6 +128,7 @@ This document provides detailed information about each service module and its re
       * [Upload encrypted secrets to DON](#upload-encrypted-secrets-to-don)
       * [List DON hosted encrypted secrets](#list-don-hosted-encrypted-secrets)
       * [Build DON hosted encrypted secrets reference](#build-don-hosted-encrypted-secrets-reference)
+      * [Fetch Request Commitments](#fetch-request-commitments)
   * [Utilities](#utilities)
     * [Service alias: `utils`](#service-alias-utils)
     * [Methods](#methods-9)
@@ -137,6 +137,8 @@ This document provides detailed information about each service module and its re
       * [Transfer ETH](#transfer-eth)
       * [Create GitHub gist](#create-github-gist)
       * [Delete GitHub gist](#delete-github-gist)
+      * [Build CBOR for Functions request](#build-cbor-for-functions-request)
+      * [Decode HEX String](#decode-hex-string)
   * [Sandbox `sandbox`](#sandbox-sandbox)
     * [Service alias: `functionsSimulation`](#service-alias-functionssimulation)
     * [Methods](#methods-10)
@@ -1056,15 +1058,9 @@ This section provides methods and functionalities designed to interact with the 
   - `subscriptionId`: Subscription ID
   - `callback`: Callback to be called when responses are fulfilled
 
-#### Stop responses listener
+#### Stop response listener
 - **Method:** stopListeningForResponses
-- **Description:** Stop responses listener
-- **Arguments:**
-  - `functionsRouterAddress`: Address of Functions Router
-
-#### Stop responses listener
-- **Method:** stopListeningForResponses
-- **Description:** Stop responses listener
+- **Description:** Stop response listener
 - **Arguments:**
   - `functionsRouterAddress`: Address of Functions Router
 
