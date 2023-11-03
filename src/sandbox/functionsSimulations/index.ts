@@ -1,56 +1,9 @@
 import * as functionsToolkit from "@chainlink/functions-toolkit";
 import { DecodedResult } from "@chainlink/functions-toolkit/dist/decodeResult";
 import { ReturnType } from "@chainlink/functions-toolkit/dist/types";
-import fs from "fs";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { join } from "path";
 
 import { DEFAULT_PORT } from "../../shared/constants";
-
-const writeSimulationConfigFile = async (
-  hre: HardhatRuntimeEnvironment
-): Promise<string> => {
-  const simulationConfig = hre.config.chainlink.functions_simulation;
-  let tsCodeSimulationsConfig = "";
-  tsCodeSimulationsConfig += `export const secrets = ${JSON.stringify(
-    simulationConfig.secrets || {}
-  )};`;
-  tsCodeSimulationsConfig += `export const maxOnChainResponseBytes = ${
-    simulationConfig.max_on_chain_response_bytes ||
-    functionsToolkit.DEFAULT_MAX_ON_CHAIN_RESPONSE_BYTES
-  };`;
-  tsCodeSimulationsConfig += `export const maxExecutionTimeMs = ${
-    simulationConfig.max_execution_time_ms ||
-    functionsToolkit.DEFAULT_MAX_EXECUTION_DURATION_MS
-  };`;
-  tsCodeSimulationsConfig += `export const maxMemoryUsageMb = ${
-    simulationConfig.max_memory_usage_mb ||
-    functionsToolkit.DEFAULT_MAX_MEMORY_USAGE_MB
-  };`;
-  tsCodeSimulationsConfig += `export const numAllowedQueries = ${
-    simulationConfig.num_allowed_queries ||
-    functionsToolkit.DEFAULT_MAX_HTTP_REQUESTS
-  };`;
-  tsCodeSimulationsConfig += `export const maxQueryDurationMs = ${
-    simulationConfig.max_query_duration_ms ||
-    functionsToolkit.DEFAULT_MAX_HTTP_REQUEST_DURATION_MS
-  };`;
-  tsCodeSimulationsConfig += `export const maxQueryUrlLength = ${
-    simulationConfig.max_query_url_length ||
-    functionsToolkit.DEFAULT_MAX_HTTP_REQUEST_URL_LENGTH
-  };`;
-  tsCodeSimulationsConfig += `export const maxQueryRequestBytes = ${
-    simulationConfig.max_query_request_bytes ||
-    functionsToolkit.DEFAULT_MAX_HTTP_REQUEST_BYTES
-  };`;
-  tsCodeSimulationsConfig += `export const maxQueryResponseBytes = ${
-    simulationConfig.max_query_response_bytes ||
-    functionsToolkit.DEFAULT_MAX_ON_CHAIN_RESPONSE_BYTES
-  };`;
-  const pathToFile = join(__dirname, "/simulationConfig.ts");
-  await fs.promises.writeFile(pathToFile, tsCodeSimulationsConfig);
-  return pathToFile;
-};
 
 export const simulateRequest = async (
   hre: HardhatRuntimeEnvironment,
@@ -58,10 +11,9 @@ export const simulateRequest = async (
   args?: string[],
   bytesArgs?: string[]
 ): Promise<DecodedResult> => {
-  const pathToConfigFile = await writeSimulationConfigFile(hre);
   const simulationDeployment =
     await functionsToolkit.startLocalFunctionsTestnet(
-      pathToConfigFile,
+      undefined,
       {},
       hre.config.chainlink.functions_simulation?.port || DEFAULT_PORT
     );
@@ -133,8 +85,6 @@ export const simulateRequest = async (
   const receipt = await provider.getTransactionReceipt(transactionHash);
   const requestId = receipt.logs[0].topics[1];
   const response = await responseListener.listenForResponse(requestId);
-
-  await fs.promises.unlink(pathToConfigFile);
 
   return hre.chainlink.utils.decodeResult(
     response.responseBytesHexstring,

@@ -220,31 +220,22 @@ The corresponding functionality is implemented in a special tasks module `sandbo
 This module implements methods for starting, restarting and stopping a Chainlink node, getting Chainlink node information,
 deploying and interacting with such contracts as [LinkToken](contracts%2FLinkToken.sol), [Operator](contracts%2FOperator.sol), [FunctionsConsumer.sol](contracts%2FFunctionsConsumer.sol) and [ChainlinkDirectRequestConsumer](contracts%2FChainlinkDirectRequestConsumer.sol).
 
-### Configure and run Functions requests simulations
+### Configure and run Functions request simulations
 
-This plugin allows you to run local Functions requests simulations.
+This plugin allows you to run local Functions request simulations.
 A simulation is an execution of your custom JavaScript code in a locally spun up Deno sandbox environment.
 It is useful for debugging and for checking whether the source code you supply to Chainlink Functions can reasonably be expected to work when passed on-chain.
 
 > **Note**  
 Install [Deno](https://deno.com/) and add it to PATH, run ```deno --version``` to verify installation. Instructions: [deno.land/#installation](deno.land/#installation).
 
-Before you run Functions requests simulations, you can configure it. To achieve this, parameters have been included in the Hardhat configuration `chainlink` group:
+Before you run Functions request simulations, you can configure it. To achieve this, related parameters have been included in the Hardhat configuration `chainlink` group:
 `hardhat.config.ts`:
 ```ts
 module.exports = {
   chainlink: {
     functions_simulation: {
       port, // Ganache local blockchain port, default: "8546"
-      secrets, // Secrets in the format of "string" key/value to be passed to Functions, , e.g. { test: "hello world" }, default: {}
-      max_on_chain_response_bytes, // Max on-chain response, bytes, default: 256
-      max_execution_time_ms, // Max execution time, ms, default: 10_000
-      max_memory_usage_mb, // Max memory usage, MB, default: 128
-      num_allowed_queries, // Max HTTP requests, default: 5
-      max_query_duration_ms, // Max HTTP request duration, ms, default: 9_000
-      max_query_url_length, // Max HTTP request URL length, bytes, default: 2048
-      max_query_request_bytes, // Max HTTP request, bytes, default: 2048
-      max_query_response_bytes, // Max HTTP response, bytes, default: 2_097_152
     }
   },
   ...

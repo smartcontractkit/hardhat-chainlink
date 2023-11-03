@@ -29,15 +29,6 @@ export interface ChainlinkUserConfig {
   };
   functions_simulation: {
     port?: number;
-    secrets?: Record<string, string>;
-    max_on_chain_response_bytes?: number;
-    max_execution_time_ms?: number;
-    max_memory_usage_mb?: number;
-    num_allowed_queries?: number;
-    max_query_duration_ms?: number;
-    max_query_url_length?: number;
-    max_query_request_bytes?: number;
-    max_query_response_bytes?: number;
   };
 }
 
@@ -72,17 +63,6 @@ extendConfig(
       },
       functions_simulation: {
         port: functions_simulation?.port,
-        secrets: functions_simulation?.secrets,
-        max_on_chain_response_bytes:
-          functions_simulation?.max_on_chain_response_bytes,
-        max_execution_time_ms: functions_simulation?.max_execution_time_ms,
-        max_memory_usage_mb: functions_simulation?.max_memory_usage_mb,
-        num_allowed_queries: functions_simulation?.num_allowed_queries,
-        max_query_duration_ms: functions_simulation?.max_query_duration_ms,
-        max_query_url_length: functions_simulation?.max_query_url_length,
-        max_query_request_bytes: functions_simulation?.max_query_request_bytes,
-        max_query_response_bytes:
-          functions_simulation?.max_query_response_bytes,
       },
     };
   }
