@@ -83,7 +83,7 @@ export const buildRequestCBOR = async (
   return functionsToolkit.buildRequestCBOR(requestParams);
 };
 
-export const decodeResult = async (
+export const decodeHexString = async (
   resultHexString: string,
   expectedReturnType: ReturnType
 ): Promise<DecodedResult> => {

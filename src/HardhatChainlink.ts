@@ -1442,7 +1442,7 @@ class Utils {
     return utils.deleteGist(githubApiToken, content);
   }
   
-  public async buildRequestCBOR(
+  public async buildFunctionsRequestCBOR(
     codeLocation: Location,
     codeLanguage: CodeLanguage,
     source: string,
@@ -1462,11 +1462,11 @@ class Utils {
     });
   }
 
-  public async decodeResult(
+  public async decodeHexString(
     resultHexstring: string,
     expectedReturnType: ReturnType
   ): Promise<DecodedResult> {
-    return utils.decodeResult(resultHexstring, expectedReturnType);
+    return utils.decodeHexString(resultHexstring, expectedReturnType);
   }
 }
 

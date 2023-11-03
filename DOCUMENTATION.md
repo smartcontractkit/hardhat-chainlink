@@ -1035,7 +1035,7 @@ This section provides methods and functionalities designed to interact with the 
 - **Description:** Listen for a response for single Functions request
 - **Arguments:**
   - `functionsRouterAddress`: Address of Functions Router
-  - `requestId`: ID of the DON to which the Functions request will be sent
+  - `requestId`: Request ID
   - `timeout`: Subscription ID (Default: 300_000)
 
 #### Listen for a response for single Functions request (from transaction)
@@ -1126,6 +1126,16 @@ This section provides methods and functionalities designed to interact with the 
   - `slotId`: Storage slot ID, can be any integer value of zero or greater
   - `version`: Reference version, any integer value of zero or greater
 
+#### Fetch Request Commitments
+- **Method:** fetchRequestCommitment
+- **Description:** Fetch Commitments for Function request
+- **Arguments:**
+  - `functionsRouterAddress`: Address of Functions Router
+  - `donId`: ID of the DON to work with
+  - `requestId`: Request ID
+  - `toBlock`: Ending block number to search for the request commitment
+  - `pastBlocksToSearch`: Number of blocks from the ending block to search for the request commitment
+
 ## Utilities
 
 The plugin utility methods.
@@ -1172,6 +1182,30 @@ The plugin utility methods.
 - **Arguments:**
   - `githubApiToken`: GitHub API token
   - `content`: Gist content
+
+> **Note**
+> The following are methods that are available only in HRE
+
+#### Build CBOR for Functions request
+
+- **Method:** buildFunctionsRequestCBOR
+- **Description:** Build CBOR for Functions request
+- **Arguments:**
+  - `codeLocation`: Inline = 0 | Remote = 1 | DONHosted = 2
+  - `codeLanguage`: JavaScript = 0
+  - `source`: Functions request source code
+  - `secretsLocation`: Inline = 0 | Remote = 1 | DONHosted = 2
+  - `encryptedSecretsReference`: HEX string, result of buildDONHostedEncryptedSecretsReference method
+  - `args`: Functions request args
+  - `bytesArgs`: Functions request bytes args
+
+#### Decode HEX String
+
+- **Method:** decodeHexString
+- **Description:** Decode HEX String
+- **Arguments:**
+  - `resultHexString`: HEX string to decode
+  - `expectedReturnType`: 'uint256' | 'int256' | 'string'
 
 ## Sandbox `sandbox`
 
@@ -1341,7 +1375,6 @@ This section provides methods and functionalities designed to interact with the 
 - **Description:** Get latest answer
 - **Arguments:**
   - `directRequestConsumerAddress`: Direct Request Consumer address
-
 
 
 ### Service alias: `functionsConsumer`

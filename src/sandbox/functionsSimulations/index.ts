@@ -86,7 +86,7 @@ export const simulateRequest = async (
   const requestId = receipt.logs[0].topics[1];
   const response = await responseListener.listenForResponse(requestId);
 
-  return hre.chainlink.utils.decodeResult(
+  return hre.chainlink.utils.decodeHexString(
     response.responseBytesHexstring,
     ReturnType.string
   );
