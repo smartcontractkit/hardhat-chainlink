@@ -7,7 +7,6 @@ import {
   DRConsumerSubtask,
   ENSFeedsResolverSubtask,
   FeedRegistrySubtask,
-  FunctionsConsumerSubtask,
   FunctionsSimulationSubtask,
   FunctionsSubtask,
   L2SequencerSubtask,
@@ -30,7 +29,6 @@ import * as l2FeedUptimeSequencerActions from "../tasks/feeds/l2FeedUptimeSequen
 import * as functionsActions from "../tasks/functions";
 import * as registriesActions from "../tasks/registries";
 import * as drConsumerActions from "../tasks/sandbox/drConsumer";
-import * as functionsConsumerActions from "../tasks/sandbox/functionsConsumer";
 import * as functionsSimulationActions from "../tasks/sandbox/functionsSimulation";
 import * as linkTokenActions from "../tasks/sandbox/linkToken";
 import * as nodeActions from "../tasks/sandbox/node";
@@ -1726,140 +1724,6 @@ export const subtasks: Subtasks = {
         {
           name: "directRequestConsumerAddress",
           description: "Direct Request Consumer address",
-        },
-      ],
-    },
-  },
-  [Task.functionsConsumer]: {
-    [FunctionsConsumerSubtask.deploy]: {
-      action: functionsConsumerActions.deploy,
-      description: "Deploy Functions Consumer",
-      args: [
-        {
-          name: "functionsRouterAddress",
-          description: "Functions Router address",
-        },
-        {
-          name: "donId",
-          description: "ID of the DON where Functions requests will be sent",
-        },
-      ],
-    },
-    [FunctionsConsumerSubtask.sendRequest]: {
-      action: functionsConsumerActions.sendRequest,
-      description: "Send Functions request",
-      args: [
-        {
-          name: "functionsRouterAddress",
-          description: "Functions Router address",
-        },
-        {
-          name: "subscriptionId",
-          description: "Subscription ID",
-        },
-        {
-          name: "source",
-          description: "Source code to execute",
-        },
-        {
-          name: "secretsLocation",
-          description: "Location of secrets",
-        },
-        {
-          name: "encryptedSecretsReference",
-          description: "Encrypted secrets reference",
-        },
-        {
-          name: "args",
-          description: "Comma-separated request args",
-          defaultValue: "",
-        },
-        {
-          name: "bytesArgs",
-          description: "Comma-separated request bytes args",
-          defaultValue: "",
-        },
-        {
-          name: "callbackGasLimit",
-          description: "Callback gas limit",
-          defaultValue: "100000",
-        },
-      ],
-    },
-    [FunctionsConsumerSubtask.sendEncodedRequest]: {
-      action: functionsConsumerActions.sendEncodedRequest,
-      description: "Send Functions Encoded Request",
-      args: [
-        {
-          name: "functionsRouterAddress",
-          description: "Functions Router address",
-        },
-        {
-          name: "subscriptionId",
-          description: "Subscription ID",
-        },
-        {
-          name: "encodedRequest",
-          description: "Encoded Functions request",
-        },
-        {
-          name: "callbackGasLimit",
-          description: "Callback gas limit",
-          defaultValue: "100000",
-        },
-      ],
-    },
-    [FunctionsConsumerSubtask.setDonId]: {
-      action: functionsConsumerActions.setDonId,
-      description: "Set DON ID",
-      args: [
-        {
-          name: "functionsRouterAddress",
-          description: "Functions Router address",
-        },
-        {
-          name: "donId",
-          description: "ID of the DON where Functions requests will be sent",
-        },
-      ],
-    },
-    [FunctionsConsumerSubtask.getDonId]: {
-      action: functionsConsumerActions.getDonId,
-      description: camelToFlat(FunctionsConsumerSubtask.getDonId),
-      args: [
-        {
-          name: "functionsRouterAddress",
-          description: "Functions Router address",
-        },
-      ],
-    },
-    [FunctionsConsumerSubtask.getLastRequestId]: {
-      action: functionsConsumerActions.getLastRequestId,
-      description: camelToFlat(FunctionsConsumerSubtask.getLastRequestId),
-      args: [
-        {
-          name: "functionsRouterAddress",
-          description: "Functions Router address",
-        },
-      ],
-    },
-    [FunctionsConsumerSubtask.getLastResponse]: {
-      action: functionsConsumerActions.getLastResponse,
-      description: camelToFlat(FunctionsConsumerSubtask.getLastResponse),
-      args: [
-        {
-          name: "functionsRouterAddress",
-          description: "Functions Router address",
-        },
-      ],
-    },
-    [FunctionsConsumerSubtask.getLastError]: {
-      action: functionsConsumerActions.getLastError,
-      description: camelToFlat(FunctionsConsumerSubtask.getLastError),
-      args: [
-        {
-          name: "functionsRouterAddress",
-          description: "Functions Router address",
         },
       ],
     },

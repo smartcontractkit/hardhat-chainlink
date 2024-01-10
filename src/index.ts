@@ -285,21 +285,6 @@ task(
   printSubtasks(Task.linkToken);
 });
 
-// FUNCTIONS CONSUMER
-task(`${PACKAGE_NAME}:${Task.functionsConsumer}`, "Functions Consumer Module")
-  .addOptionalPositionalParam("subtask", "Subtask")
-  .addOptionalParam("args", "Subtask args")
-  .setAction(async (taskArgs, hre) => {
-    return resolveTask(hre, Task.functionsConsumer, taskArgs);
-  });
-
-task(
-  `${PACKAGE_NAME}:${Task.functionsConsumer}:subtasks`,
-  "Functions Consumer Module: Subtasks List"
-).setAction(async () => {
-  printSubtasks(Task.functionsConsumer);
-});
-
 // FUNCTIONS SIMULATION
 task(
   `${PACKAGE_NAME}:${Task.functionsSimulation}`,

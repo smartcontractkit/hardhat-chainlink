@@ -22,7 +22,6 @@ import * as l2FeedUptimeSequencer from "./feeds/l2FeedUptimeSequencer";
 import * as functions from "./functions";
 import * as registries from "./registries";
 import * as drConsumer from "./sandbox/drConsumer";
-import * as functionsConsumer from "./sandbox/functionsConsumer";
 import * as functionsSimulations from "./sandbox/functionsSimulations";
 import * as linkToken from "./sandbox/linkToken";
 import * as node from "./sandbox/node";
@@ -91,7 +90,6 @@ class Sandbox {
   public operator: Operator;
   public drConsumer: DRConsumer;
   public linkToken: LinkToken;
-  public functionsConsumer: FunctionsConsumer;
   public functionsSimulation: FunctionsSimulation;
 
   constructor(hre: HardhatRuntimeEnvironment) {
@@ -99,7 +97,6 @@ class Sandbox {
     this.operator = new Operator(hre);
     this.drConsumer = new DRConsumer(hre);
     this.linkToken = new LinkToken(hre);
-    this.functionsConsumer = new FunctionsConsumer(hre);
     this.functionsSimulation = new FunctionsSimulation(hre);
   }
 }
@@ -1624,119 +1621,6 @@ class LinkToken {
       spender,
       subtractedValue
     );
-  }
-}
-
-class FunctionsConsumer {
-  private hre: HardhatRuntimeEnvironment;
-
-  constructor(hre: HardhatRuntimeEnvironment) {
-    this.hre = hre;
-  }
-
-  public async deploy(
-    functionsRouterAddress: string,
-    donId: string,
-    overrides?: Overrides
-  ): Promise<string> {
-    return functionsConsumer.deploy(
-      this.hre,
-      functionsRouterAddress,
-      donId,
-      overrides
-    );
-  }
-
-  public async initializeFunctionsConsumer(
-    functionsConsumerAddress: string,
-    overrides?: Overrides
-  ): Promise<functionsConsumer.FunctionsConsumer> {
-    return functionsConsumer.FunctionsConsumer.initialize({
-      hre: this.hre,
-      functionsConsumerAddress,
-      overrides,
-    });
-  }
-
-  public async sendRequest(
-    functionsConsumerAddress: string,
-    subscriptionId: BigNumberish,
-    source: string,
-    encryptedSecretsReference: string,
-    secretsLocation: Location,
-    args?: string[],
-    bytesArgs?: string[],
-    callbackGasLimit?: BigNumberish,
-    overrides?: Overrides
-  ): Promise<{ transactionHash: string }> {
-    return functionsConsumer.sendRequest(
-      this.hre,
-      functionsConsumerAddress,
-      subscriptionId,
-      source,
-      encryptedSecretsReference,
-      secretsLocation,
-      args,
-      bytesArgs,
-      callbackGasLimit,
-      overrides
-    );
-  }
-
-  public async sendEncodedRequest(
-    functionsConsumerAddress: string,
-    subscriptionId: BigNumberish,
-    encodedRequest: string,
-    callbackGasLimit: BigNumberish,
-    overrides?: Overrides
-  ): Promise<{ transactionHash: string }> {
-    return functionsConsumer.sendEncodedRequest(
-      this.hre,
-      functionsConsumerAddress,
-      subscriptionId,
-      encodedRequest,
-      callbackGasLimit,
-      overrides
-    );
-  }
-
-  public async setDonId(
-    functionsConsumerAddress: string,
-    donId: string,
-    overrides?: Overrides
-  ): Promise<{ transactionHash: string }> {
-    return functionsConsumer.setDonId(
-      this.hre,
-      functionsConsumerAddress,
-      donId,
-      overrides
-    );
-  }
-
-  public async getDonId(functionsConsumerAddress: string): Promise<string> {
-    return functionsConsumer.getDonId(this.hre, functionsConsumerAddress);
-  }
-
-  public async getLastRequestId(
-    functionsConsumerAddress: string
-  ): Promise<string> {
-    return functionsConsumer.getLastRequestId(
-      this.hre,
-      functionsConsumerAddress
-    );
-  }
-
-  public async getLastResponse(
-    functionsConsumerAddress: string
-  ): Promise<string> {
-    return functionsConsumer.getLastResponse(
-      this.hre,
-      functionsConsumerAddress
-    );
-  }
-
-  public async getLastError(functionsConsumerAddress: string): Promise<string> {
-    return functionsConsumer.getLastError(this.hre, functionsConsumerAddress);
   }
 }
 

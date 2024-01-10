@@ -14,7 +14,6 @@ export enum Task {
   operator = "sandbox:operator",
   drConsumer = "sandbox:drConsumer",
   linkToken = "sandbox:linkToken",
-  functionsConsumer = "sandbox:functionsConsumer",
   functionsSimulation = "sandbox:functionsSimulation",
 }
 
@@ -170,17 +169,6 @@ export enum LinkTokenSubtask {
   getAllowance = "getAllowance",
   increaseApproval = "increaseApproval",
   decreaseApproval = "decreaseApproval",
-}
-
-export enum FunctionsConsumerSubtask {
-  deploy = "deploy",
-  sendRequest = "sendRequest",
-  sendEncodedRequest = "sendEncodedRequest",
-  setDonId = "setDonId",
-  getDonId = "getDonId",
-  getLastRequestId = "getLastRequestId",
-  getLastResponse = "getLastResponse",
-  getLastError = "getLastError",
 }
 
 export enum FunctionsSimulationSubtask {

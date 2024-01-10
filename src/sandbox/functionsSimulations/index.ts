@@ -4,6 +4,7 @@ import { ReturnType } from "@chainlink/functions-toolkit/dist/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { DEFAULT_PORT } from "../../shared/constants";
+import * as functionsConsumer from "../functionsConsumer";
 
 export const simulateRequest = async (
   hre: HardhatRuntimeEnvironment,
@@ -27,24 +28,15 @@ export const simulateRequest = async (
     simulationDeployment.adminWallet.privateKey,
     provider
   );
-  const functionsConsumerAddress =
-    await hre.chainlink.sandbox.functionsConsumer.deploy(
-      simulationDeployment.functionsRouterContract.address,
-      simulationDeployment.donId,
-      {
-        signer: admin,
-        provider,
-      }
-    );
-
-  const functionsConsumer =
-    await hre.chainlink.sandbox.functionsConsumer.initializeFunctionsConsumer(
-      functionsConsumerAddress,
-      {
-        signer: admin,
-        provider,
-      }
-    );
+  const functionsConsumerAddress = await functionsConsumer.deploy(
+    hre,
+    simulationDeployment.functionsRouterContract.address,
+    simulationDeployment.donId,
+    {
+      signer: admin,
+      provider,
+    }
+  );
 
   const subscriptionManager =
     await hre.chainlink.functions.initializeFunctionsSubscriptionManager(
@@ -73,6 +65,8 @@ export const simulateRequest = async (
   await subscriptionManager.fundSubscription(juelsAmount, subscriptionId);
 
   const { transactionHash } = await functionsConsumer.sendRequest(
+    hre,
+    functionsConsumerAddress,
     subscriptionId,
     source,
     "0xabcd",
