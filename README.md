@@ -1,20 +1,22 @@
+# Hardhat Chainlink Plugin
+
+<br>
 <p align="center">
   <a href="https://chain.link" target="_blank">
     <img src="https://raw.githubusercontent.com/smartcontractkit/hardhat-starter-kit/main/box-img-lg.png" width="225" alt="Chainlink Hardhat logo">
   </a>
 </p>
-
-# Hardhat Chainlink Plugin
+<br/>
 
 The Hardhat Chainlink plugin allows users to seamlessly interact with Chainlink services in their Hardhat-based projects.
-It provides atomic methods to interact with smart contracts related to the main Chainlink services: Data Feeds, VRF, and Automation.
+It provides atomic methods to interact with smart contracts related to Chainlink services: Data Feeds, VRF, Automation and Functions.
 This plugin offers a convenient way to integrate Chainlink functionality into your web3 development workflow.
 
 > **Warning**
 >
 > **This package is currently in the BETA testing phase and is not recommended for production usage yet.**
 >
-> **Open issues to submit bugs and earn the Beta Tester POAP.**
+> **Open issues to submit bugs.**
 
 ## Installation
 > **Note**  
@@ -46,36 +48,33 @@ require("@chainlink/hardhat-chainlink");
 import "@chainlink/hardhat-chainlink";
 ```
 
-This plugin also extends the Hardhat configuration and adds `chainlink` parameters group:
-`hardhat.config.ts`:
-```ts
-module.exports = {
-  chainlink: {
-    confirmations // Number of confirmations to wait for transactions, default: 1
-  },
-  ...
-}
-```
-
-## Available Services
-The Hardhat Chainlink plugin supports the following Chainlink services:
-
-- `dataFeed` (Data Feeds)
-- `dataFeedProxy` (Data Feed Proxies)
-- `feedRegistry` (Feed Registries)
-- `l2Sequencer` (L2 Sequencers)
-- `ens` (ENS - Ethereum Name Service)
-- `automationRegistry` (Automation Registries)
-- `automationRegistrar` (Automation Registrars)
-- `vrf` (Verifiable Random Functions)
-- `functions` (Functions Service)
-
-For a more in-depth understanding of available services and methods, please explore their [tests](test).
-
 ## Usage
 
 The Hardhat Chainlink plugin offers multiple ways to interact with Chainlink services,
 giving you the flexibility to choose the approach that suits your workflow best.
+
+Below is a mapping of the names of supported Chainlink services:
+- `dataFeed`: Data Feeds
+- `dataFeedProxy`: Data Feed Proxies
+- `feedRegistry`: Feed Registries
+- `l2Sequencer`: L2 Sequencers
+- `ens`: ENS (Ethereum Name Service)
+- `automationRegistry`: Automation Registries
+- `automationRegistrar`: Automation Registrars
+- `vrf`: VRF (Verifiable Random Functions)
+- `functions`: Functions service
+
+The number of confirmations to wait for transactions to Chainlink services can be set using
+the corresponding parameter in the `chainlink` parameters group of `hardhat.config.ts`:
+```ts
+module.exports = {
+  ...,
+  chainlink: {
+    confirmations // Number of confirmations to wait for transactions (default: 1)
+  },
+  ...
+}
+```
 
 ### 1. CLI
 
@@ -147,6 +146,7 @@ async function myFunction() {
 ---
 Choose the method that fits your project's requirements and coding style.
 All three approaches provide the same set of functionalities, allowing you to interact with Chainlink services efficiently and effectively.
+For a more in-depth understanding of available services and methods, please explore their [tests](test).
 
 ## Registries
 The Hardhat Chainlink plugin provides registries that contain information about smart contracts related
@@ -156,11 +156,21 @@ which is useful for interacting with the Feed Registry.
 In general, these registries help you access essential contract addresses deployed on different networks,
 making it easier to integrate Chainlink services into your projects.
 
-You can access the plugin registries using one of the following methods:
+Below is a list of the registries provided by Hardhat Chainlink plugin:
+- `dataFeeds`: Addresses of Data Feeds-related contracts: Aggregators and Proxies, and their parameters.
+- `feedRegistries`: Feed Registries' contract addresses.
+- `l2Sequencers`: L2 Sequencer Uptime Feeds' contract addresses.
+- `keeperRegistries`: Addresses of Automation-related contracts: Keeper Registry and Keeper Registrar.
+- `linkTokens`: Link Tokens' contract addresses.
+- `vrfCoordinators`: Addresses of VRF Coordinators and their parameters.
+- `functionsRouters`: Addresses of Functions Routers and their parameters.
+- `denominations`: Records from Denominations library to interact with Feed Registries contracts.
+
+You can access them using one of the following methods:
 
 ### 1. CLI
 
-To interact with the registries through the CLI, use the following command:
+Access the registries through the CLI using the following command:
 ```
 npx hardhat chainlink:registries [method]
 ```
@@ -188,7 +198,7 @@ Access the registries as methods directly in the Hardhat Environment:
 const registry = hre.chainlink.registries.{registryName};
 ```
 
-Replace {registryName} with the name of the registry (e.g., dataFeeds, feedRegistries, keeperRegistries).
+Replace the `{registryName}` placeholder with the name of the registry (e.g., dataFeeds, feedRegistries, keeperRegistries).
 
 Example of getting data from registry in the Hardhat Environment:
 ```js
@@ -198,39 +208,24 @@ async function myFunction() {
   // 0xE62B71cf983019BFf55bC83B48601ce8419650CC
 }
 ```
-
-### Available registries
-
-The Hardhat Chainlink plugin provides the following registries:
-- `dataFeeds`: Addresses of Data Feeds-related contracts: Aggregators and Proxies, and their parameters.
-- `feedRegistries`: Feed Registries' contract addresses.
-- `l2Sequencers`: L2 Sequencer Uptime Feeds' contract addresses.
-- `keeperRegistries`: Addresses of Automation-related contracts: Keeper Registry and Keeper Registrar.
-- `linkTokens`: Link Tokens' contract addresses.
-- `vrfCoordinators`: Addresses of VRF Coordinators and their parameters.
-- `functionsRouters`: Addresses of Functions Routers and their parameters.
-- `denominations`: Records from Denominations library to interact with Feed Registries contracts.
-
+---
 For a more in-depth understanding of the structure of these records, please explore their [interfaces](src%2Fregistries%2Finterfaces).
 
 ## Sandbox
 
-In addition to the primary feature of interacting with Chainlink services, this plugin provides the ability to manage a local Chainlink node.
-The corresponding functionality is implemented in a special tasks module `sandbox`.
-This module implements methods for starting, restarting and stopping a Chainlink node, getting Chainlink node information,
-deploying and interacting with such contracts as [LinkToken](contracts%2FLinkToken.sol), [Operator](contracts%2FOperator.sol), [FunctionsConsumer.sol](contracts%2FFunctionsConsumer.sol) and [ChainlinkDirectRequestConsumer](contracts%2FChainlinkDirectRequestConsumer.sol).
+The `sandbox` module of Hardhat Chainlink plugin provides the ability to test dApps against Chainlink services locally and run simulations.
 
-### Configure and run Functions request simulations
+### Functions request simulation
 
-This plugin allows you to run local Functions request simulations.
+This plugin enables you to run local Functions request simulations.
 A simulation is an execution of your custom JavaScript code in a locally spun up Deno sandbox environment.
 It is useful for debugging and for checking whether the source code you supply to Chainlink Functions can reasonably be expected to work when passed on-chain.
 
 > **Note**  
-Install [Deno](https://deno.com/) and add it to PATH, run ```deno --version``` to verify installation. Instructions: [deno.land/#installation](deno.land/#installation).
+Install [Deno](https://deno.com/) and add it to PATH, run ```deno --version``` to verify installation. Instructions: [https://deno.com/#installation](https://deno.com/#installation).
 
-Before you run Functions request simulations, you can configure it. To achieve this, related parameters have been included in the Hardhat configuration `chainlink` group:
-`hardhat.config.ts`:
+Before you run Functions request simulations, you can configure it.  
+To achieve this, additional parameters have been included in the `chainlink` group of `hardhat.config.ts`:
 ```ts
 module.exports = {
   chainlink: {
@@ -242,30 +237,32 @@ module.exports = {
 }
 ```
 
-Once these parameters are specified, Functions requests simulations could be performed following the [documentation](DOCUMENTATION.md#service-alias-functionssimulation).
+Once these parameters are specified, Functions requests simulations could be performed following the [sandbox documentation](SANDBOX.md#service-alias-functionssimulation).
 
-### Configure, run and manage local Chainlink node
-
-This plugin allows you to run a local Chainlink node and then manage it using Docker.
+### Local testing
 > **Note**  
-Install and run Docker Daemon, and Docker Desktop for convenience. Instructions: [docs.docker.com/get-docker](https://docs.docker.com/get-docker/).
+> Install and run Docker Daemon, and Docker Desktop for convenience. Instructions: [docs.docker.com/get-docker](https://docs.docker.com/get-docker/).
 
-Before you start a Chainlink node, it's important to configure it. To achieve this, parameters have been included in the Hardhat configuration `chainlink` group:
-`hardhat.config.ts`:
+This plugin enables you to spin up a local Chainlink node, set up Chainlink services, and then conduct local tests.
+
+#### Configure local Chainlink node
+
+Before you start a Chainlink node, it's important to configure it.
+To achieve this, additional parameters have been included in the `chainlink` group of `hardhat.config.ts`:
 ```ts
 module.exports = {
   chainlink: {
     node: {
-      chain_id, // Chain ID, default: "1337"
-      chain_name, // Chain name, default: "local"
-      http_url, // JSON RPC HTTP endpoint, default: "http://host.docker.internal:8545"
-      ws_url, // JSON RPC WebSocket endpoint, default: "ws://host.docker.internal:8545"
-      cl_keystore_password, // Password to encode Chainlink keys in database, default: "password1234567890"
-      cl_api_user, // Email of Chainlink API user/admin, default: "user@chain.link"
-      cl_api_password, // Password of Chainlink API user/admin, default: "password1234567890"
-      pg_user, // Postgres DB user name, default: "chainlink"
-      pg_password, // Postgres DB user password, default: "password1234567890"
-      pg_db, // Postgres DB name, default: "chainlink"
+      chain_id, // Chain ID (default: "1337")
+      chain_name, // Chain name (default: "local")
+      http_url, // JSON RPC HTTP endpoint (default: "http://host.docker.internal:8545")
+      ws_url, // JSON RPC WebSocket endpoint (default: "ws://host.docker.internal:8545")
+      cl_keystore_password, // Password to encode Chainlink keys in database (default: "password1234567890")
+      cl_api_user, // Email of Chainlink API user/admin (default: "user@chain.link")
+      cl_api_password, // Password of Chainlink API user/admin (default: "password1234567890")
+      pg_user, // Postgres DB user name (default: "chainlink")
+      pg_password, // Postgres DB user password (default: "password1234567890")
+      pg_db, // Postgres DB name (default: "chainlink")
     }
   },
   ...
@@ -274,11 +271,15 @@ module.exports = {
 > **Note**
 > Passwords must contain both letters and numbers and be at least 16 characters long.
 
-Once these parameters are specified, Chainlink node could be started/restarted/stopped and managed with plugin following the [documentation](DOCUMENTATION.md#service-alias-node).  
+### Manage local Chainlink node
 
-You can also manage a Chainlink node either with Chainlink CLI or Chainlink node GUI.
+Once local Chainlink node parameters are specified, Chainlink node could be started/restarted/stopped and managed with the plugin following the [sandbox documentation](SANDBOX.md#service-alias-node).
+In order to login use credentials provided with `cl_api_user` and `cl_api_password`.
+
+Alternatively, you can manage a Chainlink node either with Chainlink CLI or Chainlink node GUI.
 
 #### Chainlink CLI
+
 Chainlink node CLI is available directly on a machine running Chainlink node, so first you have to connect with `bash` to a Docker container to be able to run commands.
 
 Here are some of the things you can do with the CLI:
@@ -288,13 +289,14 @@ Here are some of the things you can do with the CLI:
 * See/Create Chainlink node's keys: ETH, OCR, P2P
 * and more...
 
-Here is example command to get list of ETH keys that are used by the Chainlink node:
+Here is example command to get list of ETH keys that are used by a Chainlink node:
 ```bash
 chainlink keys eth list 
 ```
-The most useful commands to manage Chainlink node with UI you can find here: https://docs.chain.link/chainlink-nodes/resources/miscellaneous.
+The most useful commands to manage Chainlink node with CLI you can find here: https://docs.chain.link/chainlink-nodes/resources/miscellaneous.
 
 #### Chainlink GUI
+
 Chainlink node GUI is by default available on the port `6688`, this port is exposed with a docker-compose file to a host machine.
 
 Here are some of the things you can do with the GUI:
@@ -305,30 +307,14 @@ Here are some of the things you can do with the GUI:
 * See Chainlink node's current configuration
 * and more...
 
-In order to login use credentials provided with `cl_api_user` and `cl_api_password`.
-
-### Set up a Direct Request job with plugin
-
-Once Chainlink node is started, Direct Request job could be set up. It can be used for testing, learning and other purposes.  
-The process of setting up a Direct Request job is as follows:
-1. [Deploy Link Token contract](DOCUMENTATION.md#deploy-contract)
-2. [Deploy Operator contract](DOCUMENTATION.md#deploy-contract-1)
-3. [Deploy Direct Request Consumer contract](DOCUMENTATION.md#deploy-contract-1)
-4. [Get Chainlink node ETH accounts](DOCUMENTATION.md#get-eth-keys) and choose one of them
-5. [Fund chosen Chainlink ETH account](DOCUMENTATION.md#transfer-eth) with reasonable amount of ETH
-6. [Fund Direct Request Consumer contract with Link tokens](DOCUMENTATION.md#transfer) (at least 1 token)
-7. [Set chosen Chainlink ETH account to Operator contract as Authorized Sender](DOCUMENTATION.md#set-authorized-sender)
-8. [Create Direct Request job](DOCUMENTATION.md#create-direct-request-job)
-9. [Request data with Direct Request job](DOCUMENTATION.md#request-data)
-10. [Check if answer in Direct Request consumer was updated](DOCUMENTATION.md#get-latest-answer)
-
-More on Direct Request job: https://docs.chain.link/chainlink-nodes/oracle-jobs/all-jobs#direct-request-jobs.
-
 ## Documentation
 
-For detailed usage instructions and more information on each service and method, refer to the [DOCUMENTATION.md](DOCUMENTATION.md).
+For detailed usage instructions and more information, refer to:
+* [DOCUMENTATION.md](DOCUMENTATION.md) for interaction with Chainlink services;
+* [SANDBOX.md](SANDBOX.md) for local testing in Sandbox.
 
 ## Contribution
+
 We welcome contributions from the community.
 
 If you find any issues, have suggestions for improvements, or want to add new features to the plugin,
