@@ -24,7 +24,7 @@ export const deploy = async (
 
 export const requestData = async (
   hre: HardhatRuntimeEnvironment,
-  directRequestConsumerAddress: string,
+  drConsumerAddress: string,
   operatorAddress: string,
   externalJobID: string,
   observationURL: string,
@@ -33,7 +33,7 @@ export const requestData = async (
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await hre.ethers.getSigners();
   const drConsumer = ChainlinkDirectRequestConsumer__factory.connect(
-    directRequestConsumerAddress,
+    drConsumerAddress,
     signer
   );
 
@@ -56,11 +56,11 @@ export const requestData = async (
 
 export const getLatestAnswer = async (
   hre: HardhatRuntimeEnvironment,
-  directRequestConsumerAddress: string
+  drConsumerAddress: string
 ): Promise<BigNumber> => {
   const [signer] = await hre.ethers.getSigners();
   const drConsumer = ChainlinkDirectRequestConsumer__factory.connect(
-    directRequestConsumerAddress,
+    drConsumerAddress,
     signer
   );
   return drConsumer.answer();

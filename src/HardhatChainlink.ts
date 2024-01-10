@@ -919,7 +919,7 @@ class AutomationRegistry {
     executeGas: number;
     checkData: BytesLike;
     balance: BigNumber;
-    lastAutomationNode: string | undefined;
+    lastKeeper: string | undefined;
     admin: string;
     maxValidBlocknumber: BigNumber;
     amountSpent: BigNumber;
@@ -1029,7 +1029,7 @@ class Functions {
     this.hre = hre;
   }
 
-  public initializeFunctionsSubscriptionManager(
+  public initializeSubscriptionManager(
     functionsRouterAddress: string,
     linkTokenAddress: string,
     overrides?: Overrides
@@ -1042,7 +1042,7 @@ class Functions {
     });
   }
 
-  public initializeFunctionsResponseListener(
+  public initializeResponseListener(
     functionsRouterAddress: string,
     overrides?: Overrides
   ): Promise<functions.FunctionsResponseListener> {
@@ -1053,7 +1053,7 @@ class Functions {
     });
   }
 
-  public initializeFunctionsSecretsManager(
+  public initializeSecretsManager(
     functionsRouterAddress: string,
     donId: string,
     overrides?: Overrides
@@ -1434,9 +1434,9 @@ class Utils {
 
   public async deleteGist(
     githubApiToken: string,
-    content: string
+    gistURL: string
   ): Promise<boolean> {
-    return utils.deleteGist(githubApiToken, content);
+    return utils.deleteGist(githubApiToken, gistURL);
   }
   
   public async buildFunctionsRequestCBOR(
@@ -1540,7 +1540,7 @@ class DRConsumer {
   }
 
   public async requestData(
-    directRequestConsumerAddress: string,
+    drConsumerAddress: string,
     operatorAddress: string,
     externalJobID: string,
     observationURL: string,
@@ -1549,7 +1549,7 @@ class DRConsumer {
   ): Promise<{ transactionHash: string }> {
     return drConsumer.requestData(
       this.hre,
-      directRequestConsumerAddress,
+      drConsumerAddress,
       operatorAddress,
       externalJobID,
       observationURL,
@@ -1559,9 +1559,9 @@ class DRConsumer {
   }
 
   public async getLatestAnswer(
-    directRequestConsumerAddress: string
+    drConsumerAddress: string
   ): Promise<BigNumber> {
-    return drConsumer.getLatestAnswer(this.hre, directRequestConsumerAddress);
+    return drConsumer.getLatestAnswer(this.hre, drConsumerAddress);
   }
 }
 
@@ -1579,13 +1579,13 @@ class LinkToken {
   public async transfer(
     linkTokenAddress: string,
     recipient: string,
-    addedValue: BigNumberish
+    amount: BigNumberish
   ): Promise<{ transactionHash: string }> {
     return linkToken.transfer(
       this.hre,
       linkTokenAddress,
       recipient,
-      addedValue
+      amount
     );
   }
 

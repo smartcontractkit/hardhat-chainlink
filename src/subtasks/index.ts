@@ -1515,8 +1515,8 @@ export const subtasks: Subtasks = {
           description: "GitHub API Token",
         },
         {
-          name: "content",
-          description: "Gist content",
+          name: "gistURL",
+          description: "Gist URL",
         },
       ],
     },

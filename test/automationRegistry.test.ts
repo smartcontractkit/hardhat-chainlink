@@ -208,7 +208,7 @@ describe("Test chainlink:automationRegistry module", function () {
       const {
         target,
         balance,
-        lastAutomationNode,
+        lastKeeper,
         admin,
         maxValidBlocknumber,
         amountSpent,
@@ -221,7 +221,7 @@ describe("Test chainlink:automationRegistry module", function () {
 
       expect(target).to.eq(this.upkeep.address);
       expect(balance.toNumber()).to.eq(0);
-      expect(lastAutomationNode).to.eq(this.hre.ethers.constants.AddressZero);
+      expect(lastKeeper).to.eq(this.hre.ethers.constants.AddressZero);
       expect(admin).to.eq(signer.address);
       expect(maxValidBlocknumber.toString()).to.eq(UINT32_MAX.toString());
       expect(amountSpent.toNumber()).to.eq(0);
@@ -448,7 +448,7 @@ describe("Test chainlink:automationRegistry module", function () {
       const {
         target,
         balance,
-        lastAutomationNode,
+        lastKeeper,
         admin,
         maxValidBlocknumber,
         amountSpent,
@@ -464,7 +464,7 @@ describe("Test chainlink:automationRegistry module", function () {
 
       expect(target).to.eq(this.upkeep.address);
       expect(balance.toNumber()).to.eq(0);
-      expect(lastAutomationNode).to.eq(this.hre.ethers.constants.AddressZero);
+      expect(lastKeeper).to.eq(this.hre.ethers.constants.AddressZero);
       expect(admin).to.eq(signer.address);
       expect(maxValidBlocknumber.toString()).to.eq(UINT32_MAX.toString());
       expect(amountSpent.toNumber()).to.eq(0);
@@ -716,7 +716,7 @@ describe("Test chainlink:automationRegistry module", function () {
       const {
         target,
         balance,
-        lastAutomationNode,
+        lastKeeper,
         admin,
         maxValidBlocknumber,
         amountSpent,
@@ -732,7 +732,7 @@ describe("Test chainlink:automationRegistry module", function () {
 
       expect(target).to.eq(this.upkeep.address);
       expect(balance.toNumber()).to.eq(0);
-      expect(lastAutomationNode).to.eq(this.hre.ethers.constants.AddressZero);
+      expect(lastKeeper).to.eq(this.hre.ethers.constants.AddressZero);
       expect(admin).to.eq(signer.address);
       expect(maxValidBlocknumber.toString()).to.eq(UINT32_MAX.toString());
       expect(amountSpent.toNumber()).to.eq(0);

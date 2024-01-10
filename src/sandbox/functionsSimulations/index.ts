@@ -39,7 +39,7 @@ export const simulateRequest = async (
   );
 
   const subscriptionManager =
-    await hre.chainlink.functions.initializeFunctionsSubscriptionManager(
+    await hre.chainlink.functions.initializeSubscriptionManager(
       simulationDeployment.functionsRouterContract.address,
       simulationDeployment.linkTokenContract.address,
       {
@@ -49,7 +49,7 @@ export const simulateRequest = async (
     );
 
   const responseListener =
-    await hre.chainlink.functions.initializeFunctionsResponseListener(
+    await hre.chainlink.functions.initializeResponseListener(
       simulationDeployment.functionsRouterContract.address,
       {
         signer: admin,

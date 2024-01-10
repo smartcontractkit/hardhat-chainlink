@@ -11,7 +11,6 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { FunctionsSubscriptionDetails, Overrides } from "../shared/types";
 
 // DIRECT METHOD CALLS
-
 export const createSubscription = async (
   hre: HardhatRuntimeEnvironment,
   functionsRouterAddress: string,
