@@ -27,9 +27,6 @@ export interface ChainlinkUserConfig {
     pg_password?: string;
     pg_db?: string;
   };
-  functions_simulation: {
-    port?: number;
-  };
 }
 
 // Add our types to the Hardhat config
@@ -45,8 +42,7 @@ declare module "hardhat/types/config" {
 
 extendConfig(
   (config: HardhatConfig, userConfig: Readonly<HardhatUserConfig>) => {
-    const { confirmations, node, functions_simulation } =
-      userConfig.chainlink ?? {};
+    const { confirmations, node } = userConfig.chainlink ?? {};
     config.chainlink = {
       confirmations: confirmations || 1,
       node: {
@@ -60,9 +56,6 @@ extendConfig(
         pg_user: node?.pg_user,
         pg_password: node?.pg_password,
         pg_db: node?.pg_db,
-      },
-      functions_simulation: {
-        port: functions_simulation?.port,
       },
     };
   }

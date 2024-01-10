@@ -224,20 +224,7 @@ It is useful for debugging and for checking whether the source code you supply t
 > **Note**  
 Install [Deno](https://deno.com/) and add it to PATH, run ```deno --version``` to verify installation. Instructions: [https://deno.com/#installation](https://deno.com/#installation).
 
-Before you run Functions request simulations, you can configure it.  
-To achieve this, additional parameters have been included in the `chainlink` group of `hardhat.config.ts`:
-```ts
-module.exports = {
-  chainlink: {
-    functions_simulation: {
-      port, // Ganache local blockchain port, default: "8546"
-    }
-  },
-  ...
-}
-```
-
-Once these parameters are specified, Functions requests simulations could be performed following the [sandbox documentation](SANDBOX.md#service-alias-functionssimulation).
+Functions' requests simulations could be performed following the [sandbox documentation](SANDBOX.md#service-alias-functionssimulation).
 
 ### Local testing
 > **Note**  

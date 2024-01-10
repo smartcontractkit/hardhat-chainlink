@@ -1,87 +1,15 @@
 import * as functionsToolkit from "@chainlink/functions-toolkit";
-import { DecodedResult } from "@chainlink/functions-toolkit/dist/decodeResult";
-import { ReturnType } from "@chainlink/functions-toolkit/dist/types";
-import { HardhatRuntimeEnvironment } from "hardhat/types";
-
-import { DEFAULT_PORT } from "../../shared/constants";
-import * as functionsConsumer from "../functionsConsumer";
 
 export const simulateRequest = async (
-  hre: HardhatRuntimeEnvironment,
   source: string,
-  args?: string[],
-  bytesArgs?: string[]
-): Promise<DecodedResult> => {
-  const simulationDeployment =
-    await functionsToolkit.startLocalFunctionsTestnet(
-      undefined,
-      {},
-      hre.config.chainlink.functions_simulation?.port || DEFAULT_PORT
-    );
-
-  const provider = new hre.ethers.providers.JsonRpcProvider(
-    `http://localhost:${
-      hre.config.chainlink.functions_simulation?.port || DEFAULT_PORT
-    }/`
-  );
-  const admin = new hre.ethers.Wallet(
-    simulationDeployment.adminWallet.privateKey,
-    provider
-  );
-  const functionsConsumerAddress = await functionsConsumer.deploy(
-    hre,
-    simulationDeployment.functionsRouterContract.address,
-    simulationDeployment.donId,
-    {
-      signer: admin,
-      provider,
-    }
-  );
-
-  const subscriptionManager =
-    await hre.chainlink.functions.initializeSubscriptionManager(
-      simulationDeployment.functionsRouterContract.address,
-      simulationDeployment.linkTokenContract.address,
-      {
-        signer: admin,
-        provider,
-      }
-    );
-
-  const responseListener =
-    await hre.chainlink.functions.initializeResponseListener(
-      simulationDeployment.functionsRouterContract.address,
-      {
-        signer: admin,
-        provider,
-      }
-    );
-
-  const { subscriptionId } = await subscriptionManager.createSubscription(
-    functionsConsumerAddress
-  );
-
-  const juelsAmount = hre.ethers.utils.parseUnits("100", "ether");
-  await subscriptionManager.fundSubscription(juelsAmount, subscriptionId);
-
-  const { transactionHash } = await functionsConsumer.sendRequest(
-    hre,
-    functionsConsumerAddress,
-    subscriptionId,
+  secrets: Record<string, string>,
+  args: string[],
+  bytesArgs: string[]
+): Promise<functionsToolkit.SimulationResult> => {
+  return functionsToolkit.simulateScript({
     source,
-    "0xabcd",
-    functionsToolkit.Location.Remote,
+    secrets,
     args,
     bytesArgs,
-    100_000
-  );
-
-  const receipt = await provider.getTransactionReceipt(transactionHash);
-  const requestId = receipt.logs[0].topics[1];
-  const response = await responseListener.listenForResponse(requestId);
-
-  return hre.chainlink.utils.decodeHexString(
-    response.responseBytesHexstring,
-    ReturnType.string
-  );
+  });
 };

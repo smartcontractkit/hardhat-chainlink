@@ -1,13 +1,4 @@
-import { DecodedResult } from "@chainlink/functions-toolkit/dist/decodeResult";
-import {
-  CodeLanguage,
-  FunctionsResponse,
-  GatewayResponse,
-  Location,
-  RequestCommitment,
-  ReturnType,
-  ThresholdPublicKey,
-} from "@chainlink/functions-toolkit/dist/types";
+import * as functionsToolkit from "@chainlink/functions-toolkit";
 import "@nomiclabs/hardhat-ethers";
 import { BigNumber, BigNumberish, BytesLike } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
@@ -1184,7 +1175,7 @@ class Functions {
 
   public timeoutRequests(
     functionsRouterAddress: string,
-    requestCommitments: RequestCommitment[],
+    requestCommitments: functionsToolkit.RequestCommitment[],
     overrides?: Overrides
   ): Promise<{ transactionHash: string }> {
     return functions.timeoutRequests(
@@ -1220,7 +1211,7 @@ class Functions {
     functionsRouterAddress: string,
     requestId: string,
     timeout?: number
-  ): Promise<FunctionsResponse> {
+  ): Promise<functionsToolkit.FunctionsResponse> {
     return functions.listenForResponse(
       this.hre,
       functionsRouterAddress,
@@ -1235,7 +1226,7 @@ class Functions {
     timeout?: number,
     confirmations?: number,
     checkInterval?: number
-  ): Promise<FunctionsResponse> {
+  ): Promise<functionsToolkit.FunctionsResponse> {
     return functions.listenForResponseFromTransaction(
       this.hre,
       functionsRouterAddress,
@@ -1249,7 +1240,7 @@ class Functions {
   public listenForResponses(
     functionsRouterAddress: string,
     subscriptionId: string,
-    callback: (functionsResponse: FunctionsResponse) => any
+    callback: (functionsResponse: functionsToolkit.FunctionsResponse) => any
   ): Promise<void> {
     return functions.listenForResponses(
       this.hre,
@@ -1274,7 +1265,7 @@ class Functions {
     functionsRouterAddress: string,
     donId: string
   ): Promise<{
-    thresholdPublicKey: ThresholdPublicKey;
+    thresholdPublicKey: functionsToolkit.ThresholdPublicKey;
     donPublicKey: string;
   }> {
     return functions.fetchKeys(this.hre, functionsRouterAddress, donId);
@@ -1348,7 +1339,7 @@ class Functions {
     donId: string,
     gatewayUrls: string[]
   ): Promise<{
-    result: GatewayResponse;
+    result: functionsToolkit.GatewayResponse;
     error?: string;
   }> {
     return functions.listDONHostedEncryptedSecrets(
@@ -1382,7 +1373,7 @@ class Functions {
     toBlock?: number | "latest",
     pastBlocksToSearch?: number,
     overrides?: Overrides
-  ): Promise<RequestCommitment> {
+  ): Promise<functionsToolkit.RequestCommitment> {
     return functions.fetchRequestCommitment(
       this.hre,
       functionsRouterAddress,
@@ -1440,10 +1431,10 @@ class Utils {
   }
   
   public async buildFunctionsRequestCBOR(
-    codeLocation: Location,
-    codeLanguage: CodeLanguage,
+    codeLocation: functionsToolkit.Location,
+    codeLanguage: functionsToolkit.CodeLanguage,
     source: string,
-    secretsLocation?: Location,
+    secretsLocation?: functionsToolkit.Location,
     encryptedSecretsReference?: string,
     args?: string[],
     bytesArgs?: string[]
@@ -1461,8 +1452,8 @@ class Utils {
 
   public async decodeHexString(
     resultHexstring: string,
-    expectedReturnType: ReturnType
-  ): Promise<DecodedResult> {
+    expectedReturnType: functionsToolkit.ReturnType
+  ): Promise<functionsToolkit.DecodedResult> {
     return utils.decodeHexString(resultHexstring, expectedReturnType);
   }
 }
@@ -1633,12 +1624,13 @@ class FunctionsSimulation {
 
   public async simulateRequest(
     source: string,
-    args?: string[],
-    bytesArgs?: string[]
-  ): Promise<DecodedResult> {
+    secrets: Record<string, string> | {},
+    args: string[] | [],
+    bytesArgs: string[] | []
+  ): Promise<functionsToolkit.SimulationResult> {
     return functionsSimulations.simulateRequest(
-      this.hre,
       source,
+      secrets,
       args,
       bytesArgs
     );
