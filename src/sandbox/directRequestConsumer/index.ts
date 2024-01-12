@@ -14,17 +14,18 @@ export const deploy = async (
 ): Promise<string> => {
   const [signer] = await hre.ethers.getSigners();
 
-  const drConsumer = await new ChainlinkDirectRequestConsumer__factory()
-    .connect(signer)
-    .deploy(linkTokenAddress);
-  await drConsumer.deployed();
+  const directRequestConsumer =
+    await new ChainlinkDirectRequestConsumer__factory()
+      .connect(signer)
+      .deploy(linkTokenAddress);
+  await directRequestConsumer.deployed();
 
-  return drConsumer.address;
+  return directRequestConsumer.address;
 };
 
 export const requestData = async (
   hre: HardhatRuntimeEnvironment,
-  drConsumerAddress: string,
+  directRequestConsumerAddress: string,
   operatorAddress: string,
   externalJobID: string,
   observationURL: string,
@@ -32,12 +33,12 @@ export const requestData = async (
   multiplyTimes: BigNumberish
 ): Promise<{ transactionHash: string }> => {
   const [signer] = await hre.ethers.getSigners();
-  const drConsumer = ChainlinkDirectRequestConsumer__factory.connect(
-    drConsumerAddress,
+  const directRequestConsumer = ChainlinkDirectRequestConsumer__factory.connect(
+    directRequestConsumerAddress,
     signer
   );
 
-  const tx: ContractTransaction = await drConsumer.requestData(
+  const tx: ContractTransaction = await directRequestConsumer.requestData(
     operatorAddress,
     externalJobID.replace(/-/g, ""),
     observationURL,
@@ -56,12 +57,12 @@ export const requestData = async (
 
 export const getLatestAnswer = async (
   hre: HardhatRuntimeEnvironment,
-  drConsumerAddress: string
+  directRequestConsumerAddress: string
 ): Promise<BigNumber> => {
   const [signer] = await hre.ethers.getSigners();
-  const drConsumer = ChainlinkDirectRequestConsumer__factory.connect(
-    drConsumerAddress,
+  const directRequestConsumer = ChainlinkDirectRequestConsumer__factory.connect(
+    directRequestConsumerAddress,
     signer
   );
-  return drConsumer.answer();
+  return directRequestConsumer.answer();
 };

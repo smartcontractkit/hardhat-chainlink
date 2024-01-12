@@ -249,18 +249,18 @@ task(
 });
 
 // DIRECT REQUEST CONSUMER
-task(`${PACKAGE_NAME}:${Task.drConsumer}`, "Direct Request Consumer Module")
+task(`${PACKAGE_NAME}:${Task.directRequestConsumer}`, "Direct Request Consumer Module")
   .addOptionalPositionalParam("subtask", "Subtask")
   .addOptionalParam("args", "Subtask args")
   .setAction(async (taskArgs, hre) => {
-    return resolveTask(hre, Task.drConsumer, taskArgs);
+    return resolveTask(hre, Task.directRequestConsumer, taskArgs);
   });
 
 task(
-  `${PACKAGE_NAME}:${Task.drConsumer}:subtasks`,
+  `${PACKAGE_NAME}:${Task.directRequestConsumer}:subtasks`,
   "Direct Request Consumer Module: Subtasks List"
 ).setAction(async () => {
-  printSubtasks(Task.drConsumer);
+  printSubtasks(Task.directRequestConsumer);
 });
 
 // LINK TOKEN

@@ -24,7 +24,7 @@ These services facilitate spinning up and managing a Chainlink node, as well as 
     * [Service alias: `operator`](#service-alias-operator)
       * [Deploy contract](#deploy-contract-1)
       * [Set authorized sender](#set-authorized-sender)
-    * [Service alias: `drConsumer`](#service-alias-drconsumer)
+    * [Service alias: `directRequestConsumer`](#service-alias-directrequestconsumer)
       * [Deploy contract](#deploy-contract-2)
       * [Request data](#request-data)
       * [Get latest answer](#get-latest-answer)
@@ -279,9 +279,9 @@ This section provides methods and functionalities designed to interact with the 
   const txData = await operator.setAuthorizedSender(operatorAddress, sender);
   ```
 
-### Service alias: [`drConsumer`](src%2Fsandbox%2FdrConsumer%2Findex.ts)
+### Service alias: [`directRequestConsumer`](src%2Fsandbox%2FdirectRequestConsumer%2Findex.ts)
 ```typescript
-const drConsumer = hre.chainlink.sandbox.drConsumer;
+const directRequestConsumer = hre.chainlink.sandbox.directRequestConsumer;
 ```
 This section provides methods and functionalities designed to interact with the [Direct Request Consumer](contracts%2FChainlinkDirectRequestConsumer.sol).
 
@@ -291,20 +291,20 @@ This section provides methods and functionalities designed to interact with the 
 - **Description:** Deploy Direct Request Consumer contract
 - **Arguments:** `(linkTokenAddress: string)`
   - `linkTokenAddress`: Link Token address
-- **Returns:** `(drConsumerAddress: string)`
-  - `drConsumerAddress`: Direct Request Consumer address
+- **Returns:** `(directRequestConsumerAddress: string)`
+  - `directRequestConsumerAddress`: Direct Request Consumer address
 - **Usage:**
   ```typescript
   const linkTokenAddress = '0x01BE23585060835E02B77ef475b0Cc51aA1e0709';
-  const drConsumerAddress = await drConsumer.deploy(linkTokenAddress);
+  const directRequestConsumerAddress = await directRequestConsumer.deploy(linkTokenAddress);
   ```
 
 #### Request data
 
 - **Method:** requestData
 - **Description:** Request data to be fulfilled with Direct Request job
-- **Arguments:** `(drConsumerAddress: string, operatorAddress: string, externalJobID: string, observationURL: string, pathToData: string, multiplyTimes: string)`
-  - `drConsumerAddress`: Direct Request Consumer address
+- **Arguments:** `(directRequestConsumerAddress: string, operatorAddress: string, externalJobID: string, observationURL: string, pathToData: string, multiplyTimes: string)`
+  - `directRequestConsumerAddress`: Direct Request Consumer address
   - `operatorAddress`: Operator address
   - `externalJobID`: Direct Request External Job ID
   - `observationURL`: URL to retrieve data
@@ -316,27 +316,27 @@ This section provides methods and functionalities designed to interact with the 
   - `transactionHash`: Transaction hash of the transaction that requested data
 - **Usage:**
   ```typescript
-  const drConsumerAddress = '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e';
+  const directRequestConsumerAddress = '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e';
   const operatorAddress = '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e';
   const externalJobID = '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e';
   const observationURL = 'https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD';
   const pathToData = 'USD';
   const multiplyTimes = '100';
-  const txData = await drConsumer.requestData(drConsumerAddress, operatorAddress, externalJobID, observationURL, pathToData, multiplyTimes);
+  const txData = await directRequestConsumer.requestData(directRequestConsumerAddress, operatorAddress, externalJobID, observationURL, pathToData, multiplyTimes);
   ```
 
 #### Get latest answer
 
 - **Method:** getLatestAnswer
 - **Description:** Get latest answer
-- **Arguments:** `(drConsumerAddress: string)`
-  - `drConsumerAddress`: Direct Request Consumer address
+- **Arguments:** `(directRequestConsumerAddress: string)`
+  - `directRequestConsumerAddress`: Direct Request Consumer address
 - **Returns:** `(latestAnswer: BigNumber)`
   - `latestAnswer`: Latest answer
 - **Usage:**
   ```typescript
-  const drConsumerAddress = '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e';
-  const latestAnswer = await drConsumer.getLatestAnswer(drConsumerAddress);
+  const directRequestConsumerAddress = '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e';
+  const latestAnswer = await directRequestConsumer.getLatestAnswer(directRequestConsumerAddress);
   ```
 
 ### Set up a Direct Request job with plugin

@@ -12,7 +12,7 @@ export enum Task {
   utils = "utils",
   node = "sandbox:node",
   operator = "sandbox:operator",
-  drConsumer = "sandbox:drConsumer",
+  directRequestConsumer = "sandbox:directRequestConsumer",
   linkToken = "sandbox:linkToken",
   functionsSimulation = "sandbox:functionsSimulation",
 }
@@ -157,7 +157,7 @@ export enum OperatorSubtask {
   setAuthorizedSender = "setAuthorizedSender",
 }
 
-export enum DRConsumerSubtask {
+export enum DirectRequestConsumerSubtask {
   deploy = "deploy",
   requestData = "requestData",
   getLatestAnswer = "getLatestAnswer",

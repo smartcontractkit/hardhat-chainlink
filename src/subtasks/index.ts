@@ -4,7 +4,7 @@ import {
   AutomationRegistrySubtask,
   DataFeedProxySubtask,
   DataFeedSubtask,
-  DRConsumerSubtask,
+  DirectRequestConsumerSubtask,
   ENSFeedsResolverSubtask,
   FeedRegistrySubtask,
   FunctionsSimulationSubtask,
@@ -28,7 +28,7 @@ import * as feedRegistryActions from "../tasks/feeds/feedRegistry";
 import * as l2FeedUptimeSequencerActions from "../tasks/feeds/l2FeedUptimeSequencer";
 import * as functionsActions from "../tasks/functions";
 import * as registriesActions from "../tasks/registries";
-import * as drConsumerActions from "../tasks/sandbox/drConsumer";
+import * as directRequestConsumerActions from "../tasks/sandbox/directRequestConsumer";
 import * as functionsSimulationActions from "../tasks/sandbox/functionsSimulation";
 import * as linkTokenActions from "../tasks/sandbox/linkToken";
 import * as nodeActions from "../tasks/sandbox/node";
@@ -1675,9 +1675,9 @@ export const subtasks: Subtasks = {
       ],
     },
   },
-  [Task.drConsumer]: {
-    [DRConsumerSubtask.deploy]: {
-      action: drConsumerActions.deploy,
+  [Task.directRequestConsumer]: {
+    [DirectRequestConsumerSubtask.deploy]: {
+      action: directRequestConsumerActions.deploy,
       description: "Deploy Direct Request Consumer",
       args: [
         {
@@ -1686,8 +1686,8 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [DRConsumerSubtask.requestData]: {
-      action: drConsumerActions.requestData,
+    [DirectRequestConsumerSubtask.requestData]: {
+      action: directRequestConsumerActions.requestData,
       description: "Request Data with Direct Request",
       args: [
         {
@@ -1717,8 +1717,8 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [DRConsumerSubtask.getLatestAnswer]: {
-      action: drConsumerActions.getLatestAnswer,
+    [DirectRequestConsumerSubtask.getLatestAnswer]: {
+      action: directRequestConsumerActions.getLatestAnswer,
       description: "Get latest answer",
       args: [
         {

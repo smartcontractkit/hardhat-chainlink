@@ -12,7 +12,7 @@ import * as feedRegistry from "./feeds/feedRegistry";
 import * as l2FeedUptimeSequencer from "./feeds/l2FeedUptimeSequencer";
 import * as functions from "./functions";
 import * as registries from "./registries";
-import * as drConsumer from "./sandbox/drConsumer";
+import * as directRequestConsumer from "./sandbox/directRequestConsumer";
 import * as functionsSimulations from "./sandbox/functionsSimulations";
 import * as linkToken from "./sandbox/linkToken";
 import * as node from "./sandbox/node";
@@ -79,14 +79,14 @@ export class HardhatChainlink {
 class Sandbox {
   public node: Node;
   public operator: Operator;
-  public drConsumer: DRConsumer;
+  public directRequestConsumer: DirectRequestConsumer;
   public linkToken: LinkToken;
   public functionsSimulation: FunctionsSimulation;
 
   constructor(hre: HardhatRuntimeEnvironment) {
     this.node = new Node(hre);
     this.operator = new Operator(hre);
-    this.drConsumer = new DRConsumer(hre);
+    this.directRequestConsumer = new DirectRequestConsumer(hre);
     this.linkToken = new LinkToken(hre);
     this.functionsSimulation = new FunctionsSimulation(hre);
   }
@@ -1519,7 +1519,7 @@ class Operator {
   }
 }
 
-class DRConsumer {
+class DirectRequestConsumer {
   private hre: HardhatRuntimeEnvironment;
 
   constructor(hre: HardhatRuntimeEnvironment) {
@@ -1527,20 +1527,20 @@ class DRConsumer {
   }
 
   public async deploy(linkTokenAddress: string): Promise<string> {
-    return drConsumer.deploy(this.hre, linkTokenAddress);
+    return directRequestConsumer.deploy(this.hre, linkTokenAddress);
   }
 
   public async requestData(
-    drConsumerAddress: string,
+    directRequestConsumerAddress: string,
     operatorAddress: string,
     externalJobID: string,
     observationURL: string,
     pathToData: string,
     multiplyTimes: string
   ): Promise<{ transactionHash: string }> {
-    return drConsumer.requestData(
+    return directRequestConsumer.requestData(
       this.hre,
-      drConsumerAddress,
+      directRequestConsumerAddress,
       operatorAddress,
       externalJobID,
       observationURL,
@@ -1550,9 +1550,9 @@ class DRConsumer {
   }
 
   public async getLatestAnswer(
-    drConsumerAddress: string
+    directRequestConsumerAddress: string
   ): Promise<BigNumber> {
-    return drConsumer.getLatestAnswer(this.hre, drConsumerAddress);
+    return directRequestConsumer.getLatestAnswer(this.hre, directRequestConsumerAddress);
   }
 }
 
