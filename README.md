@@ -9,7 +9,7 @@
 <br/>
 
 The Hardhat Chainlink plugin allows users to seamlessly interact with Chainlink services in their Hardhat-based projects.
-It provides atomic methods to interact with smart contracts related to Chainlink services: Data Feeds, VRF, Automation and Functions.
+It provides atomic methods to interact with smart contracts related to the following Chainlink services: Data Feeds, VRF, Automation and Functions.
 This plugin offers a convenient way to integrate Chainlink functionality into your web3 development workflow.
 
 > **Warning**
@@ -156,7 +156,8 @@ which is useful for interacting with the Feed Registry.
 In general, these registries help you access essential contract addresses deployed on different networks,
 making it easier to integrate Chainlink services into your projects.
 
-Below is a list of the registries provided by Hardhat Chainlink plugin:
+Below is a list of the objects containing address data for service configurations for the Chainlink services
+provided by the Hardhat Chainlink plugin:
 - `dataFeeds`: Addresses of Data Feeds-related contracts: Aggregators and Proxies, and their parameters.
 - `feedRegistries`: Feed Registries' contract addresses.
 - `l2Sequencers`: L2 Sequencer Uptime Feeds' contract addresses.
