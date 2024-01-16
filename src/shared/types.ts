@@ -1,7 +1,9 @@
+import { BigNumber, providers, Signer } from "ethers";
+
 import {
   DataFeed,
   FeedRegistry,
-  FunctionOracle,
+  FunctionsRouter,
   KeeperRegistry,
   L2Sequencer,
   LinkToken,
@@ -21,7 +23,7 @@ export type LinkTokensRegistry = Record<string, LinkToken>;
 export type KeeperRegistriesRegistry = Record<string, KeeperRegistry>;
 export type L2SequencersRegistry = Record<string, L2Sequencer>;
 export type DenominationsRegistry = Record<string, string>;
-export type FunctionOraclesRegistry = Record<string, FunctionOracle>;
+export type FunctionsRoutersRegistry = Record<string, FunctionsRouter>;
 
 export type Subtasks = Record<string, Record<string, SubtaskProperties>>;
 
@@ -36,4 +38,25 @@ export type Choice = {
 export type DockerOutput = {
   exitCode: number | null;
   err: string;
+};
+
+export type FunctionsSubscriptionDetails = {
+  balance: BigNumber;
+  owner: string;
+  blockedBalance: BigNumber;
+  proposedOwner: string;
+  consumers: string[];
+  flags: string;
+};
+
+export type VRFSubscriptionDetails = {
+  balance: BigNumber;
+  reqCount: BigNumber;
+  owner: string;
+  consumers: string[];
+};
+
+export type Overrides = {
+  signer?: Signer;
+  provider?: providers.JsonRpcProvider;
 };

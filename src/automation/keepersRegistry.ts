@@ -14,11 +14,10 @@ const connectKeeperRegistry = async (
   keeperRegistryAddress: string
 ) => {
   const [signer] = await hre.ethers.getSigners();
-  const typeAndVersionInterface =
-    await TypeAndVersionInterface__factory.connect(
-      keeperRegistryAddress,
-      signer
-    );
+  const typeAndVersionInterface = TypeAndVersionInterface__factory.connect(
+    keeperRegistryAddress,
+    signer
+  );
   const typeAndVersion = await typeAndVersionInterface.typeAndVersion();
   switch (typeAndVersion) {
     case KeeperRegistryVersion.registry1_2:
@@ -137,7 +136,7 @@ export const getUpkeep = async (
   executeGas: number;
   checkData: BytesLike;
   balance: BigNumber;
-  lastAutomationNode: string | undefined;
+  lastKeeper: string | undefined;
   admin: string;
   maxValidBlocknumber: BigNumber;
   amountSpent: BigNumber;
@@ -154,7 +153,7 @@ export const getUpkeep = async (
     executeGas: upkeep.executeGas,
     checkData: upkeep.checkData,
     balance: upkeep.balance,
-    lastAutomationNode: "lastKeeper" in upkeep ? upkeep.lastKeeper : undefined,
+    lastKeeper: "lastKeeper" in upkeep ? upkeep.lastKeeper : undefined,
     admin: upkeep.admin,
     maxValidBlocknumber: upkeep.maxValidBlocknumber,
     amountSpent: upkeep.amountSpent,
@@ -281,11 +280,10 @@ export const getTypeAndVersion = async (
   keeperRegistryAddress: string
 ): Promise<string> => {
   const [signer] = await hre.ethers.getSigners();
-  const typeAndVersionInterface =
-    await TypeAndVersionInterface__factory.connect(
-      keeperRegistryAddress,
-      signer
-    );
+  const typeAndVersionInterface = TypeAndVersionInterface__factory.connect(
+    keeperRegistryAddress,
+    signer
+  );
   return typeAndVersionInterface.typeAndVersion();
 };
 

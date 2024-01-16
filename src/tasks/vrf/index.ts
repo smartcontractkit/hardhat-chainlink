@@ -2,6 +2,7 @@ import { BigNumber, BigNumberish } from "ethers";
 import { BytesLike } from "ethers/lib/utils";
 import { ActionType } from "hardhat/types";
 
+import { VRFSubscriptionDetails } from "../../shared/types";
 import * as vrf from "../../vrf";
 
 export const createSubscription: ActionType<{
@@ -41,7 +42,7 @@ export const cancelSubscription: ActionType<{
 export const addConsumer: ActionType<{
   vrfCoordinatorAddress: string;
   consumerAddress: string;
-  subscriptionId: BigNumber;
+  subscriptionId: BigNumberish;
 }> = async (taskArgs, hre) => {
   return vrf.addConsumer(
     hre,
@@ -54,7 +55,7 @@ export const addConsumer: ActionType<{
 export const removeConsumer: ActionType<{
   vrfCoordinatorAddress: string;
   consumerAddress: string;
-  subscriptionId: BigNumber;
+  subscriptionId: BigNumberish;
 }> = async (taskArgs, hre) => {
   return vrf.removeConsumer(
     hre,
@@ -66,8 +67,8 @@ export const removeConsumer: ActionType<{
 
 export const getSubscriptionDetails: ActionType<{
   vrfCoordinatorAddress: string;
-  subscriptionId: BigNumber;
-}> = async (taskArgs, hre) => {
+  subscriptionId: BigNumberish;
+}> = async (taskArgs, hre): Promise<VRFSubscriptionDetails> => {
   return vrf.getSubscriptionDetails(
     hre,
     taskArgs.vrfCoordinatorAddress,

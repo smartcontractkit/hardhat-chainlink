@@ -1,3 +1,4 @@
+import * as functionsToolkit from "@chainlink/functions-toolkit";
 import "@nomiclabs/hardhat-ethers";
 import { BigNumber, BigNumberish, BytesLike } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
@@ -9,12 +10,19 @@ import * as dataFeedProxy from "./feeds/dataFeedProxy";
 import * as ensFeedsResolver from "./feeds/ensFeedsResolver";
 import * as feedRegistry from "./feeds/feedRegistry";
 import * as l2FeedUptimeSequencer from "./feeds/l2FeedUptimeSequencer";
+import * as functions from "./functions";
 import * as registries from "./registries";
-import * as drConsumer from "./sandbox/drConsumer";
+import * as directRequestConsumer from "./sandbox/directRequestConsumer";
+import * as functionsSimulations from "./sandbox/functionsSimulations";
 import * as linkToken from "./sandbox/linkToken";
 import * as node from "./sandbox/node";
 import * as operator from "./sandbox/operator";
-import { DockerOutput } from "./shared/types";
+import {
+  DockerOutput,
+  FunctionsSubscriptionDetails,
+  Overrides,
+  VRFSubscriptionDetails,
+} from "./shared/types";
 import * as utils from "./utils";
 import * as vrf from "./vrf";
 
@@ -24,7 +32,7 @@ export class HardhatChainlink {
     l2Sequencers: typeof registries.l2SequencersRegistry;
     vrfCoordinators: typeof registries.vrfCoordinatorsRegistry;
     keeperRegistries: typeof registries.keeperRegistriesRegistry;
-    functionOracles: typeof registries.functionOraclesRegistry;
+    functionsRouters: typeof registries.functionsRoutersRegistry;
     linkTokens: typeof registries.linkTokensRegistry;
     networks: typeof registries.networksRegistry;
     denominations: typeof registries.denominationsRegistry;
@@ -37,7 +45,7 @@ export class HardhatChainlink {
   public vrf: VRF;
   public automationRegistrar: AutomationRegistrar;
   public automationRegistry: AutomationRegistry;
-  public functionOracle: FunctionOracle;
+  public functions: Functions;
   public utils: Utils;
   public sandbox: Sandbox;
   private hre: HardhatRuntimeEnvironment;
@@ -49,7 +57,7 @@ export class HardhatChainlink {
       l2Sequencers: registries.l2SequencersRegistry,
       vrfCoordinators: registries.vrfCoordinatorsRegistry,
       keeperRegistries: registries.keeperRegistriesRegistry,
-      functionOracles: registries.functionOraclesRegistry,
+      functionsRouters: registries.functionsRoutersRegistry,
       linkTokens: registries.linkTokensRegistry,
       networks: registries.networksRegistry,
       denominations: registries.denominationsRegistry,
@@ -62,7 +70,7 @@ export class HardhatChainlink {
     this.vrf = new VRF(this.hre);
     this.automationRegistrar = new AutomationRegistrar(this.hre);
     this.automationRegistry = new AutomationRegistry(this.hre);
-    this.functionOracle = new FunctionOracle(this.hre);
+    this.functions = new Functions(this.hre);
     this.utils = new Utils(this.hre);
     this.sandbox = new Sandbox(this.hre);
   }
@@ -71,14 +79,16 @@ export class HardhatChainlink {
 class Sandbox {
   public node: Node;
   public operator: Operator;
-  public drConsumer: DRConsumer;
+  public directRequestConsumer: DirectRequestConsumer;
   public linkToken: LinkToken;
+  public functionsSimulation: FunctionsSimulation;
 
   constructor(hre: HardhatRuntimeEnvironment) {
     this.node = new Node(hre);
     this.operator = new Operator(hre);
-    this.drConsumer = new DRConsumer(hre);
+    this.directRequestConsumer = new DirectRequestConsumer(hre);
     this.linkToken = new LinkToken(hre);
+    this.functionsSimulation = new FunctionsSimulation(hre);
   }
 }
 
@@ -593,13 +603,13 @@ class VRF {
   public async cancelSubscription(
     vrfCoordinatorAddress: string,
     subscriptionId: BigNumberish,
-    receivingWallet: string
+    receivingAddress: string
   ): Promise<{ transactionHash: string }> {
     return vrf.cancelSubscription(
       this.hre,
       vrfCoordinatorAddress,
       subscriptionId,
-      receivingWallet
+      receivingAddress
     );
   }
 
@@ -651,12 +661,7 @@ class VRF {
   public async getSubscriptionDetails(
     vrfCoordinatorAddress: string,
     subscriptionId: BigNumberish
-  ): Promise<{
-    balance: BigNumber;
-    reqCount: BigNumber;
-    owner: string;
-    consumers: string[];
-  }> {
+  ): Promise<VRFSubscriptionDetails> {
     return vrf.getSubscriptionDetails(
       this.hre,
       vrfCoordinatorAddress,
@@ -905,7 +910,7 @@ class AutomationRegistry {
     executeGas: number;
     checkData: BytesLike;
     balance: BigNumber;
-    lastAutomationNode: string | undefined;
+    lastKeeper: string | undefined;
     admin: string;
     maxValidBlocknumber: BigNumber;
     amountSpent: BigNumber;
@@ -1008,11 +1013,376 @@ class AutomationRegistry {
   }
 }
 
-class FunctionOracle {
+class Functions {
   private hre: HardhatRuntimeEnvironment;
 
   constructor(hre: HardhatRuntimeEnvironment) {
     this.hre = hre;
+  }
+
+  public initializeSubscriptionManager(
+    functionsRouterAddress: string,
+    linkTokenAddress: string,
+    overrides?: Overrides
+  ): Promise<functions.FunctionsSubscriptionManager> {
+    return functions.FunctionsSubscriptionManager.initialize({
+      hre: this.hre,
+      functionsRouterAddress,
+      linkTokenAddress,
+      overrides,
+    });
+  }
+
+  public initializeResponseListener(
+    functionsRouterAddress: string,
+    overrides?: Overrides
+  ): Promise<functions.FunctionsResponseListener> {
+    return functions.FunctionsResponseListener.initialize({
+      hre: this.hre,
+      functionsRouterAddress,
+      overrides,
+    });
+  }
+
+  public initializeSecretsManager(
+    functionsRouterAddress: string,
+    donId: string,
+    overrides?: Overrides
+  ): Promise<functions.FunctionsSecretsManager> {
+    return functions.FunctionsSecretsManager.initialize({
+      hre: this.hre,
+      functionsRouterAddress,
+      donId,
+      overrides,
+    });
+  }
+
+  // Subscription Manager
+
+  public createSubscription(
+    functionsRouterAddress: string,
+    consumerAddress?: string,
+    overrides?: Overrides
+  ): Promise<{ subscriptionId: BigNumber }> {
+    return functions.createSubscription(
+      this.hre,
+      functionsRouterAddress,
+      consumerAddress,
+      overrides
+    );
+  }
+
+  public fundSubscription(
+    functionsRouterAddress: string,
+    linkTokenAddress: string,
+    amountInJuels: BigNumberish,
+    subscriptionId: BigNumberish,
+    overrides?: Overrides
+  ): Promise<{ transactionHash: string }> {
+    return functions.fundSubscription(
+      this.hre,
+      functionsRouterAddress,
+      linkTokenAddress,
+      amountInJuels,
+      subscriptionId,
+      overrides
+    );
+  }
+
+  public cancelSubscription(
+    functionsRouterAddress: string,
+    subscriptionId: BigNumberish,
+    receivingAddress?: string,
+    overrides?: Overrides
+  ): Promise<{ transactionHash: string }> {
+    return functions.cancelSubscription(
+      this.hre,
+      functionsRouterAddress,
+      subscriptionId,
+      receivingAddress,
+      overrides
+    );
+  }
+
+  public requestSubscriptionOwnerTransfer(
+    functionsRouterAddress: string,
+    subscriptionId: BigNumberish,
+    newOwnerAddress: string,
+    overrides?: Overrides
+  ): Promise<{ transactionHash: string }> {
+    return functions.requestSubscriptionOwnerTransfer(
+      this.hre,
+      functionsRouterAddress,
+      subscriptionId,
+      newOwnerAddress,
+      overrides
+    );
+  }
+
+  public acceptSubscriptionOwnerTransfer(
+    functionsRouterAddress: string,
+    subscriptionId: BigNumberish,
+    overrides?: Overrides
+  ): Promise<{ transactionHash: string }> {
+    return functions.acceptSubscriptionOwnerTransfer(
+      this.hre,
+      functionsRouterAddress,
+      subscriptionId,
+      overrides
+    );
+  }
+
+  public getSubscriptionDetails(
+    functionsRouterAddress: string,
+    subscriptionId: BigNumberish
+  ): Promise<FunctionsSubscriptionDetails> {
+    return functions.getSubscriptionDetails(
+      this.hre,
+      functionsRouterAddress,
+      subscriptionId
+    );
+  }
+
+  public addConsumer(
+    functionsRouterAddress: string,
+    consumerAddress: string,
+    subscriptionId: BigNumberish,
+    overrides?: Overrides
+  ): Promise<{ transactionHash: string }> {
+    return functions.addConsumer(
+      this.hre,
+      functionsRouterAddress,
+      consumerAddress,
+      subscriptionId,
+      overrides
+    );
+  }
+
+  public removeConsumer(
+    functionsRouterAddress: string,
+    consumerAddress: string,
+    subscriptionId: BigNumberish,
+    overrides?: Overrides
+  ): Promise<{ transactionHash: string }> {
+    return functions.removeConsumer(
+      this.hre,
+      functionsRouterAddress,
+      consumerAddress,
+      subscriptionId,
+      overrides
+    );
+  }
+
+  public timeoutRequests(
+    functionsRouterAddress: string,
+    requestCommitments: functionsToolkit.RequestCommitment[],
+    overrides?: Overrides
+  ): Promise<{ transactionHash: string }> {
+    return functions.timeoutRequests(
+      this.hre,
+      functionsRouterAddress,
+      requestCommitments,
+      overrides
+    );
+  }
+
+  public estimateRequestCost(
+    functionsRouterAddress: string,
+    donId: string,
+    subscriptionId: BigNumberish,
+    callbackGasLimit: number,
+    gasPriceWei: BigNumberish,
+    overrides?: Overrides
+  ): Promise<BigInt> {
+    return functions.estimateRequestCost(
+      this.hre,
+      functionsRouterAddress,
+      donId,
+      subscriptionId,
+      callbackGasLimit,
+      gasPriceWei,
+      overrides
+    );
+  }
+
+  // Response Listener
+
+  public listenForResponse(
+    functionsRouterAddress: string,
+    requestId: string,
+    timeout?: number
+  ): Promise<functionsToolkit.FunctionsResponse> {
+    return functions.listenForResponse(
+      this.hre,
+      functionsRouterAddress,
+      requestId,
+      timeout
+    );
+  }
+
+  public listenForResponseFromTransaction(
+    functionsRouterAddress: string,
+    transactionHash: string,
+    timeout?: number,
+    confirmations?: number,
+    checkInterval?: number
+  ): Promise<functionsToolkit.FunctionsResponse> {
+    return functions.listenForResponseFromTransaction(
+      this.hre,
+      functionsRouterAddress,
+      transactionHash,
+      timeout,
+      confirmations,
+      checkInterval
+    );
+  }
+
+  public listenForResponses(
+    functionsRouterAddress: string,
+    subscriptionId: string,
+    callback: (functionsResponse: functionsToolkit.FunctionsResponse) => any
+  ): Promise<void> {
+    return functions.listenForResponses(
+      this.hre,
+      functionsRouterAddress,
+      subscriptionId,
+      callback
+    );
+  }
+
+  public stopListeningForResponses(
+    functionsRouterAddress: string
+  ): Promise<void> {
+    return functions.stopListeningForResponses(
+      this.hre,
+      functionsRouterAddress
+    );
+  }
+
+  // Secrets Manager
+
+  public fetchKeys(
+    functionsRouterAddress: string,
+    donId: string
+  ): Promise<{
+    thresholdPublicKey: functionsToolkit.ThresholdPublicKey;
+    donPublicKey: string;
+  }> {
+    return functions.fetchKeys(this.hre, functionsRouterAddress, donId);
+  }
+
+  public encryptSecretsUrls(
+    functionsRouterAddress: string,
+    donId: string,
+    secretsUrls: string[]
+  ): Promise<string> {
+    return functions.encryptSecretsUrls(
+      this.hre,
+      functionsRouterAddress,
+      donId,
+      secretsUrls
+    );
+  }
+
+  public verifyOffchainSecrets(
+    functionsRouterAddress: string,
+    donId: string,
+    secretsUrls: string[]
+  ): Promise<boolean> {
+    return functions.verifyOffchainSecrets(
+      this.hre,
+      functionsRouterAddress,
+      donId,
+      secretsUrls
+    );
+  }
+
+  public encryptSecrets(
+    functionsRouterAddress: string,
+    donId: string,
+    secrets?: Record<string, string>
+  ): Promise<{
+    encryptedSecrets: string;
+  }> {
+    return functions.encryptSecrets(
+      this.hre,
+      functionsRouterAddress,
+      donId,
+      secrets
+    );
+  }
+
+  public uploadEncryptedSecretsToDON(
+    functionsRouterAddress: string,
+    donId: string,
+    encryptedSecretsHexstring: string,
+    gatewayUrls: string[],
+    slotId: number,
+    minutesUntilExpiration: number
+  ): Promise<{
+    version: number;
+    success: boolean;
+  }> {
+    return functions.uploadEncryptedSecretsToDON(
+      this.hre,
+      functionsRouterAddress,
+      donId,
+      encryptedSecretsHexstring,
+      gatewayUrls,
+      slotId,
+      minutesUntilExpiration
+    );
+  }
+
+  public listDONHostedEncryptedSecrets(
+    functionsRouterAddress: string,
+    donId: string,
+    gatewayUrls: string[]
+  ): Promise<{
+    result: functionsToolkit.GatewayResponse;
+    error?: string;
+  }> {
+    return functions.listDONHostedEncryptedSecrets(
+      this.hre,
+      functionsRouterAddress,
+      donId,
+      gatewayUrls
+    );
+  }
+
+  public buildDONHostedEncryptedSecretsReference(
+    functionsRouterAddress: string,
+    donId: string,
+    slotId: number,
+    version: number
+  ): Promise<string> {
+    return functions.buildDONHostedEncryptedSecretsReference(
+      this.hre,
+      functionsRouterAddress,
+      donId,
+      slotId,
+      version
+    );
+  }
+  
+  // utils
+  public fetchRequestCommitment(
+    functionsRouterAddress: string,
+    donId: string,
+    requestId: string,
+    toBlock?: number | "latest",
+    pastBlocksToSearch?: number,
+    overrides?: Overrides
+  ): Promise<functionsToolkit.RequestCommitment> {
+    return functions.fetchRequestCommitment(
+      this.hre,
+      functionsRouterAddress,
+      donId,
+      requestId,
+      toBlock,
+      pastBlocksToSearch,
+      overrides
+    );
   }
 }
 
@@ -1045,6 +1415,47 @@ class Utils {
   }> {
     return utils.transferETH(this.hre, recipient, amount);
   }
+
+  public async createGist(
+    githubApiToken: string,
+    content: string
+  ): Promise<string> {
+    return utils.createGist(githubApiToken, content);
+  }
+
+  public async deleteGist(
+    githubApiToken: string,
+    gistURL: string
+  ): Promise<boolean> {
+    return utils.deleteGist(githubApiToken, gistURL);
+  }
+  
+  public async buildFunctionsRequestCBOR(
+    codeLocation: functionsToolkit.Location,
+    codeLanguage: functionsToolkit.CodeLanguage,
+    source: string,
+    secretsLocation?: functionsToolkit.Location,
+    encryptedSecretsReference?: string,
+    args?: string[],
+    bytesArgs?: string[]
+  ): Promise<string> {
+    return utils.buildRequestCBOR({
+      codeLocation,
+      codeLanguage,
+      source,
+      secretsLocation,
+      encryptedSecretsReference,
+      args,
+      bytesArgs,
+    });
+  }
+
+  public async decodeHexString(
+    resultHexstring: string,
+    expectedReturnType: functionsToolkit.ReturnType
+  ): Promise<functionsToolkit.DecodedResult> {
+    return utils.decodeHexString(resultHexstring, expectedReturnType);
+  }
 }
 
 // SANDBOX
@@ -1076,6 +1487,10 @@ class Node {
     return node.getP2PKeys(this.hre);
   }
 
+  public async getVRFKeys(): Promise<string> {
+    return node.getVRFKeys(this.hre);
+  }
+
   public async getJobs(): Promise<string> {
     return node.getJobs(this.hre);
   }
@@ -1104,7 +1519,7 @@ class Operator {
   }
 }
 
-class DRConsumer {
+class DirectRequestConsumer {
   private hre: HardhatRuntimeEnvironment;
 
   constructor(hre: HardhatRuntimeEnvironment) {
@@ -1112,7 +1527,7 @@ class DRConsumer {
   }
 
   public async deploy(linkTokenAddress: string): Promise<string> {
-    return drConsumer.deploy(this.hre, linkTokenAddress);
+    return directRequestConsumer.deploy(this.hre, linkTokenAddress);
   }
 
   public async requestData(
@@ -1123,7 +1538,7 @@ class DRConsumer {
     pathToData: string,
     multiplyTimes: string
   ): Promise<{ transactionHash: string }> {
-    return drConsumer.requestData(
+    return directRequestConsumer.requestData(
       this.hre,
       directRequestConsumerAddress,
       operatorAddress,
@@ -1137,7 +1552,7 @@ class DRConsumer {
   public async getLatestAnswer(
     directRequestConsumerAddress: string
   ): Promise<BigNumber> {
-    return drConsumer.getLatestAnswer(this.hre, directRequestConsumerAddress);
+    return directRequestConsumer.getLatestAnswer(this.hre, directRequestConsumerAddress);
   }
 }
 
@@ -1155,13 +1570,13 @@ class LinkToken {
   public async transfer(
     linkTokenAddress: string,
     recipient: string,
-    addedValue: BigNumberish
+    amount: BigNumberish
   ): Promise<{ transactionHash: string }> {
     return linkToken.transfer(
       this.hre,
       linkTokenAddress,
       recipient,
-      addedValue
+      amount
     );
   }
 
@@ -1196,6 +1611,28 @@ class LinkToken {
       linkTokenAddress,
       spender,
       subtractedValue
+    );
+  }
+}
+
+class FunctionsSimulation {
+  private hre: HardhatRuntimeEnvironment;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
+  }
+
+  public async simulateRequest(
+    source: string,
+    secrets: Record<string, string> | {},
+    args: string[] | [],
+    bytesArgs: string[] | []
+  ): Promise<functionsToolkit.SimulationResult> {
+    return functionsSimulations.simulateRequest(
+      source,
+      secrets,
+      args,
+      bytesArgs
     );
   }
 }

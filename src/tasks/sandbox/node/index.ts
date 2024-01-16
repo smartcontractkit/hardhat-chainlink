@@ -38,6 +38,13 @@ export const getP2PKeys: ActionType<{}> = async (
   return node.getP2PKeys(hre);
 };
 
+export const getVRFKeys: ActionType<{}> = async (
+  taskArgs,
+  hre
+): Promise<string> => {
+  return node.getVRFKeys(hre);
+};
+
 export const getOCRKeys: ActionType<{}> = async (
   taskArgs,
   hre

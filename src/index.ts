@@ -15,17 +15,17 @@ import "./type-extensions";
 
 export interface ChainlinkUserConfig {
   confirmations?: number;
-  node: {
-    chain_id: string;
-    chain_name: string;
-    http_url: string;
-    ws_url: string;
-    cl_keystore_password: string;
-    cl_api_user: string;
-    cl_api_password: string;
-    pg_user: string;
-    pg_password: string;
-    pg_db: string;
+  node?: {
+    chain_id?: string;
+    chain_name?: string;
+    http_url?: string;
+    ws_url?: string;
+    cl_keystore_password?: string;
+    cl_api_user?: string;
+    cl_api_password?: string;
+    pg_user?: string;
+    pg_password?: string;
+    pg_db?: string;
   };
 }
 
@@ -46,17 +46,16 @@ extendConfig(
     config.chainlink = {
       confirmations: confirmations || 1,
       node: {
-        chain_id: node?.chain_id || "1337",
-        chain_name: node?.chain_name || "local",
-        http_url: node?.http_url || "http://host.docker.internal:8545",
-        ws_url: node?.ws_url || "ws://host.docker.internal:8545",
-        cl_keystore_password:
-          node?.cl_keystore_password || "password1234567890",
-        cl_api_user: node?.cl_api_user || "user@chain.link",
-        cl_api_password: node?.cl_api_password || "password1234567890",
-        pg_user: node?.pg_user || "chainlink",
-        pg_password: node?.pg_password || "password1234567890",
-        pg_db: node?.pg_db || "chainlink",
+        chain_id: node?.chain_id,
+        chain_name: node?.chain_name,
+        http_url: node?.http_url,
+        ws_url: node?.ws_url,
+        cl_keystore_password: node?.cl_keystore_password,
+        cl_api_user: node?.cl_api_user,
+        cl_api_password: node?.cl_api_password,
+        pg_user: node?.pg_user,
+        pg_password: node?.pg_password,
+        pg_db: node?.pg_db,
       },
     };
   }
@@ -189,6 +188,21 @@ task(
   printSubtasks(Task.automationRegistry);
 });
 
+// FUNCTIONS
+task(`${PACKAGE_NAME}:${Task.functions}`, "Functions Module")
+  .addOptionalPositionalParam("subtask", "Subtask")
+  .addOptionalParam("args", "Subtask args")
+  .setAction(async (taskArgs, hre) => {
+    return resolveTask(hre, Task.functions, taskArgs);
+  });
+
+task(
+  `${PACKAGE_NAME}:${Task.functions}:subtasks`,
+  "Functions Module: Subtasks List"
+).setAction(async () => {
+  printSubtasks(Task.functions);
+});
+
 // REGISTRIES
 task(`${PACKAGE_NAME}:${Task.registries}`, "Plugin Registries Module")
   .addOptionalPositionalParam("subtask", "Subtask")
@@ -235,18 +249,18 @@ task(
 });
 
 // DIRECT REQUEST CONSUMER
-task(`${PACKAGE_NAME}:${Task.drConsumer}`, "Direct Request Consumer Module")
+task(`${PACKAGE_NAME}:${Task.directRequestConsumer}`, "Direct Request Consumer Module")
   .addOptionalPositionalParam("subtask", "Subtask")
   .addOptionalParam("args", "Subtask args")
   .setAction(async (taskArgs, hre) => {
-    return resolveTask(hre, Task.drConsumer, taskArgs);
+    return resolveTask(hre, Task.directRequestConsumer, taskArgs);
   });
 
 task(
-  `${PACKAGE_NAME}:${Task.drConsumer}:subtasks`,
+  `${PACKAGE_NAME}:${Task.directRequestConsumer}:subtasks`,
   "Direct Request Consumer Module: Subtasks List"
 ).setAction(async () => {
-  printSubtasks(Task.drConsumer);
+  printSubtasks(Task.directRequestConsumer);
 });
 
 // LINK TOKEN
@@ -262,6 +276,24 @@ task(
   "Link Token Module: Subtasks List"
 ).setAction(async () => {
   printSubtasks(Task.linkToken);
+});
+
+// FUNCTIONS SIMULATION
+task(
+  `${PACKAGE_NAME}:${Task.functionsSimulation}`,
+  "Functions Simulation Module"
+)
+  .addOptionalPositionalParam("subtask", "Subtask")
+  .addOptionalParam("args", "Subtask args")
+  .setAction(async (taskArgs, hre) => {
+    return resolveTask(hre, Task.functionsSimulation, taskArgs);
+  });
+
+task(
+  `${PACKAGE_NAME}:${Task.functionsSimulation}:subtasks`,
+  "Functions Simulation Module: Subtasks List"
+).setAction(async () => {
+  printSubtasks(Task.functionsSimulation);
 });
 
 // UTILS

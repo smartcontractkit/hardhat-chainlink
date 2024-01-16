@@ -1,6 +1,6 @@
 {
   "name": "@chainlink/hardhat-chainlink",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Hardhat plugin that adds interaction with Chainlink services to Hardhat projects",
   "repository": "https://github.com/smartcontractkit/hardhat-chainlink.git",
   "license": "MIT",
@@ -24,7 +24,9 @@
     "test:vrfCoordinator": "mocha --exit 'test/vrfCoordinator.test.ts'",
     "test:automationRegistrar": "mocha --exit 'test/automationRegistrar.test.ts'",
     "test:automationRegistry": "mocha --exit 'test/automationRegistry.test.ts'",
-    "test": "yarn test:prepare && yarn test:dataFeed && yarn test:dataFeedProxy && yarn test:ensFeedsResolver && yarn test:feedRegistry && yarn test:l2FeedUptimeSequencer && yarn test:vrfCoordinator && yarn test:automationRegistrar && yarn test:automationRegistry",
+    "test:functions": "mocha --exit 'test/functionsRouter.test.ts'",
+    "test:functionsSimulation": "mocha --exit 'test/functionsSimulation.test.ts'",
+    "test": "yarn test:prepare && yarn test:dataFeed && yarn test:dataFeedProxy && yarn test:ensFeedsResolver && yarn test:feedRegistry && yarn test:l2FeedUptimeSequencer && yarn test:vrfCoordinator && yarn test:automationRegistrar && yarn test:automationRegistry && yarn test:functions",
     "copyArtifacts": "copyfiles -a -f ./node_modules/@chainlink/contracts/abi/**/* chainlink-artifacts",
     "removeArtifacts": "rm -rf chainlink-artifacts",
     "compile": "hardhat compile",
@@ -52,7 +54,7 @@
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
     "copyfiles": "^2.4.1",
-    "hardhat": "^2.16.0",
+    "hardhat": "^2.17.3",
     "hardhat-gas-reporter": "^1.0.9",
     "mocha": "^10.2.0",
     "mocha-suppress-logs": "^0.3.1",
@@ -66,7 +68,8 @@
     "typescript": "^5.1.3"
   },
   "dependencies": {
-    "@chainlink/contracts": "0.6.1",
+    "@chainlink/contracts": "0.8.0",
+    "@chainlink/functions-toolkit": "0.2.6",
     "@inquirer/confirm": "^2.0.6",
     "@inquirer/input": "^1.2.5",
     "@inquirer/select": "^1.2.5",
@@ -77,6 +80,6 @@
     "ethers": "^5.4.7"
   },
   "peerDependencies": {
-    "hardhat": "^2.16.0"
+    "hardhat": "^2.17.3"
   }
 }

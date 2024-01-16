@@ -104,7 +104,7 @@ export const migrateUpkeeps: ActionType<{
   destination: string;
 }> = async (taskArgs, hre) => {
   const upkeepIds = taskArgs.upkeepIds.split(",").map((upkeepId) => {
-    return BigNumber.from(upkeepId);
+    return BigNumber.from(upkeepId.trim());
   });
   return automation.migrateUpkeeps(
     hre,

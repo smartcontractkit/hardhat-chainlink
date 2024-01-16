@@ -26,8 +26,8 @@ export const getL2Sequencer: ActionType<{}> = async (taskArgs, hre) => {
   return inquirers.inquireL2Sequencer(hre, false);
 };
 
-export const getFunctionOracle: ActionType<{}> = async (taskArgs, hre) => {
-  return inquirers.inquireFunctionOracle(hre, false);
+export const getFunctionRouter: ActionType<{}> = async (taskArgs, hre) => {
+  return inquirers.inquireFunctionsRouter(hre, false);
 };
 
 export const getDenomination: ActionType<{}> = async () => {

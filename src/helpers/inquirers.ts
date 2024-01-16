@@ -1,3 +1,7 @@
+import {
+  CodeLanguage,
+  Location,
+} from "@chainlink/functions-toolkit/dist/types";
 import confirm from "@inquirer/confirm";
 import input from "@inquirer/input";
 import select from "@inquirer/select";
@@ -10,7 +14,7 @@ import {
   DataFeedsRegistry,
   DenominationsRegistry,
   FeedRegistriesRegistry,
-  FunctionOraclesRegistry,
+  FunctionsRoutersRegistry,
   KeeperRegistriesRegistry,
   L2SequencersRegistry,
   LinkTokensRegistry,
@@ -44,8 +48,15 @@ export const inquire = async (
       return inquireKeeperRegistrarAddress(hre);
     case InquirableParameter.l2SequencerAddress:
       return inquireL2SequencerAddress(hre);
-    case InquirableParameter.functionOracleAddress:
-      return inquireFunctionOracleAddress(hre);
+    case InquirableParameter.functionsRouterAddress:
+      return inquireFunctionsRouterAddress(hre);
+    case InquirableParameter.donId:
+      return inquireDonId(hre);
+    case InquirableParameter.codeLocation:
+    case InquirableParameter.secretsLocation:
+      return inquireLocation();
+    case InquirableParameter.codeLanguage:
+      return inquireCodeLanguage();
     case InquirableParameter.feedRegistryBaseTick:
       return inquireFeedRegistryBaseTick();
     case InquirableParameter.feedRegistryQuoteTick:
@@ -610,15 +621,15 @@ export const inquireL2SequencerAddress = async (
   return l2SequencerAddress;
 };
 
-export const inquireFunctionOracle = async (
+export const inquireFunctionsRouter = async (
   hre: HardhatRuntimeEnvironment,
   useHardhatNetwork: boolean = true
 ) => {
   const networksRegistry: NetworksRegistry =
     registries.networksRegistry as NetworksRegistry;
 
-  const functionOraclesRegistry: FunctionOraclesRegistry =
-    registries.functionOraclesRegistry as FunctionOraclesRegistry;
+  const functionsRoutersRegistry: FunctionsRoutersRegistry =
+    registries.functionsRoutersRegistry as FunctionsRoutersRegistry;
 
   let chainSlug = "";
   if (useHardhatNetwork) {
@@ -634,7 +645,7 @@ export const inquireFunctionOracle = async (
   } else {
     chainSlug = await select({
       message: "Select a network",
-      choices: Object.values(Object.keys(functionOraclesRegistry)).reduce(
+      choices: Object.values(Object.keys(functionsRoutersRegistry)).reduce(
         (agg, networkName) => {
           agg.push({
             name: networksRegistry[networkName].name,
@@ -648,40 +659,66 @@ export const inquireFunctionOracle = async (
     });
   }
 
-  if (!functionOraclesRegistry[chainSlug]) {
+  if (!functionsRoutersRegistry[chainSlug]) {
     console.log(
-      `There is no Function Oracle in the plugin registry for the selected chain: ${hre.network.name}`
+      `There is no Function Router in the plugin registry for the selected chain: ${hre.network.name}`
     );
     return undefined;
   }
 
-  return functionOraclesRegistry[chainSlug];
+  return functionsRoutersRegistry[chainSlug];
 };
 
-export const inquireFunctionOracleAddress = async (
+export const inquireFunctionsRouterAddress = async (
   hre: HardhatRuntimeEnvironment,
   useHardhatNetwork: boolean = true
 ) => {
-  const functionOracle = await inquireFunctionOracle(hre, useHardhatNetwork);
-  if (!functionOracle) {
+  const functionsRouter = await inquireFunctionsRouter(hre, useHardhatNetwork);
+  if (!functionsRouter) {
     return input({
-      message: "Provide a valid Function Oracle address",
+      message: "Provide a valid Functions Router address",
     });
   }
 
-  const functionOracleAddress = functionOracle.contractAddress;
+  const functionsRouterAddress = functionsRouter.contractAddress;
 
   const answer: boolean = await confirm({
-    message: `Function Oracle found in the plugin registry: ${functionOracleAddress}. Do you want to proceed with it?`,
+    message: `Functions Router found in the plugin registry: ${functionsRouterAddress}. Do you want to proceed with it?`,
   });
 
   if (!answer) {
     return input({
-      message: "Provide a valid Function Oracle address",
+      message: "Provide a valid Functions Router address",
     });
   }
 
-  return functionOracleAddress;
+  return functionsRouterAddress;
+};
+
+export const inquireDonId = async (
+  hre: HardhatRuntimeEnvironment,
+  useHardhatNetwork: boolean = true
+) => {
+  const functionsRouter = await inquireFunctionsRouter(hre, useHardhatNetwork);
+  if (!functionsRouter) {
+    return input({
+      message: "Provide a valid Functions Router address",
+    });
+  }
+
+  const donId = functionsRouter.donId;
+
+  const answer: boolean = await confirm({
+    message: `DON ID found in the plugin registry: ${donId}. Do you want to proceed with it?`,
+  });
+
+  if (!answer) {
+    return input({
+      message: "Provide a valid DON ID",
+    });
+  }
+
+  return donId;
 };
 
 export const inquireFeedRegistryBaseTick = async () => {
@@ -729,6 +766,38 @@ export const inquireDenomination = async () => {
     }, [] as Choice[]),
   });
   return denomination;
+};
+
+export const inquireLocation = async () => {
+  const keys = Object.keys(Location);
+  const values = Object.values(Location);
+  return select({
+    message: "Select a location",
+    choices: keys.reduce((agg, _, currentIndex) => {
+      agg.push({
+        name: keys[currentIndex],
+        value: values[currentIndex].toString(),
+        description: keys[currentIndex],
+      });
+      return agg;
+    }, [] as Choice[]),
+  });
+};
+
+export const inquireCodeLanguage = async () => {
+  const keys = Object.keys(CodeLanguage);
+  const values = Object.values(CodeLanguage);
+  return select({
+    message: "Select a code language",
+    choices: keys.reduce((agg, _, currentIndex) => {
+      agg.push({
+        name: keys[currentIndex],
+        value: values[currentIndex].toString(),
+        description: keys[currentIndex],
+      });
+      return agg;
+    }, [] as Choice[]),
+  });
 };
 
 export const inquireSubtaskProperties = async (

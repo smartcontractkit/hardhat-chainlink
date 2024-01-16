@@ -4,9 +4,11 @@ import {
   AutomationRegistrySubtask,
   DataFeedProxySubtask,
   DataFeedSubtask,
-  DRConsumerSubtask,
+  DirectRequestConsumerSubtask,
   ENSFeedsResolverSubtask,
   FeedRegistrySubtask,
+  FunctionsSimulationSubtask,
+  FunctionsSubtask,
   L2SequencerSubtask,
   LinkTokenSubtask,
   NodeSubtask,
@@ -24,8 +26,10 @@ import * as dataFeedProxyActions from "../tasks/feeds/dataFeedProxy";
 import * as ensFeedsResolverActions from "../tasks/feeds/ensFeedsResolver";
 import * as feedRegistryActions from "../tasks/feeds/feedRegistry";
 import * as l2FeedUptimeSequencerActions from "../tasks/feeds/l2FeedUptimeSequencer";
+import * as functionsActions from "../tasks/functions";
 import * as registriesActions from "../tasks/registries";
-import * as drConsumerActions from "../tasks/sandbox/drConsumer";
+import * as directRequestConsumerActions from "../tasks/sandbox/directRequestConsumer";
+import * as functionsSimulationActions from "../tasks/sandbox/functionsSimulation";
 import * as linkTokenActions from "../tasks/sandbox/linkToken";
 import * as nodeActions from "../tasks/sandbox/node";
 import * as operatorActions from "../tasks/sandbox/operator";
@@ -807,7 +811,7 @@ export const subtasks: Subtasks = {
         },
         {
           name: "newOwnerAddress",
-          description: "Address of new Subscription owner",
+          description: "Address of new owner of Subscription",
         },
       ],
     },
@@ -1207,7 +1211,205 @@ export const subtasks: Subtasks = {
       ],
     },
   },
-  [Task.functions]: {},
+  [Task.functions]: {
+    [FunctionsSubtask.createSubscription]: {
+      action: functionsActions.createSubscription,
+      description: camelToFlat(FunctionsSubtask.createSubscription),
+      args: [
+        {
+          name: "functionsRouterAddress",
+          description: "Address of Functions Router",
+        },
+        {
+          name: "consumerAddress",
+          description: "Address of Functions Consumer",
+          defaultValue: "",
+        },
+      ],
+    },
+    [FunctionsSubtask.fundSubscription]: {
+      action: functionsActions.fundSubscription,
+      description: camelToFlat(FunctionsSubtask.fundSubscription),
+      args: [
+        {
+          name: "functionsRouterAddress",
+          description: "Address of Functions Router",
+        },
+        {
+          name: "linkTokenAddress",
+          description: "Address of Link Token",
+        },
+        {
+          name: "amountInJuels",
+          description: "Amount of LINK in Juels to fund Subscription",
+        },
+        {
+          name: "subscriptionId",
+          description: "Subscription ID",
+        },
+      ],
+    },
+    [FunctionsSubtask.cancelSubscription]: {
+      action: functionsActions.cancelSubscription,
+      description: camelToFlat(FunctionsSubtask.cancelSubscription),
+      args: [
+        {
+          name: "functionsRouterAddress",
+          description: "Address of Functions Router",
+        },
+        {
+          name: "subscriptionId",
+          description: "Subscription ID",
+        },
+        {
+          name: "receivingAddress",
+          description: "Address to receive the balance of Subscription",
+          defaultValue: "",
+        },
+      ],
+    },
+    [FunctionsSubtask.getSubscriptionDetails]: {
+      action: functionsActions.getSubscriptionDetails,
+      description: camelToFlat(FunctionsSubtask.getSubscriptionDetails),
+      args: [
+        {
+          name: "functionsRouterAddress",
+          description: "Address of Functions Router",
+        },
+        {
+          name: "subscriptionId",
+          description: "Subscription ID",
+        },
+      ],
+    },
+    [FunctionsSubtask.requestSubscriptionOwnerTransfer]: {
+      action: functionsActions.requestSubscriptionOwnerTransfer,
+      description: camelToFlat(
+        FunctionsSubtask.requestSubscriptionOwnerTransfer
+      ),
+      args: [
+        {
+          name: "functionsRouterAddress",
+          description: "Address of Functions Router",
+        },
+        {
+          name: "subscriptionId",
+          description: "Subscription ID",
+        },
+        {
+          name: "newOwnerAddress",
+          description: "Address of new owner of Subscription ",
+        },
+      ],
+    },
+    [FunctionsSubtask.acceptSubscriptionOwnerTransfer]: {
+      action: functionsActions.acceptSubscriptionOwnerTransfer,
+      description: camelToFlat(
+        FunctionsSubtask.acceptSubscriptionOwnerTransfer
+      ),
+      args: [
+        {
+          name: "functionsRouterAddress",
+          description: "Address of Functions Router",
+        },
+        {
+          name: "subscriptionId",
+          description: "Subscription ID",
+        },
+      ],
+    },
+    [FunctionsSubtask.addConsumer]: {
+      action: functionsActions.addConsumer,
+      description: camelToFlat(FunctionsSubtask.addConsumer),
+      args: [
+        {
+          name: "functionsRouterAddress",
+          description: "Address of Functions Router",
+        },
+        {
+          name: "consumerAddress",
+          description: "Address of Functions Consumer",
+        },
+        {
+          name: "subscriptionId",
+          description: "Subscription ID",
+        },
+      ],
+    },
+    [FunctionsSubtask.removeConsumer]: {
+      action: functionsActions.removeConsumer,
+      description: camelToFlat(FunctionsSubtask.removeConsumer),
+      args: [
+        {
+          name: "functionsRouterAddress",
+          description: "Address of Functions Router",
+        },
+        {
+          name: "consumerAddress",
+          description: "Address of Functions Consumer",
+        },
+        {
+          name: "subscriptionId",
+          description: "Subscription ID",
+        },
+      ],
+    },
+    [FunctionsSubtask.timeoutRequests]: {
+      action: functionsActions.timeoutRequests,
+      description: camelToFlat(FunctionsSubtask.timeoutRequests),
+      args: [
+        {
+          name: "functionsRouterAddress",
+          description: "Address of Functions Router",
+        },
+        {
+          name: "requestIdsString",
+          description: "Comma-separated requests IDs",
+        },
+        {
+          name: "donId",
+          description: "ID of the DON where Functions requests has been sent",
+        },
+        {
+          name: "toBlock",
+          description: "End block in search range",
+          defaultValue: "latest",
+        },
+        {
+          name: "pastBlocksToSearch",
+          description: "Number of blocks to search (before toBlock)",
+          defaultValue: "1000",
+        },
+      ],
+    },
+    [FunctionsSubtask.estimateRequestCost]: {
+      action: functionsActions.estimateRequestCost,
+      description: camelToFlat(FunctionsSubtask.estimateRequestCost),
+      args: [
+        {
+          name: "functionsRouterAddress",
+          description: "Address of Functions Router",
+        },
+        {
+          name: "donId",
+          description:
+            "ID of the DON to which the Functions request will be sent",
+        },
+        {
+          name: "subscriptionId",
+          description: "Subscription ID",
+        },
+        {
+          name: "callbackGasLimit",
+          description: "Total gas used by the consumer contract's callback",
+        },
+        {
+          name: "gasPriceWei",
+          description: "Gas price in wei",
+        },
+      ],
+    },
+  },
   [Task.registries]: {
     [PluginRegistriesSubtask.getDataFeed]: {
       action: registriesActions.getDataFeed,
@@ -1239,9 +1441,9 @@ export const subtasks: Subtasks = {
       description: camelToFlat(PluginRegistriesSubtask.getL2Sequencer),
       args: [],
     },
-    [PluginRegistriesSubtask.getFunctionOracle]: {
-      action: registriesActions.getFunctionOracle,
-      description: camelToFlat(PluginRegistriesSubtask.getFunctionOracle),
+    [PluginRegistriesSubtask.getFunctionRouter]: {
+      action: registriesActions.getFunctionRouter,
+      description: camelToFlat(PluginRegistriesSubtask.getFunctionRouter),
       args: [],
     },
     [PluginRegistriesSubtask.getDenomination]: {
@@ -1287,6 +1489,34 @@ export const subtasks: Subtasks = {
           name: "amount",
           description: "Amount of ETH in wei",
           defaultValue: "1000000000000000000",
+        },
+      ],
+    },
+    [UtilsSubtask.createGist]: {
+      action: utilsActions.createGist,
+      description: "Create private GitHub gist",
+      args: [
+        {
+          name: "githubApiToken",
+          description: "GitHub API Token",
+        },
+        {
+          name: "content",
+          description: "Gist content",
+        },
+      ],
+    },
+    [UtilsSubtask.deleteGist]: {
+      action: utilsActions.deleteGist,
+      description: "Delete private GitHub gist",
+      args: [
+        {
+          name: "githubApiToken",
+          description: "GitHub API Token",
+        },
+        {
+          name: "gistURL",
+          description: "Gist URL",
         },
       ],
     },
@@ -1445,9 +1675,9 @@ export const subtasks: Subtasks = {
       ],
     },
   },
-  [Task.drConsumer]: {
-    [DRConsumerSubtask.deploy]: {
-      action: drConsumerActions.deploy,
+  [Task.directRequestConsumer]: {
+    [DirectRequestConsumerSubtask.deploy]: {
+      action: directRequestConsumerActions.deploy,
       description: "Deploy Direct Request Consumer",
       args: [
         {
@@ -1456,8 +1686,8 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [DRConsumerSubtask.requestData]: {
-      action: drConsumerActions.requestData,
+    [DirectRequestConsumerSubtask.requestData]: {
+      action: directRequestConsumerActions.requestData,
       description: "Request Data with Direct Request",
       args: [
         {
@@ -1487,13 +1717,35 @@ export const subtasks: Subtasks = {
         },
       ],
     },
-    [DRConsumerSubtask.getLatestAnswer]: {
-      action: drConsumerActions.getLatestAnswer,
+    [DirectRequestConsumerSubtask.getLatestAnswer]: {
+      action: directRequestConsumerActions.getLatestAnswer,
       description: "Get latest answer",
       args: [
         {
           name: "directRequestConsumerAddress",
           description: "Direct Request Consumer address",
+        },
+      ],
+    },
+  },
+  [Task.functionsSimulation]: {
+    [FunctionsSimulationSubtask.simulateRequest]: {
+      action: functionsSimulationActions.simulateRequest,
+      description: "Simulate Functions request",
+      args: [
+        {
+          name: "source",
+          description: "Source code to execute",
+        },
+        {
+          name: "args",
+          description: "Comma-separated request args",
+          defaultValue: "",
+        },
+        {
+          name: "bytesArgs",
+          description: "Comma-separated request bytes args",
+          defaultValue: "",
         },
       ],
     },

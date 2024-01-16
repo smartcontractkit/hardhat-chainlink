@@ -1,12 +1,12 @@
 import { BigNumber } from "ethers";
 import { ActionType } from "hardhat/types";
 
-import * as drConsumer from "../../../sandbox/drConsumer";
+import * as directRequestConsumer from "../../../sandbox/directRequestConsumer";
 
 export const deploy: ActionType<{
   linkTokenAddress: string;
 }> = async (taskArgs, hre): Promise<string> => {
-  return drConsumer.deploy(hre, taskArgs.linkTokenAddress);
+  return directRequestConsumer.deploy(hre, taskArgs.linkTokenAddress);
 };
 
 export const requestData: ActionType<{
@@ -17,7 +17,7 @@ export const requestData: ActionType<{
   pathToData: string;
   multiplyTimes: string;
 }> = async (taskArgs, hre): Promise<{ transactionHash: string }> => {
-  return drConsumer.requestData(
+  return directRequestConsumer.requestData(
     hre,
     taskArgs.directRequestConsumerAddress,
     taskArgs.operatorAddress,
@@ -31,5 +31,8 @@ export const requestData: ActionType<{
 export const getLatestAnswer: ActionType<{
   directRequestConsumerAddress: string;
 }> = async (taskArgs, hre): Promise<BigNumber> => {
-  return drConsumer.getLatestAnswer(hre, taskArgs.directRequestConsumerAddress);
+  return directRequestConsumer.getLatestAnswer(
+    hre,
+    taskArgs.directRequestConsumerAddress
+  );
 };

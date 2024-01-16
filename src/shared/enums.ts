@@ -12,8 +12,9 @@ export enum Task {
   utils = "utils",
   node = "sandbox:node",
   operator = "sandbox:operator",
-  drConsumer = "sandbox:drConsumer",
+  directRequestConsumer = "sandbox:directRequestConsumer",
   linkToken = "sandbox:linkToken",
+  functionsSimulation = "sandbox:functionsSimulation",
 }
 
 export enum DataFeedSubtask {
@@ -116,6 +117,19 @@ export enum AutomationRegistrarSubtask {
   getTypeAndVersion = "getTypeAndVersion",
 }
 
+export enum FunctionsSubtask {
+  createSubscription = "createSubscription",
+  fundSubscription = "fundSubscription",
+  getSubscriptionDetails = "getSubscriptionDetails",
+  cancelSubscription = "cancelSubscription",
+  requestSubscriptionOwnerTransfer = "requestSubscriptionOwnerTransfer",
+  acceptSubscriptionOwnerTransfer = "acceptSubscriptionOwnerTransfer",
+  addConsumer = "addConsumer",
+  removeConsumer = "removeConsumer",
+  timeoutRequests = "timeoutRequests",
+  estimateRequestCost = "estimateRequestCost",
+}
+
 export enum PluginRegistriesSubtask {
   getDataFeed = "getDataFeed",
   getFeedRegistry = "getFeedRegistry",
@@ -123,7 +137,7 @@ export enum PluginRegistriesSubtask {
   getLinkToken = "getLinkToken",
   getKeeperRegistry = "getKeeperRegistry",
   getL2Sequencer = "getL2Sequencer",
-  getFunctionOracle = "getFunctionOracle",
+  getFunctionRouter = "getFunctionRouter",
   getDenomination = "getDenomination",
 }
 
@@ -143,7 +157,7 @@ export enum OperatorSubtask {
   setAuthorizedSender = "setAuthorizedSender",
 }
 
-export enum DRConsumerSubtask {
+export enum DirectRequestConsumerSubtask {
   deploy = "deploy",
   requestData = "requestData",
   getLatestAnswer = "getLatestAnswer",
@@ -157,10 +171,16 @@ export enum LinkTokenSubtask {
   decreaseApproval = "decreaseApproval",
 }
 
+export enum FunctionsSimulationSubtask {
+  simulateRequest = "simulateRequest",
+}
+
 export enum UtilsSubtask {
   getRoundId = "getRoundId",
   parseRoundId = "parseRoundId",
   transferETH = "transferETH",
+  createGist = "createGist",
+  deleteGist = "deleteGist",
 }
 
 export const enum InquirableParameter {
@@ -172,7 +192,11 @@ export const enum InquirableParameter {
   keeperRegistryAddress = "keeperRegistryAddress",
   keeperRegistrarAddress = "keeperRegistrarAddress",
   l2SequencerAddress = "l2SequencerAddress",
-  functionOracleAddress = "functionOracleAddress",
+  functionsRouterAddress = "functionsRouterAddress",
+  donId = "donId",
+  secretsLocation = "secretsLocation",
+  codeLocation = "codeLocation",
+  codeLanguage = "codeLanguage",
   feedRegistryBaseTick = "feedRegistryBaseTick",
   feedRegistryQuoteTick = "feedRegistryQuoteTick",
 }

@@ -22,3 +22,17 @@ export const transferETH: ActionType<{
 }> = async (taskArgs, hre) => {
   return utils.transferETH(hre, taskArgs.recipient, taskArgs.amount);
 };
+
+export const createGist: ActionType<{
+  githubApiToken: string;
+  content: string;
+}> = async (taskArgs, _) => {
+  return utils.createGist(taskArgs.githubApiToken, taskArgs.content);
+};
+
+export const deleteGist: ActionType<{
+  githubApiToken: string;
+  content: string;
+}> = async (taskArgs, _) => {
+  return utils.deleteGist(taskArgs.githubApiToken, taskArgs.content);
+};

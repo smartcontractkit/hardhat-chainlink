@@ -1,3 +1,9 @@
+import * as functionsToolkit from "@chainlink/functions-toolkit";
+import { DecodedResult } from "@chainlink/functions-toolkit/dist/decodeResult";
+import {
+  FunctionsRequestParams,
+  ReturnType,
+} from "@chainlink/functions-toolkit/dist/types";
 import { BigNumber, BigNumberish } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
@@ -55,4 +61,31 @@ export const transferETH = async (
   return {
     transactionHash: tx.hash,
   };
+};
+
+export const createGist = async (
+  githubApiToken: string,
+  content: string
+): Promise<string> => {
+  return functionsToolkit.createGist(githubApiToken, content);
+};
+
+export const deleteGist = async (
+  githubApiToken: string,
+  gistURL: string
+): Promise<boolean> => {
+  return functionsToolkit.deleteGist(githubApiToken, gistURL);
+};
+
+export const buildRequestCBOR = async (
+  requestParams: FunctionsRequestParams
+): Promise<string> => {
+  return functionsToolkit.buildRequestCBOR(requestParams);
+};
+
+export const decodeHexString = async (
+  resultHexString: string,
+  expectedReturnType: ReturnType
+): Promise<DecodedResult> => {
+  return functionsToolkit.decodeResult(resultHexString, expectedReturnType);
 };
