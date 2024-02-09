@@ -8,6 +8,7 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment: publish
 
     steps:
       - name: Checkout code
@@ -19,7 +20,7 @@ jobs:
           node-version: '18.x'
           registry-url: 'https://registry.npmjs.org'
           always-auth: true
-          
+
       - name: Setup npm authentication
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
 
