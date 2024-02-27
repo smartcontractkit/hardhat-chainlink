@@ -203,6 +203,21 @@ task(
   printSubtasks(Task.functions);
 });
 
+// CCIP
+task(`${PACKAGE_NAME}:${Task.ccip}`, "CCIP Module")
+  .addOptionalPositionalParam("subtask", "Subtask")
+  .addOptionalParam("args", "Subtask args")
+  .setAction(async (taskArgs, hre) => {
+    return resolveTask(hre, Task.ccip, taskArgs);
+  });
+
+task(
+  `${PACKAGE_NAME}:${Task.ccip}:subtasks`,
+  "CCIP Module: Subtasks List"
+).setAction(async () => {
+  printSubtasks(Task.ccip);
+});
+
 // REGISTRIES
 task(`${PACKAGE_NAME}:${Task.registries}`, "Plugin Registries Module")
   .addOptionalPositionalParam("subtask", "Subtask")
