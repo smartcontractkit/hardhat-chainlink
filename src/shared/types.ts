@@ -1,6 +1,7 @@
 import { BigNumber, providers, Signer } from "ethers";
 
 import {
+  CCIPRouter,
   DataFeed,
   FeedRegistry,
   FunctionsRouter,
@@ -24,6 +25,7 @@ export type KeeperRegistriesRegistry = Record<string, KeeperRegistry>;
 export type L2SequencersRegistry = Record<string, L2Sequencer>;
 export type DenominationsRegistry = Record<string, string>;
 export type FunctionsRoutersRegistry = Record<string, FunctionsRouter>;
+export type CCIPRoutersRegistry = Record<string, CCIPRouter>;
 
 export type Subtasks = Record<string, Record<string, SubtaskProperties>>;
 

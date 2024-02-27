@@ -8,6 +8,7 @@ export enum Task {
   automationRegistrar = "automationRegistrar",
   vrf = "vrf",
   functions = "functions",
+  ccip = "ccip",
   registries = "registries",
   utils = "utils",
   node = "sandbox:node",
@@ -130,6 +131,15 @@ export enum FunctionsSubtask {
   estimateRequestCost = "estimateRequestCost",
 }
 
+export enum CCIPSubtask {
+  getSupportedTokens = "getSupportedTokens",
+  isChainSupported = "isChainSupported",
+  getOnRamp = "getOnRamp",
+  isOffRamp = "isOffRamp",
+  getWrappedNative = "getWrappedNative",
+  getTypeAndVersion = "getTypeAndVersion",
+}
+
 export enum PluginRegistriesSubtask {
   getDataFeed = "getDataFeed",
   getFeedRegistry = "getFeedRegistry",
@@ -138,6 +148,7 @@ export enum PluginRegistriesSubtask {
   getKeeperRegistry = "getKeeperRegistry",
   getL2Sequencer = "getL2Sequencer",
   getFunctionRouter = "getFunctionRouter",
+  getCCIPRouter = "getCCIPRouter",
   getDenomination = "getDenomination",
 }
 
@@ -193,6 +204,7 @@ export const enum InquirableParameter {
   keeperRegistrarAddress = "keeperRegistrarAddress",
   l2SequencerAddress = "l2SequencerAddress",
   functionsRouterAddress = "functionsRouterAddress",
+  ccipRouterAddress = "ccipRouterAddress",
   donId = "donId",
   secretsLocation = "secretsLocation",
   codeLocation = "codeLocation",
