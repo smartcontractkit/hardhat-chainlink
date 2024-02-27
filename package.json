@@ -1,6 +1,6 @@
 {
   "name": "@chainlink/hardhat-chainlink",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Hardhat plugin that adds interaction with Chainlink services to Hardhat projects",
   "repository": "https://github.com/smartcontractkit/hardhat-chainlink.git",
   "license": "MIT",
