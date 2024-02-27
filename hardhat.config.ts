@@ -43,6 +43,7 @@ const config: HardhatUserConfig = {
       "./chainlink-artifacts/TypeAndVersionInterface.json",
       "./chainlink-artifacts/OptimismSequencerUptimeFeed.json",
       "./chainlink-artifacts/VRFCoordinatorV2.json",
+      "./chainlink-artifacts/Router.json",
     ],
   },
 };
