@@ -3,144 +3,196 @@
     "name": "Ethereum Mainnet",
     "chainSlug": "ethereum",
     "networkSlug": "mainnet",
-    "chainId": "1"
+    "chainId": "1",
+    "ccipChainSelector": "5009297550715157269"
   },
   {
     "name": "Ethereum Goerli",
     "chainSlug": "goerli",
     "networkSlug": "testnet",
-    "chainId": "5"
+    "chainId": "5",
+    "ccipChainSelector": ""
   },
   {
     "name": "Ethereum Sepolia",
     "chainSlug": "sepolia",
     "networkSlug": "testnet",
-    "chainId": "11155111"
+    "chainId": "11155111",
+    "ccipChainSelector": "16015286601757825753"
   },
   {
     "name": "BNB Chain Mainnet",
     "chainSlug": "bsc",
     "networkSlug": "mainnet",
-    "chainId": "56"
+    "chainId": "56",
+    "ccipChainSelector": "11344663589394136015"
   },
   {
     "name": "BNB Chain Testnet",
     "chainSlug": "bnb-chain-testnet",
     "networkSlug": "testnet",
-    "chainId": "97"
+    "chainId": "97",
+    "ccipChainSelector": "13264668187771770619"
   },
   {
     "name": "Polygon Mainnet",
     "chainSlug": "polygon",
     "networkSlug": "mainnet",
-    "chainId": "137"
+    "chainId": "137",
+    "ccipChainSelector": "4051577828743386545"
   },
   {
     "name": "Polygon Mumbai",
     "chainSlug": "mumbai",
     "networkSlug": "testnet",
-    "chainId": "80001"
+    "chainId": "80001",
+    "ccipChainSelector": "12532609583862916517"
   },
   {
     "name": "Arbitrum Mainnet",
     "chainSlug": "arbitrum",
     "networkSlug": "mainnet",
-    "chainId": "42161"
+    "chainId": "42161",
+    "ccipChainSelector": "4949039107694359620"
   },
   {
     "name": "Arbitrum Goerli",
     "chainSlug": "arbitrum-goerli",
     "networkSlug": "testnet",
-    "chainId": "421613"
+    "chainId": "421613",
+    "ccipChainSelector": ""
+  },
+  {
+    "name": "Arbitrum Sepolia",
+    "chainSlug": "arbitrum-sepolia",
+    "networkSlug": "testnet",
+    "chainId": "421614",
+    "ccipChainSelector": "3478487238524512106"
   },
   {
     "name": "Optimism Mainnet",
     "chainSlug": "optimism",
     "networkSlug": "mainnet",
-    "chainId": "10"
+    "chainId": "10",
+    "ccipChainSelector": "3734403246176062136"
   },
   {
     "name": "Optimism Goerli",
     "chainSlug": "optimism-goerli",
     "networkSlug": "testnet",
-    "chainId": "420"
+    "chainId": "420",
+    "ccipChainSelector": ""
+  },
+  {
+    "name": "Optimism Sepolia",
+    "chainSlug": "optimism-sepolia",
+    "networkSlug": "testnet",
+    "chainId": "11155420",
+    "ccipChainSelector": "5224473277236331295"
   },
   {
     "name": "Avalanche Mainnet",
     "chainSlug": "avalanche",
     "networkSlug": "mainnet",
-    "chainId": "43114"
+    "chainId": "43114",
+    "ccipChainSelector": "6433500567565415381"
   },
   {
     "name": "Avalanche Fuji",
     "chainSlug": "fuji",
     "networkSlug": "testnet",
-    "chainId": "43113"
+    "chainId": "43113",
+    "ccipChainSelector": "14767482510784806043"
   },
   {
     "name": "Moonriver Mainnet",
     "chainSlug": "moonriver",
     "networkSlug": "mainnet",
-    "chainId": "1285"
+    "chainId": "1285",
+    "ccipChainSelector": ""
   },
   {
     "name": "Fantom Opera",
     "chainSlug": "fantom",
     "networkSlug": "mainnet",
-    "chainId": "250"
+    "chainId": "250",
+    "ccipChainSelector": ""
   },
   {
     "name": "Fantom Testnet",
     "chainSlug": "fantom-testnet",
     "networkSlug": "testnet",
-    "chainId": "4002"
+    "chainId": "4002",
+    "ccipChainSelector": ""
   },
   {
     "name": "Harmony Mainnet",
     "chainSlug": "harmony",
     "networkSlug": "mainnet",
-    "chainId": "1666600000"
+    "chainId": "1666600000",
+    "ccipChainSelector": ""
   },
   {
     "name": "Moonbeam Mainnet",
     "chainSlug": "moonbeam",
     "networkSlug": "mainnet",
-    "chainId": "1284"
+    "chainId": "1284",
+    "ccipChainSelector": ""
   },
   {
     "name": "Metis Mainnet",
     "chainSlug": "metis",
     "networkSlug": "mainnet",
-    "chainId": "1088"
+    "chainId": "1088",
+    "ccipChainSelector": ""
   },
   {
     "name": "RSK Mainnet",
     "chainSlug": "rsk",
     "networkSlug": "mainnet",
-    "chainId": "30"
+    "chainId": "30",
+    "ccipChainSelector": ""
   },
   {
     "name": "Gnosis Chain Mainnet",
     "chainSlug": "xdai",
     "networkSlug": "mainnet",
-    "chainId": "100"
+    "chainId": "100",
+    "ccipChainSelector": ""
   },
   {
     "name": "Base Goerli",
     "chainSlug": "base-goerli",
     "networkSlug": "testnet",
-    "chainId": "84531"
+    "chainId": "84531",
+    "ccipChainSelector": ""
   },
   {
     "name": "Celo Mainnet",
     "chainSlug": "celo",
     "networkSlug": "mainnet",
-    "chainId": "42220"
+    "chainId": "42220",
+    "ccipChainSelector": ""
   },
   {
     "name": "Celo Alfajores",
     "chainSlug": "alfajores",
     "networkSlug": "testnet",
-    "chainId": "44787"
+    "chainId": "44787",
+    "ccipChainSelector": ""
+  },
+  {
+    "name": "Base Mainnet",
+    "chainSlug": "base",
+    "networkSlug": "mainnet",
+    "chainId": "8453",
+    "ccipChainSelector": "15971525489660198786"
+  },
+  {
+    "name": "Base Sepolia",
+    "chainSlug": "base-sepolia",
+    "networkSlug": "testnet",
+    "chainId": "84532",
+    "ccipChainSelector": "10344971235874465080"
   }
 ]
