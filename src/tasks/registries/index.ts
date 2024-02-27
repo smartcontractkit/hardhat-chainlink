@@ -30,6 +30,10 @@ export const getFunctionRouter: ActionType<{}> = async (taskArgs, hre) => {
   return inquirers.inquireFunctionsRouter(hre, false);
 };
 
+export const getCCIPRouter: ActionType<{}> = async (taskArgs, hre) => {
+  return inquirers.inquireCCIPRouter(hre, false);
+};
+
 export const getDenomination: ActionType<{}> = async () => {
   return inquirers.inquireDenomination();
 };

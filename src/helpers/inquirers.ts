@@ -10,6 +10,7 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import * as registries from "../registries";
 import { InquirableParameter, Task } from "../shared/enums";
 import {
+  CCIPRoutersRegistry,
   Choice,
   DataFeedsRegistry,
   DenominationsRegistry,
@@ -50,6 +51,8 @@ export const inquire = async (
       return inquireL2SequencerAddress(hre);
     case InquirableParameter.functionsRouterAddress:
       return inquireFunctionsRouterAddress(hre);
+    case InquirableParameter.ccipRouterAddress:
+      return inquireCCIPRouterAddress(hre);
     case InquirableParameter.donId:
       return inquireDonId(hre);
     case InquirableParameter.codeLocation:
@@ -693,6 +696,80 @@ export const inquireFunctionsRouterAddress = async (
   }
 
   return functionsRouterAddress;
+};
+
+export const inquireCCIPRouter = async (
+  hre: HardhatRuntimeEnvironment,
+  useHardhatNetwork: boolean = true
+) => {
+  const networksRegistry: NetworksRegistry =
+    registries.networksRegistry as NetworksRegistry;
+
+  const ccipRoutersRegistry: CCIPRoutersRegistry =
+    registries.ccipRoutersRegistry as CCIPRoutersRegistry;
+
+  let chainSlug = "";
+  if (useHardhatNetwork) {
+    const chainId = hre.network.config.chainId;
+    if (!chainId) {
+      console.log(
+        "Could not identify network, chainId is not specified in hardhat.config."
+      );
+      return undefined;
+    }
+
+    chainSlug = networksRegistry[chainId].chainSlug;
+  } else {
+    chainSlug = await select({
+      message: "Select a network",
+      choices: Object.values(Object.keys(ccipRoutersRegistry)).reduce(
+        (agg, networkName) => {
+          agg.push({
+            name: networksRegistry[networkName].name,
+            value: kebabToCamelCase(networksRegistry[networkName].chainSlug),
+            description: networksRegistry[networkName].name,
+          });
+          return agg;
+        },
+        [] as Choice[]
+      ),
+    });
+  }
+
+  if (!ccipRoutersRegistry[chainSlug]) {
+    console.log(
+      `There is no CCIP Router in the plugin registry for the selected chain: ${hre.network.name}`
+    );
+    return undefined;
+  }
+
+  return ccipRoutersRegistry[chainSlug];
+};
+
+export const inquireCCIPRouterAddress = async (
+  hre: HardhatRuntimeEnvironment,
+  useHardhatNetwork: boolean = true
+) => {
+  const ccipRouter = await inquireCCIPRouter(hre, useHardhatNetwork);
+  if (!ccipRouter) {
+    return input({
+      message: "Provide a valid CCIP Router address",
+    });
+  }
+
+  const ccipRouterAddress = ccipRouter.contractAddress;
+
+  const answer: boolean = await confirm({
+    message: `CCIP Router found in the plugin registry: ${ccipRouterAddress}. Do you want to proceed with it?`,
+  });
+
+  if (!answer) {
+    return input({
+      message: "Provide a valid CCIP Router address",
+    });
+  }
+
+  return ccipRouterAddress;
 };
 
 export const inquireDonId = async (
