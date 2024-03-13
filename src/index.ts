@@ -6,6 +6,8 @@ import {
   HardhatUserConfig,
 } from "hardhat/types";
 
+import { CCIPReceiver__factory } from "../types";
+
 import { HardhatChainlink } from "./HardhatChainlink";
 import { PACKAGE_NAME } from "./shared/constants";
 import { Task } from "./shared/enums";
@@ -218,6 +220,46 @@ task(
   printSubtasks(Task.ccip);
 });
 
+task(
+  `${PACKAGE_NAME}:${Task.ccip}:estimateReceiverGas`,
+  "CCIP Module: Estimate CCIP Receiver Gas"
+).setAction(
+  async (taskArgs: {
+    destinationRPCUrl: string;
+    ccipMessageId: string;
+    sourceChainSelector: string;
+    ccipMessageSender: string;
+    ccipMessageData: string;
+    ccipReceiverAddress: string;
+    gasLimit: string;
+  }) => {
+    const { ethers } = require("ethers");
+
+    // Initialize an ethers instance
+    const provider = new ethers.providers.JsonRpcProvider(
+      `${taskArgs.destinationRPCUrl}`
+    );
+
+    const ccipReceiverInterface = CCIPReceiver__factory.createInterface();
+    const data = ccipReceiverInterface.encodeFunctionData("ccipReceive", [
+      {
+        messageId: `${taskArgs.ccipMessageId}`,
+        sourceChainSelector: `${taskArgs.sourceChainSelector}`,
+        sender: `${taskArgs.ccipMessageSender}`,
+        data: `${taskArgs.ccipMessageData}`,
+        destTokenAmounts: [],
+      },
+    ]);
+
+    // Query the blockchain (replace example parameters)
+    return provider.estimateGas({
+      to: `${taskArgs.ccipReceiverAddress}`,
+      data,
+      gasLimit: `${taskArgs.gasLimit}`,
+    });
+  }
+);
+
 // REGISTRIES
 task(`${PACKAGE_NAME}:${Task.registries}`, "Plugin Registries Module")
   .addOptionalPositionalParam("subtask", "Subtask")
@@ -264,7 +306,10 @@ task(
 });
 
 // DIRECT REQUEST CONSUMER
-task(`${PACKAGE_NAME}:${Task.directRequestConsumer}`, "Direct Request Consumer Module")
+task(
+  `${PACKAGE_NAME}:${Task.directRequestConsumer}`,
+  "Direct Request Consumer Module"
+)
   .addOptionalPositionalParam("subtask", "Subtask")
   .addOptionalParam("args", "Subtask args")
   .setAction(async (taskArgs, hre) => {
