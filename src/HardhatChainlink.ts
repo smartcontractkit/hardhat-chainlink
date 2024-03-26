@@ -20,9 +20,12 @@ import * as functionsSimulations from "./sandbox/functionsSimulations";
 import * as linkToken from "./sandbox/linkToken";
 import * as node from "./sandbox/node";
 import * as operator from "./sandbox/operator";
+import * as ccipReceiver from "./sandbox/ccipReceiver";
 import {
+  CCIPMessage,
   DockerOutput,
   FunctionsSubscriptionDetails,
+  GasEstimationOptions,
   Overrides,
   VRFSubscriptionDetails,
 } from "./shared/types";
@@ -87,6 +90,7 @@ class Sandbox {
   public directRequestConsumer: DirectRequestConsumer;
   public linkToken: LinkToken;
   public functionsSimulation: FunctionsSimulation;
+  public ccipReceiver: CCIPReceiver;
 
   constructor(hre: HardhatRuntimeEnvironment) {
     this.node = new Node(hre);
@@ -94,6 +98,7 @@ class Sandbox {
     this.directRequestConsumer = new DirectRequestConsumer(hre);
     this.linkToken = new LinkToken(hre);
     this.functionsSimulation = new FunctionsSimulation();
+    this.ccipReceiver = new CCIPReceiver(hre);
   }
 }
 
@@ -1734,6 +1739,35 @@ class FunctionsSimulation {
       secrets,
       args,
       bytesArgs
+    );
+  }
+}
+
+class CCIPReceiver {
+  private hre: HardhatRuntimeEnvironment;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
+  }
+  
+  public deploy(ccipRouterAddress: string): Promise<string> {
+    return ccipReceiver.deploy(this.hre, ccipRouterAddress);
+  }
+  
+  public getRouterAddress(ccipReceiverAddress: string): Promise<string> {
+    return ccipReceiver.getRouterAddress(this.hre, ccipReceiverAddress);
+  }
+
+  public estimateGas(
+    ccipReceiverAddress: string,
+    ccipMessage: CCIPMessage,
+    gasEstimationOptions: GasEstimationOptions,
+  ): Promise<BigNumber> {
+    return ccipReceiver.estimateGas(
+      this.hre,
+      ccipReceiverAddress,
+      ccipMessage,
+      gasEstimationOptions
     );
   }
 }
