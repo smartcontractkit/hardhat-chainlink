@@ -29,7 +29,8 @@ export const resolveTask = async (
       subtaskArgs[subtaskArg.name] = await inquire(
         hre,
         subtaskArg.name,
-        subtaskArg.defaultValue
+        subtaskArg.defaultValue,
+        subtaskArg.isBoolean
       );
     }
   }

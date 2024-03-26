@@ -3,8 +3,11 @@ import "@nomiclabs/hardhat-ethers";
 import { BigNumber, BigNumberish, BytesLike } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
+import { Client } from "../types/chainlink-artifacts/Router";
+
 import * as automationRegistrar from "./automation/keepersRegistrar";
 import * as automationRegistry from "./automation/keepersRegistry";
+import * as ccip from "./ccip";
 import * as dataFeed from "./feeds/dataFeed";
 import * as dataFeedProxy from "./feeds/dataFeedProxy";
 import * as ensFeedsResolver from "./feeds/ensFeedsResolver";
@@ -17,9 +20,12 @@ import * as functionsSimulations from "./sandbox/functionsSimulations";
 import * as linkToken from "./sandbox/linkToken";
 import * as node from "./sandbox/node";
 import * as operator from "./sandbox/operator";
+import * as ccipReceiver from "./sandbox/ccipReceiver";
 import {
+  CCIPMessage,
   DockerOutput,
   FunctionsSubscriptionDetails,
+  GasEstimationOptions,
   Overrides,
   VRFSubscriptionDetails,
 } from "./shared/types";
@@ -46,6 +52,7 @@ export class HardhatChainlink {
   public automationRegistrar: AutomationRegistrar;
   public automationRegistry: AutomationRegistry;
   public functions: Functions;
+  public ccip: CCIP;
   public utils: Utils;
   public sandbox: Sandbox;
   private hre: HardhatRuntimeEnvironment;
@@ -71,6 +78,7 @@ export class HardhatChainlink {
     this.automationRegistrar = new AutomationRegistrar(this.hre);
     this.automationRegistry = new AutomationRegistry(this.hre);
     this.functions = new Functions(this.hre);
+    this.ccip = new CCIP(this.hre);
     this.utils = new Utils(this.hre);
     this.sandbox = new Sandbox(this.hre);
   }
@@ -82,13 +90,15 @@ class Sandbox {
   public directRequestConsumer: DirectRequestConsumer;
   public linkToken: LinkToken;
   public functionsSimulation: FunctionsSimulation;
+  public ccipReceiver: CCIPReceiver;
 
   constructor(hre: HardhatRuntimeEnvironment) {
     this.node = new Node(hre);
     this.operator = new Operator(hre);
     this.directRequestConsumer = new DirectRequestConsumer(hre);
     this.linkToken = new LinkToken(hre);
-    this.functionsSimulation = new FunctionsSimulation(hre);
+    this.functionsSimulation = new FunctionsSimulation();
+    this.ccipReceiver = new CCIPReceiver(hre);
   }
 }
 
@@ -1364,7 +1374,7 @@ class Functions {
       version
     );
   }
-  
+
   // utils
   public fetchRequestCommitment(
     functionsRouterAddress: string,
@@ -1383,6 +1393,108 @@ class Functions {
       pastBlocksToSearch,
       overrides
     );
+  }
+}
+
+class CCIP {
+  private hre: HardhatRuntimeEnvironment;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
+  }
+
+  public initializeRouter(
+    ccipRouterAddress: string,
+    overrides?: Overrides
+  ): Promise<ccip.CCIPRouter> {
+    return ccip.CCIPRouter.initialize({
+      hre: this.hre,
+      ccipRouterAddress,
+      overrides,
+    });
+  }
+
+  public getFee(
+    ccipRouterAddress: string,
+    destinationChainSelector: BigNumberish,
+    message: Client.EVM2AnyMessageStruct,
+    overrides?: Overrides
+  ): Promise<BigNumber> {
+    return ccip.getFee(
+      this.hre,
+      ccipRouterAddress,
+      destinationChainSelector,
+      message,
+      overrides
+    );
+  }
+
+  public getSupportedTokens(
+    ccipRouterAddress: string,
+    chainSelector: BigNumberish,
+    overrides?: Overrides
+  ): Promise<string[]> {
+    return ccip.getSupportedTokens(
+      this.hre,
+      ccipRouterAddress,
+      chainSelector,
+      overrides
+    );
+  }
+
+  public isChainSupported(
+    ccipRouterAddress: string,
+    chainSelector: BigNumberish,
+    overrides?: Overrides
+  ): Promise<boolean> {
+    return ccip.isChainSupported(
+      this.hre,
+      ccipRouterAddress,
+      chainSelector,
+      overrides
+    );
+  }
+
+  public getOnRamp(
+    ccipRouterAddress: string,
+    chainSelector: BigNumberish,
+    overrides?: Overrides
+  ): Promise<string> {
+    return ccip.getOnRamp(
+      this.hre,
+      ccipRouterAddress,
+      chainSelector,
+      overrides
+    );
+  }
+
+  public isOffRamp(
+    ccipRouterAddress: string,
+    sourceChainSelector: BigNumberish,
+    offRampAddress: string,
+    overrides?: Overrides
+  ): Promise<boolean> {
+    return ccip.isOffRamp(
+      this.hre,
+      ccipRouterAddress,
+      sourceChainSelector,
+      offRampAddress,
+      overrides
+    );
+  }
+
+  public getWrappedNative(
+    ccipRouterAddress: string,
+    overrides?: Overrides
+  ): Promise<string> {
+    return ccip.getWrappedNative(this.hre, ccipRouterAddress, overrides);
+  }
+
+  public getTypeAndVersion(
+    ccipRouterAddress: string,
+    overrides?: Overrides
+  ): Promise<string> {
+    return ccip.getTypeAndVersion(this.hre, ccipRouterAddress, overrides);
   }
 }
 
@@ -1429,7 +1541,7 @@ class Utils {
   ): Promise<boolean> {
     return utils.deleteGist(githubApiToken, gistURL);
   }
-  
+
   public async buildFunctionsRequestCBOR(
     codeLocation: functionsToolkit.Location,
     codeLanguage: functionsToolkit.CodeLanguage,
@@ -1552,7 +1664,10 @@ class DirectRequestConsumer {
   public async getLatestAnswer(
     directRequestConsumerAddress: string
   ): Promise<BigNumber> {
-    return directRequestConsumer.getLatestAnswer(this.hre, directRequestConsumerAddress);
+    return directRequestConsumer.getLatestAnswer(
+      this.hre,
+      directRequestConsumerAddress
+    );
   }
 }
 
@@ -1572,12 +1687,7 @@ class LinkToken {
     recipient: string,
     amount: BigNumberish
   ): Promise<{ transactionHash: string }> {
-    return linkToken.transfer(
-      this.hre,
-      linkTokenAddress,
-      recipient,
-      amount
-    );
+    return linkToken.transfer(this.hre, linkTokenAddress, recipient, amount);
   }
 
   public async getAllowance(
@@ -1616,11 +1726,7 @@ class LinkToken {
 }
 
 class FunctionsSimulation {
-  private hre: HardhatRuntimeEnvironment;
-
-  constructor(hre: HardhatRuntimeEnvironment) {
-    this.hre = hre;
-  }
+  constructor() {}
 
   public async simulateRequest(
     source: string,
@@ -1633,6 +1739,35 @@ class FunctionsSimulation {
       secrets,
       args,
       bytesArgs
+    );
+  }
+}
+
+class CCIPReceiver {
+  private hre: HardhatRuntimeEnvironment;
+
+  constructor(hre: HardhatRuntimeEnvironment) {
+    this.hre = hre;
+  }
+  
+  public deploy(ccipRouterAddress: string): Promise<string> {
+    return ccipReceiver.deploy(this.hre, ccipRouterAddress);
+  }
+  
+  public getRouterAddress(ccipReceiverAddress: string): Promise<string> {
+    return ccipReceiver.getRouterAddress(this.hre, ccipReceiverAddress);
+  }
+
+  public estimateGas(
+    ccipReceiverAddress: string,
+    ccipMessage: CCIPMessage,
+    gasEstimationOptions: GasEstimationOptions,
+  ): Promise<BigNumber> {
+    return ccipReceiver.estimateGas(
+      this.hre,
+      ccipReceiverAddress,
+      ccipMessage,
+      gasEstimationOptions
     );
   }
 }

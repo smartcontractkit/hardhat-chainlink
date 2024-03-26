@@ -1,6 +1,6 @@
 {
   "name": "@chainlink/hardhat-chainlink",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Hardhat plugin that adds interaction with Chainlink services to Hardhat projects",
   "repository": "https://github.com/smartcontractkit/hardhat-chainlink.git",
   "license": "MIT",
@@ -27,7 +27,7 @@
     "test:functions": "mocha --exit 'test/functionsRouter.test.ts'",
     "test:functionsSimulation": "mocha --exit 'test/functionsSimulation.test.ts'",
     "test": "yarn test:prepare && yarn test:dataFeed && yarn test:dataFeedProxy && yarn test:ensFeedsResolver && yarn test:feedRegistry && yarn test:l2FeedUptimeSequencer && yarn test:vrfCoordinator && yarn test:automationRegistrar && yarn test:automationRegistry && yarn test:functions",
-    "copyArtifacts": "copyfiles -a -f ./node_modules/@chainlink/contracts/abi/**/* chainlink-artifacts",
+    "copyArtifacts": "copyfiles -a -f ./node_modules/@chainlink/contracts/abi/**/* ./node_modules/@chainlink/contracts-ccip/abi/**/* chainlink-artifacts",
     "removeArtifacts": "rm -rf chainlink-artifacts",
     "compile": "hardhat compile",
     "prebuild": "npm run copyArtifacts && npm run compile && npm run removeArtifacts",
@@ -44,7 +44,7 @@
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "1.0.6",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.8",
-    "@nomicfoundation/hardhat-toolbox": "2.0.2",
+    "@nomicfoundation/hardhat-toolbox": "^2.0.2",
     "@nomiclabs/hardhat-etherscan": "^3.1.7",
     "@typechain/ethers-v5": "^10.1.1",
     "@typechain/hardhat": "^6.1.6",
@@ -55,7 +55,6 @@
     "chai-as-promised": "^7.1.1",
     "copyfiles": "^2.4.1",
     "hardhat": "^2.17.3",
-    "hardhat-gas-reporter": "^1.0.9",
     "mocha": "^10.2.0",
     "mocha-suppress-logs": "^0.3.1",
     "prettier": "^2.8.8",
@@ -69,6 +68,7 @@
   },
   "dependencies": {
     "@chainlink/contracts": "0.8.0",
+    "@chainlink/contracts-ccip": "1.2.1",
     "@chainlink/functions-toolkit": "0.2.6",
     "@inquirer/confirm": "^2.0.6",
     "@inquirer/input": "^1.2.5",

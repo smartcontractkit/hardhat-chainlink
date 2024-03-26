@@ -2,6 +2,7 @@ import fs from "fs";
 
 import { kebabToCamelCase } from "../../helpers/utils";
 import {
+  CCIPRoutersRegistry,
   DataFeedsRegistry,
   FeedRegistriesRegistry,
   FunctionsRoutersRegistry,
@@ -12,6 +13,7 @@ import {
   VRFCoordinatorsRegistry,
 } from "../../shared/types";
 import {
+  CCIPRouter,
   DataFeed,
   FeedRegistry,
   FunctionsRouter,
@@ -21,6 +23,7 @@ import {
   Network,
   VRFCoordinator,
 } from "../interfaces";
+import ccipRoutersJSON from "../json/CCIPRouters.json";
 import dataFeedsJSON from "../json/DataFeeds.json";
 import feedRegistriesJSON from "../json/FeedRegistries.json";
 import functionsRoutersJSON from "../json/FunctionsRouters.json";
@@ -30,6 +33,7 @@ import linkTokensJSON from "../json/LinkTokens.json";
 import networksJSON from "../json/Networks.json";
 import vrfCoordinatorsJSON from "../json/VRFCoordinators.json";
 
+const ccipRouters: CCIPRouter[] = ccipRoutersJSON as CCIPRouter[];
 const dataFeeds: DataFeed[] = dataFeedsJSON as DataFeed[];
 const feedRegistries: FeedRegistry[] = feedRegistriesJSON as FeedRegistry[];
 const networks: Network[] = networksJSON as Network[];
@@ -43,6 +47,7 @@ const keeperRegistries: KeeperRegistry[] =
 const l2Sequencers: L2Sequencer[] = l2SequencersJson as L2Sequencer[];
 
 const networksMap: NetworksRegistry = {};
+const ccipRoutersMap: CCIPRoutersRegistry = {};
 const dataFeedsMap: DataFeedsRegistry = {};
 const feedRegistriesMap: FeedRegistriesRegistry = {};
 const vrfCoordinatorsMap: VRFCoordinatorsRegistry = {};
@@ -83,6 +88,11 @@ functionsRouters.forEach((functionsRouter: FunctionsRouter) => {
   functionsRoutersMap[kebabToCamelCase(chainSlug)] = functionsRouter;
 });
 
+ccipRouters.forEach((ccipRouter: CCIPRouter) => {
+  const chainSlug = networksMap[ccipRouter.chainId].chainSlug;
+  ccipRoutersMap[kebabToCamelCase(chainSlug)] = ccipRouter;
+});
+
 linkTokens.forEach((linkToken: LinkToken) => {
   const chainSlug = networksMap[linkToken.chainId].chainSlug;
   linkTokensMap[kebabToCamelCase(chainSlug)] = linkToken;
@@ -113,6 +123,9 @@ const tsCodeVRFCoordinators = `export const vrfCoordinatorsRegistry = ${JSON.str
 const tsCodeFunctionsRouters = `export const functionsRoutersRegistry = ${JSON.stringify(
   functionsRoutersMap
 )};`;
+const tsCodeCCIPRouters = `export const ccipRoutersRegistry = ${JSON.stringify(
+  ccipRoutersMap
+)};`;
 const tsCodeLinkTokens = `export const linkTokensRegistry = ${JSON.stringify(
   linkTokensMap
 )};`;
@@ -128,6 +141,7 @@ fs.writeFileSync("../dataFeedsRegistry.ts", tsCodeDataFeeds);
 fs.writeFileSync("../feedRegistriesRegistry.ts", tsCodeFeedRegistries);
 fs.writeFileSync("../vrfCoordinatorsRegistry.ts", tsCodeVRFCoordinators);
 fs.writeFileSync("../functionsRoutersRegistry.ts", tsCodeFunctionsRouters);
+fs.writeFileSync("../ccipRoutersRegistry.ts", tsCodeCCIPRouters);
 fs.writeFileSync("../linkTokensRegistry.ts", tsCodeLinkTokens);
 fs.writeFileSync("../keeperRegistriesRegistry.ts", tsCodeKeeperRegistries);
 fs.writeFileSync("../l2SequencersRegistry.ts", tsCodeL2Sequencers);

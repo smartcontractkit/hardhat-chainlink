@@ -203,6 +203,21 @@ task(
   printSubtasks(Task.functions);
 });
 
+// CCIP
+task(`${PACKAGE_NAME}:${Task.ccip}`, "CCIP Module")
+  .addOptionalPositionalParam("subtask", "Subtask")
+  .addOptionalParam("args", "Subtask args")
+  .setAction(async (taskArgs, hre) => {
+    return resolveTask(hre, Task.ccip, taskArgs);
+  });
+
+task(
+  `${PACKAGE_NAME}:${Task.ccip}:subtasks`,
+  "CCIP Module: Subtasks List"
+).setAction(async () => {
+  printSubtasks(Task.ccip);
+});
+
 // REGISTRIES
 task(`${PACKAGE_NAME}:${Task.registries}`, "Plugin Registries Module")
   .addOptionalPositionalParam("subtask", "Subtask")
@@ -249,7 +264,10 @@ task(
 });
 
 // DIRECT REQUEST CONSUMER
-task(`${PACKAGE_NAME}:${Task.directRequestConsumer}`, "Direct Request Consumer Module")
+task(
+  `${PACKAGE_NAME}:${Task.directRequestConsumer}`,
+  "Direct Request Consumer Module"
+)
   .addOptionalPositionalParam("subtask", "Subtask")
   .addOptionalParam("args", "Subtask args")
   .setAction(async (taskArgs, hre) => {
@@ -294,6 +312,21 @@ task(
   "Functions Simulation Module: Subtasks List"
 ).setAction(async () => {
   printSubtasks(Task.functionsSimulation);
+});
+
+// CCIP RECEIVER
+task(`${PACKAGE_NAME}:${Task.ccipReceiver}`, "CCIP Receiver Module")
+  .addOptionalPositionalParam("subtask", "Subtask")
+  .addOptionalParam("args", "Subtask args")
+  .setAction(async (taskArgs, hre) => {
+    return resolveTask(hre, Task.ccipReceiver, taskArgs);
+  });
+
+task(
+  `${PACKAGE_NAME}:${Task.ccipReceiver}:subtasks`,
+  "CCIP Receiver Module: Subtasks List"
+).setAction(async () => {
+  printSubtasks(Task.ccipReceiver);
 });
 
 // UTILS

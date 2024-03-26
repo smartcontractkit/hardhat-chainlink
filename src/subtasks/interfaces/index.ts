@@ -4,6 +4,7 @@ interface SubtaskArg {
   name: string;
   description?: string;
   defaultValue?: any;
+  isBoolean?: boolean;
 }
 
 export interface SubtaskProperties {
