@@ -16,6 +16,7 @@ export enum Task {
   directRequestConsumer = "sandbox:directRequestConsumer",
   linkToken = "sandbox:linkToken",
   functionsSimulation = "sandbox:functionsSimulation",
+  ccipReceiver = "sandbox:ccipReceiver",
 }
 
 export enum DataFeedSubtask {
@@ -184,6 +185,12 @@ export enum LinkTokenSubtask {
 
 export enum FunctionsSimulationSubtask {
   simulateRequest = "simulateRequest",
+}
+
+export enum CCIPReceiverSubtask {
+  deploy = "deploy",
+  getRouterAddress = "getRouterAddress",
+  estimateGas = "estimateGas",
 }
 
 export enum UtilsSubtask {
