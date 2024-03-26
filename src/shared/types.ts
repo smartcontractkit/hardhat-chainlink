@@ -62,3 +62,17 @@ export type Overrides = {
   signer?: Signer;
   provider?: providers.JsonRpcProvider;
 };
+
+export type CCIPMessage = {
+  messageId: string;
+  sourceChainSelector: string;
+  sender: string;
+  data: string;
+  destTokenAmounts: { token: string; amount: string }[];
+};
+
+export type GasEstimationOptions = {
+  destinationChainRpcUrl?: string;
+  destinationChainBlockId?: string;
+  isForking?: boolean;
+};
