@@ -30,7 +30,8 @@ import { camelToFlat, kebabToCamelCase } from "./utils";
 export const inquire = async (
   hre: HardhatRuntimeEnvironment,
   parameterName: string,
-  defaultValue: any
+  defaultValue: any,
+  isBoolean: boolean = false
 ) => {
   switch (parameterName) {
     case InquirableParameter.dataFeedAddress:
@@ -65,14 +66,22 @@ export const inquire = async (
     case InquirableParameter.feedRegistryQuoteTick:
       return inquireFeedRegistryQuoteTick();
     default:
-      return inquireInput(camelToFlat(parameterName), defaultValue);
+      return inquireInput(camelToFlat(parameterName), defaultValue, isBoolean);
   }
 };
 
 export const inquireInput = async (
   parameterName: string,
-  defaultValue: any
+  defaultValue: any,
+  isBoolean: boolean = false
 ) => {
+  if (isBoolean) {
+    const result = await confirm({
+      message: `${parameterName}`,
+    });
+
+    return result.toString();
+  }
   return input({
     message: `Provide a ${parameterName}`,
     default: defaultValue,
