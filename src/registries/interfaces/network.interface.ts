@@ -3,4 +3,5 @@ export interface Network {
   chainSlug: string;
   networkSlug: string;
   chainId: string;
+  ccipChainSelector: string;
 }

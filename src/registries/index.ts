@@ -3,6 +3,7 @@ export * from "./dataFeedsRegistry";
 export * from "./feedRegistriesRegistry";
 export * from "./vrfCoordinatorsRegistry";
 export * from "./functionsRoutersRegistry";
+export * from "./ccipRoutersRegistry";
 export * from "./linkTokensRegistry";
 export * from "./keeperRegistriesRegistry";
 export * from "./l2SequencersRegistry";

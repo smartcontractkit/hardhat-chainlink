@@ -1,3 +1,4 @@
+export * from "./ccipRouter.interface";
 export * from "./dataFeed.interface";
 export * from "./feedRegistry.interface";
 export * from "./functionRouter.interface";

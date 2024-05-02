@@ -2,6 +2,8 @@ import { camelToFlat } from "../helpers/utils";
 import {
   AutomationRegistrarSubtask,
   AutomationRegistrySubtask,
+  CCIPReceiverSubtask,
+  CCIPSubtask,
   DataFeedProxySubtask,
   DataFeedSubtask,
   DirectRequestConsumerSubtask,
@@ -21,6 +23,7 @@ import {
 import { Subtasks } from "../shared/types";
 import * as automationRegistrarActions from "../tasks/automation/keeperRegistrar";
 import * as automationRegistryActions from "../tasks/automation/keeperRegistry";
+import * as ccipActions from "../tasks/ccip";
 import * as dataFeedActions from "../tasks/feeds/dataFeed";
 import * as dataFeedProxyActions from "../tasks/feeds/dataFeedProxy";
 import * as ensFeedsResolverActions from "../tasks/feeds/ensFeedsResolver";
@@ -28,6 +31,7 @@ import * as feedRegistryActions from "../tasks/feeds/feedRegistry";
 import * as l2FeedUptimeSequencerActions from "../tasks/feeds/l2FeedUptimeSequencer";
 import * as functionsActions from "../tasks/functions";
 import * as registriesActions from "../tasks/registries";
+import * as ccipReceiverActions from "../tasks/sandbox/ccipReceiver";
 import * as directRequestConsumerActions from "../tasks/sandbox/directRequestConsumer";
 import * as functionsSimulationActions from "../tasks/sandbox/functionsSimulation";
 import * as linkTokenActions from "../tasks/sandbox/linkToken";
@@ -1410,6 +1414,88 @@ export const subtasks: Subtasks = {
       ],
     },
   },
+  [Task.ccip]: {
+    [CCIPSubtask.getSupportedTokens]: {
+      action: ccipActions.getSupportedTokens,
+      description: camelToFlat(CCIPSubtask.getSupportedTokens),
+      args: [
+        {
+          name: "ccipRouterAddress",
+          description: "Address of CCIP Router",
+        },
+        {
+          name: "chainSelector",
+          description: "CCIP chain selector",
+        },
+      ],
+    },
+    [CCIPSubtask.isChainSupported]: {
+      action: ccipActions.isChainSupported,
+      description: camelToFlat(CCIPSubtask.isChainSupported),
+      args: [
+        {
+          name: "ccipRouterAddress",
+          description: "Address of CCIP Router",
+        },
+        {
+          name: "chainSelector",
+          description: "CCIP chain selector",
+        },
+      ],
+    },
+    [CCIPSubtask.getOnRamp]: {
+      action: ccipActions.getOnRamp,
+      description: camelToFlat(CCIPSubtask.getOnRamp),
+      args: [
+        {
+          name: "ccipRouterAddress",
+          description: "Address of CCIP Router",
+        },
+        {
+          name: "chainSelector",
+          description: "CCIP chain selector",
+        },
+      ],
+    },
+    [CCIPSubtask.isOffRamp]: {
+      action: ccipActions.isOffRamp,
+      description: camelToFlat(CCIPSubtask.isOffRamp),
+      args: [
+        {
+          name: "ccipRouterAddress",
+          description: "Address of CCIP Router",
+        },
+        {
+          name: "sourceChainSelector",
+          description: "CCIP source chain selector",
+        },
+        {
+          name: "offRampAddress",
+          description: "Address of a contract to be checked",
+        },
+      ],
+    },
+    [CCIPSubtask.getWrappedNative]: {
+      action: ccipActions.getWrappedNative,
+      description: camelToFlat(CCIPSubtask.getWrappedNative),
+      args: [
+        {
+          name: "ccipRouterAddress",
+          description: "Address of CCIP Router",
+        },
+      ],
+    },
+    [CCIPSubtask.getTypeAndVersion]: {
+      action: ccipActions.getTypeAndVersion,
+      description: camelToFlat(CCIPSubtask.getTypeAndVersion),
+      args: [
+        {
+          name: "ccipRouterAddress",
+          description: "Address of CCIP Router",
+        },
+      ],
+    },
+  },
   [Task.registries]: {
     [PluginRegistriesSubtask.getDataFeed]: {
       action: registriesActions.getDataFeed,
@@ -1444,6 +1530,11 @@ export const subtasks: Subtasks = {
     [PluginRegistriesSubtask.getFunctionRouter]: {
       action: registriesActions.getFunctionRouter,
       description: camelToFlat(PluginRegistriesSubtask.getFunctionRouter),
+      args: [],
+    },
+    [PluginRegistriesSubtask.getCCIPRouter]: {
+      action: registriesActions.getCCIPRouter,
+      description: camelToFlat(PluginRegistriesSubtask.getCCIPRouter),
       args: [],
     },
     [PluginRegistriesSubtask.getDenomination]: {
@@ -1746,6 +1837,57 @@ export const subtasks: Subtasks = {
           name: "bytesArgs",
           description: "Comma-separated request bytes args",
           defaultValue: "",
+        },
+      ],
+    },
+  },
+  [Task.ccipReceiver]: {
+    [CCIPReceiverSubtask.deploy]: {
+      action: ccipReceiverActions.deploy,
+      description: "Deploy Simple CCIP Receiver",
+      args: [
+        {
+          name: "ccipRouterAddress",
+          description: "Address of CCIP Router",
+        },
+      ],
+    },
+    [CCIPReceiverSubtask.getRouterAddress]: {
+      action: ccipReceiverActions.getRouterAddress,
+      description: "Get CCIP Router address",
+      args: [
+        {
+          name: "ccipReceiverAddress",
+          description: "Address of CCIP Receiver",
+        },
+      ],
+    },
+    [CCIPReceiverSubtask.estimateGas]: {
+      action: ccipReceiverActions.estimateGas,
+      description: "Estimate CCIP Receiver gas usage",
+      args: [
+        {
+          name: "ccipReceiverAddress",
+          description: "Address of CCIP Receiver",
+        },
+        {
+          name: "ccipMessageJsonPath",
+          description: "JSON path to CCIP message",
+        },
+        {
+          name: "destinationChainRpcUrl",
+          description: "Destination chain RPC URL",
+          defaultValue: "",
+        },
+        {
+          name: "destinationChainBlockId",
+          description: "Destination chain block ID",
+          defaultValue: "",
+        },
+        {
+          name: "isForking",
+          description: "Fork destination chain while estimating gas",
+          isBoolean: true,
         },
       ],
     },
