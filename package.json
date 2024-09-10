@@ -76,7 +76,7 @@
     "@nomiclabs/hardhat-ethers": "^2.2.3",
     "axios": "^1.4.0",
     "chalk": "4.1.2",
-    "docker-compose": "^0.24.1",
+    "docker-compose": "^0.24.8",
     "ethers": "^5.4.7"
   },
   "peerDependencies": {

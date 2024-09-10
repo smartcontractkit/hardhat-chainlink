@@ -14,7 +14,7 @@ const login = async (): Promise<void> => {
     ["chainlink", "admin", "login", "-f", "/clroot/api-credentials"],
     {
       cwd: join("./"),
-      composeOptions: ["-f", "docker-compose-chainlink-hardhat.yaml"],
+      composeOptions: ["-f", "docker compose-chainlink-hardhat.yaml"],
       log: true,
     }
   );
@@ -106,26 +106,26 @@ const up = async (
     case NodeStartType.run:
       result = await compose.upAll({
         cwd: join("./"),
-        composeOptions: ["-f", "docker-compose-chainlink-hardhat.yaml"],
+        composeOptions: ["-f", "docker compose-chainlink-hardhat.yaml"],
         log: true,
       });
       break;
     case NodeStartType.restart:
       await compose.down({
         cwd: join("./"),
-        composeOptions: ["-f", "docker-compose-chainlink-hardhat.yaml"],
+        composeOptions: ["-f", "docker compose-chainlink-hardhat.yaml"],
         log: true,
       });
       result = await compose.upAll({
         cwd: join("./"),
-        composeOptions: ["-f", "docker-compose-chainlink-hardhat.yaml"],
+        composeOptions: ["-f", "docker compose-chainlink-hardhat.yaml"],
         log: true,
       });
       break;
     case NodeStartType.stop:
       result = await compose.stop({
         cwd: join("./"),
-        composeOptions: ["-f", "docker-compose-chainlink-hardhat.yaml"],
+        composeOptions: ["-f", "docker compose-chainlink-hardhat.yaml"],
         log: true,
       });
       break;
@@ -166,7 +166,7 @@ export const getETHKeys = async (
     ["chainlink", "-j", "keys", "eth", "list"],
     {
       cwd: join("./"),
-      composeOptions: ["-f", "docker-compose-chainlink-hardhat.yaml"],
+      composeOptions: ["-f", "docker compose-chainlink-hardhat.yaml"],
     }
   );
   return result.out;
@@ -181,7 +181,7 @@ export const getP2PKeys = async (
     ["chainlink", "-j", "keys", "p2p", "list"],
     {
       cwd: join("./"),
-      composeOptions: ["-f", "docker-compose-chainlink-hardhat.yaml"],
+      composeOptions: ["-f", "docker compose-chainlink-hardhat.yaml"],
     }
   );
   return result.out;
@@ -196,7 +196,7 @@ export const getVRFKeys = async (
     ["chainlink", "-j", "keys", "vrf", "list"],
     {
       cwd: join("./"),
-      composeOptions: ["-f", "docker-compose-chainlink-hardhat.yaml"],
+      composeOptions: ["-f", "docker compose-chainlink-hardhat.yaml"],
     }
   );
   return result.out;
@@ -211,7 +211,7 @@ export const getOCRKeys = async (
     ["chainlink", "-j", "keys", "ocr", "list"],
     {
       cwd: join("./"),
-      composeOptions: ["-f", "docker-compose-chainlink-hardhat.yaml"],
+      composeOptions: ["-f", "docker compose-chainlink-hardhat.yaml"],
     }
   );
   return result.out;
@@ -226,7 +226,7 @@ export const getJobs = async (
     ["chainlink", "-j", "jobs", "list"],
     {
       cwd: join("./"),
-      composeOptions: ["-f", "docker-compose-chainlink-hardhat.yaml"],
+      composeOptions: ["-f", "docker compose-chainlink-hardhat.yaml"],
     }
   );
   return result.out;
@@ -267,7 +267,7 @@ export const createDirectRequestJob = async (
     ["chainlink", "jobs", "create", "/clroot/jobs/direct-request-job.toml"],
     {
       cwd: join("./"),
-      composeOptions: ["-f", "docker-compose-chainlink-hardhat.yaml"],
+      composeOptions: ["-f", "docker compose-chainlink-hardhat.yaml"],
       log: true,
     }
   );
