@@ -345,7 +345,7 @@ Once Chainlink node is started, Direct Request job could be set up. It can be us
 The process of setting up a Direct Request job is as follows:
 1. [Deploy Link Token contract](SANDBOX.md#deploy-contract)
 2. [Deploy Operator contract](SANDBOX.md#deploy-contract-1)
-3. [Deploy Direct Request Consumer contract](SANDBOX.md#deploy-contract-1)
+3. [Deploy Direct Request Consumer contract](SANDBOX.md#deploy-contract-2)
 4. [Get Chainlink node ETH accounts](SANDBOX.md#get-eth-keys) and choose one of them
 5. [Fund chosen Chainlink ETH account](DOCUMENTATION.md#transfer-eth) with reasonable amount of ETH
 6. [Fund Direct Request Consumer contract with Link tokens](SANDBOX.md#transfer) (at least 1 token)
