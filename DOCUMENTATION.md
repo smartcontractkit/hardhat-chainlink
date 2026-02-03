@@ -1279,7 +1279,7 @@ which serves as the intermediary between smart contracts on the blockchain and t
 
 ## Automation Services
 
-Chainlink [Automation](https://docs.chain.link/vrf/v2/introduction) service enables conditional execution 
+Chainlink [Automation](https://docs.chain.link/chainlink-automation/introduction) service enables conditional execution 
 of your smart contracts functions through a hyper-reliable and decentralized automation platform.
 
 ### Service alias: [`automationRegistrar`](src%2Fautomation%2FkeepersRegistrar.ts)
