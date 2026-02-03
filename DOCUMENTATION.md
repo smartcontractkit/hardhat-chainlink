@@ -474,7 +474,7 @@ which acts as a proxy for Chainlink Data Feeds.
 const feedRegistry = hre.chainlink.feedRegistry;
 ```
 This section provides methods and functionalities designed to interact with the [Feed Registry](https://docs.chain.link/data-feeds/feed-registry) smart contracts,
-which acts is an on-chain mapping of assets to Data Feeds.
+which is an on-chain mapping of assets to Data Feeds.
 
 > **Note**
 >  Chainlink Feed Registry is exclusively available on the Ethereum mainnet.
